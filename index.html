@@ -96,12 +96,13 @@ button{
   top:50%;
   left:50%;
   transform:translate(-50%,-50%) scale(0);
-  font-size:90px;
+  font-size:110px;
+  z-index:999;
   opacity:0;
-  z-index:20;
   pointer-events:none;
+  filter: drop-shadow(0 0 10px black);
 }
-
+  
 .starAnimate{
   animation:starPop 1s ease;
 }
@@ -336,14 +337,23 @@ function render(){
 
 function nextLetter(){
 
+  // 1. move letter
   currentIndex++;
 
+  if(currentIndex >= letters.length){
+    currentIndex = 0;
+  }
+
+  // 2. reward ALWAYS triggers first (important for dopamine loop)
   stars++;
 
   updateStars();
 
   showStarReward();
 
+  playRewardSound();
+
+  // 3. level logic
   if(currentIndex % 5 === 0){
 
     level++;
@@ -354,38 +364,54 @@ function nextLetter(){
 
   }
 
-  if(currentIndex >= letters.length){
-
-    currentIndex = 0;
-
-  }
-
+  // 4. render next state
   render();
-
 }
-
 /* =========================
    STAR SYSTEM
 ========================= */
 
 function updateStars(){
 
-  document.getElementById("starCounter").innerText =
-    `⭐ ${stars}`;
+  const el = document.getElementById("starCounter");
+
+  el.innerText = `⭐ ${stars}`;
+
+  // small pulse effect
+  el.style.transform = "scale(1.2)";
+
+  setTimeout(()=>{
+    el.style.transform = "scale(1)";
+  },150);
 
 }
-
 function showStarReward(){
 
   const star = document.getElementById("starPopup");
 
-  star.innerText = `⭐ +${stars}`;
+  // ALWAYS show +1 per interaction (not cumulative confusion)
+  star.innerText = "⭐ +1";
+
+  star.style.display = "block";
+  star.style.opacity = "1";
 
   star.classList.remove("starAnimate");
 
-  void star.offsetWidth;
+  void star.offsetWidth; // restart animation
 
   star.classList.add("starAnimate");
+
+}
+  /* =========================
+   Guarenteed Reward Sound
+========================= */
+  function playRewardSound(){
+
+  const audio = new Audio("assets/sounds/rewards/great_job.mp3");
+
+  audio.volume = 0.8;
+
+  audio.play().catch(()=>{});
 
 }
 
@@ -403,31 +429,27 @@ function updateLevel(){
 /* =========================
    BALLOONS
 ========================= */
-
 function showBalloons(){
 
-  for(let i=0;i<5;i++){
+  for(let i=0;i<8;i++){
 
-    const balloon = document.createElement("div");
+    const b = document.createElement("div");
 
-    balloon.className = "balloon";
+    b.className = "balloon";
 
-    balloon.innerText = "🎈";
+    b.innerText = "🎈";
 
-    balloon.style.left =
-      Math.random()*100 + "vw";
+    b.style.left = (Math.random()*100) + "vw";
 
-    document.body.appendChild(balloon);
+    b.style.fontSize = (30 + Math.random()*30) + "px";
 
-    setTimeout(()=>{
-      balloon.remove();
-    },5000);
+    document.body.appendChild(b);
 
+    setTimeout(()=> b.remove(), 5000);
   }
-
 }
 
-/* =========================
+  /* =========================
    AUTO MODE
 ========================= */
 
