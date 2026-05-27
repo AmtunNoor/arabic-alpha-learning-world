@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arabic Learning World</title>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  overflow:hidden;
+  background:#000;
+  color:white;
+  text-align:center;
+  background-size:cover;
+  background-position:center;
+  transition: background-image 1s ease;
+}
+
+.overlay {
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.35);
+}
+
+#app {
+  position:relative;
+  z-index:2;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:20px;
+}
+
+#letter {
+  font-size:140px;
+  background:rgba(255,255,255,0.15);
+  padding:30px 60px;
+  border-radius:25px;
+}
+
+#action {
+  font-size:28px;
+  color:#ffd36e;
+}
+
+#phrase {
+  font-size:20px;
+  opacity:0.9;
+}
+
+button {
+  padding:10px 20px;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<div id="app">
+  <div id="letter">ا</div>
+  <div id="action">Tap Start</div>
+  <div id="phrase">Learning Arabic</div>
+
+  <button onclick="next()">Next</button>
+</div>
+
+<script>
+const letters = [
+  {a:"ا", audio:"assets/sounds/letters/alif.mp3"},
+  {a:"ب", audio:"assets/sounds/letters/ba.mp3"},
+  {a:"ت", audio:"assets/sounds/letters/ta.mp3"}
+];
+
+const actions = ["Jump!", "Clap!", "Run!", "Spin!"];
+const phrases = ["Great job!", "Well done!", "Amazing!", "Keep going!"];
+
+const themes = [
+  "assets/images/themes/snow.webp",
+  "assets/images/themes/garden.webp",
+  "assets/images/themes/rainbow.webp"
+];
+
+let i=0;
+const audio = new Audio();
+
+function render(){
+  const L = letters[i];
+
+  document.getElementById("letter").innerText = L.a;
+
+  document.getElementById("action").innerText =
+    actions[Math.floor(Math.random()*actions.length)];
+
+  document.getElementById("phrase").innerText =
+    phrases[Math.floor(Math.random()*phrases.length)];
+
+  audio.src = L.audio;
+  audio.play();
+
+  document.body.style.backgroundImage =
+    `url('${themes[i % themes.length]}')`;
+}
+
+function next(){
+  i++;
+  if(i>=letters.length) i=0;
+  render();
+}
+
+window.onload = render;
+</script>
+
+</body>
+</html>
