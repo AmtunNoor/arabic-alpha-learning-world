@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Arabic Learning World Engine</title>
+<title>Arabic Learning World - Final Engine</title>
 
 <style>
 
@@ -15,24 +15,35 @@ body{
   color:white;
 }
 
-/* ===== BACKGROUND ENGINE (DUAL IMAGE) ===== */
+/* ===== BACKGROUND (DUAL LAYER) ===== */
 #bg1,#bg2{
   position:fixed;
   inset:0;
   background-size:cover;
   background-position:center;
-  transition:opacity 1.2s ease;
-  z-index:-2;
+  transition:opacity 1.5s ease;
+  z-index:-3;
 }
 
-#bg2{z-index:-1; opacity:0;}
+#bg2{opacity:0;}
 
+/* ===== PARTICLE CANVAS ===== */
+#fx{
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+}
+
+/* OVERLAY */
 .overlay{
   position:absolute;
   inset:0;
-  background:rgba(0,0,0,0.35);
+  background:rgba(0,0,0,0.25);
+  z-index:-1;
 }
 
+/* APP */
 #app{
   position:relative;
   z-index:2;
@@ -46,16 +57,15 @@ body{
 
 /* LETTER */
 #letter{
-  font-size:150px;
+  font-size:160px;
   padding:30px 60px;
   background:rgba(255,255,255,0.15);
   border-radius:30px;
 }
 
-/* ACTION VISUAL */
+/* ACTION */
 #action{
-  font-size:120px;
-  transition:transform 0.3s ease;
+  font-size:130px;
 }
 
 /* PHRASE */
@@ -75,24 +85,30 @@ body{
   font-size:22px;
 }
 
-/* STAR POPUP */
+/* STAR */
 #starPopup{
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%) scale(0);
-  font-size:120px;
+  font-size:140px;
   opacity:0;
+  text-align:center;
+}
+
+#starPopup span{
+  display:block;
+  font-size:32px;
 }
 
 .starAnim{
-  animation:pop 0.9s ease;
+  animation:pop 1s ease;
 }
 
 @keyframes pop{
-  0%{transform:translate(-50%,-50%) scale(0);opacity:0;}
-  50%{transform:translate(-50%,-50%) scale(1.4);opacity:1;}
-  100%{transform:translate(-50%,-50%) scale(0);opacity:0;}
+  0%{transform:translate(-50%,-50%) scale(0);}
+  50%{transform:translate(-50%,-50%) scale(1.5);}
+  100%{transform:translate(-50%,-50%) scale(0);}
 }
 
 /* BALLOON */
@@ -107,6 +123,26 @@ body{
   to{transform:translateY(-120vh);opacity:0;}
 }
 
+/* ACTION ANIMATIONS */
+.clap{animation:clap 0.7s infinite;}
+.jump{animation:jump 0.7s infinite;}
+.spin{animation:spin 1s linear infinite;}
+
+@keyframes clap{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.3);}
+}
+
+@keyframes jump{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-50px);}
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+
 </style>
 </head>
 
@@ -114,6 +150,9 @@ body{
 
 <div id="bg1"></div>
 <div id="bg2"></div>
+
+<canvas id="fx"></canvas>
+
 <div class="overlay"></div>
 
 <div id="hud">
@@ -121,59 +160,31 @@ body{
   <div id="stars">⭐ 0</div>
 </div>
 
-<div id="starPopup">⭐</div>
+<div id="starPopup">⭐<span>0</span></div>
 
 <div id="app">
-
   <div id="letter">ا</div>
-
   <div id="action">👋</div>
-
-  <div id="phrase">Listen and watch</div>
-
+  <div id="phrase"></div>
 </div>
 
 <script>
 
-/* ===================== LETTERS ===================== */
+/* ================= LETTERS ================= */
 const letters = [
   {a:"ا", audio:"assets/sounds/letters/alif.mp3"},
   {a:"ب", audio:"assets/sounds/letters/ba.mp3"},
   {a:"ت", audio:"assets/sounds/letters/ta.mp3"}
 ];
 
-/* ===================== ACTIONS ===================== */
+/* ================= ACTIONS ================= */
 const actions = [
-  {
-    icon:"👏",
-    name:"clap",
-    text:"Clap your hands!",
-    audio:"assets/sounds/actions/clap.mp3"
-  },
-  {
-    icon:"🦘",
-    name:"jump",
-    text:"Jump fast!",
-    audio:"assets/sounds/actions/jump.mp3"
-  },
-  {
-    icon:"🌀",
-    name:"spin",
-    text:"Spin around!",
-    audio:"assets/sounds/actions/spin.mp3"
-  }
+  {icon:"👏", name:"clap", text:"Clap!", audio:"assets/sounds/actions/clap.mp3"},
+  {icon:"🦘", name:"jump", text:"Jump!", audio:"assets/sounds/actions/jump.mp3"},
+  {icon:"🌀", name:"spin", text:"Spin!", audio:"assets/sounds/actions/spin.mp3"}
 ];
 
-/* ===================== PHRASES ===================== */
-const phrases = [
-  "Great job!",
-  "Amazing!",
-  "Well done!",
-  "Fantastic!",
-  "You did it!"
-];
-
-/* ===================== THEMES (DUAL IMAGES) ===================== */
+/* ================= THEMES ================= */
 const themes = [
   ["assets/images/themes/snow.webp","assets/images/themes/snow_2.webp"],
   ["assets/images/themes/garden.webp","assets/images/themes/garden_2.webp"],
@@ -181,56 +192,125 @@ const themes = [
   ["assets/images/themes/rainbow.webp","assets/images/themes/rainbow_2.webp"]
 ];
 
-/* ===================== STATE ===================== */
+/* ================= STATE ================= */
 let i=0;
 let stars=0;
 let level=1;
 let toggle=true;
 
-const letterAudio = new Audio();
-const actionAudio = new Audio();
+const letterAudio=new Audio();
+const actionAudio=new Audio();
 
-/* ===================== PRELOAD ===================== */
-function preload(){
-  themes.flat().forEach(src=>{
-    const img=new Image();
-    img.src=src;
-  });
+/* ================= PRELOAD ================= */
+themes.flat().forEach(src=>{
+  const img=new Image();
+  img.src=src;
+});
+
+/* ================= PARTICLES ================= */
+const canvas=document.getElementById("fx");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+
+function setParticles(type){
+
+  particles=[];
+
+  for(let i=0;i<80;i++){
+    particles.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height,
+      r:Math.random()*3+1,
+      d:Math.random()*1+0.5,
+      type:type
+    });
+  }
 }
-preload();
 
-/* ===================== THEME ENGINE ===================== */
+function draw(){
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  particles.forEach(p=>{
+
+    if(p.type==="snow"){
+      p.y+=p.d;
+      if(p.y>canvas.height)p.y=0;
+      ctx.fillStyle="white";
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+    }
+
+    if(p.type==="ocean"){
+      p.x+=Math.sin(p.y/40);
+      p.y+=0.5;
+      if(p.y>canvas.height)p.y=0;
+      ctx.fillRect(p.x,p.y,p.r,p.r);
+    }
+
+    if(p.type==="garden"){
+      p.y+=p.d;
+      p.x+=Math.sin(p.y/30);
+      if(p.y>canvas.height)p.y=0;
+      ctx.fillRect(p.x,p.y,p.r,p.r);
+    }
+
+    if(p.type==="rainbow"){
+      p.y+=1.2;
+      p.x+=Math.sin(p.y/10)*2;
+      if(p.y>canvas.height)p.y=0;
+      ctx.fillRect(p.x,p.y,p.r,p.r);
+    }
+
+  });
+
+  requestAnimationFrame(draw);
+}
+draw();
+
+/* ================= THEME ================= */
+let worldToggle=true;
+
 function setTheme(){
 
-  const set = themes[level-1] || themes[0];
+  const set=themes[level-1]||themes[0];
 
-  const next = toggle ? document.getElementById("bg2") : document.getElementById("bg1");
-  const curr = toggle ? document.getElementById("bg1") : document.getElementById("bg2");
+  const next=worldToggle?bg2:bg1;
+  const curr=worldToggle?bg1:bg2;
 
-  next.style.backgroundImage = `url('${set[i % 2]}')`;
-  next.style.opacity = 1;
-  curr.style.opacity = 0;
+  next.style.backgroundImage=`url('${set[i%2]}')`;
+  next.style.opacity=1;
+  curr.style.opacity=0;
 
-  toggle = !toggle;
+  worldToggle=!worldToggle;
+
+  const map=["snow","garden","ocean","rainbow"];
+  setParticles(map[level-1]||"snow");
+
 }
 
-/* ===================== STAR ===================== */
+/* ================= STAR ================= */
 function showStar(){
 
   stars++;
 
-  document.getElementById("stars").innerText = `⭐ ${stars}`;
+  document.getElementById("stars").innerText=`⭐ ${stars}`;
 
-  const s = document.getElementById("starPopup");
-
-  s.innerText = "⭐ " + stars;
+  const s=document.getElementById("starPopup");
+  s.innerHTML=`⭐<span>${stars}</span>`;
 
   s.classList.remove("starAnim");
   void s.offsetWidth;
   s.classList.add("starAnim");
+
 }
 
-/* ===================== BALLOONS ===================== */
+/* ================= BALLOONS ================= */
 function balloons(){
 
   for(let b=0;b<6;b++){
@@ -241,58 +321,64 @@ function balloons(){
     document.body.appendChild(el);
     setTimeout(()=>el.remove(),5000);
   }
+
 }
 
-/* ===================== MAIN ENGINE ===================== */
-function run(){
+/* ================= CORE LOOP ================= */
+function step(){
 
-  const L = letters[i];
-  const A = actions[Math.floor(Math.random()*actions.length)];
+  const L=letters[i];
+  const A=actions[Math.floor(Math.random()*actions.length)];
 
-  /* LETTER */
-  document.getElementById("letter").innerText = L.a;
-  letterAudio.src = L.audio;
+  document.getElementById("letter").innerText=L.a;
+
+  letterAudio.src=L.audio;
   letterAudio.play().catch(()=>{});
 
-  /* ACTION */
-  const act = document.getElementById("action");
-  act.innerText = A.icon;
-  act.className = A.name;
+  const act=document.getElementById("action");
+  act.innerText=A.icon;
+  act.className="";
+  void act.offsetWidth;
+  act.className=A.name;
 
-  /* PHRASE */
-  document.getElementById("phrase").innerText = A.text;
+  document.getElementById("phrase").innerText=A.text;
 
-  /* ACTION AUDIO */
   setTimeout(()=>{
-    actionAudio.src = A.audio;
+    actionAudio.src=A.audio;
     actionAudio.play().catch(()=>{});
   },700);
 
-  /* THEME */
   setTheme();
 
 }
 
-/* ===================== NEXT ===================== */
+/* ================= NEXT ================= */
 function next(){
 
   showStar();
 
   i++;
 
-  if(i % 2 === 0){
+  if(i%2===0){
     level++;
-    document.getElementById("level").innerText = `Level ${level}`;
+    document.getElementById("level").innerText=`Level ${level}`;
     balloons();
   }
 
-  if(i >= letters.length) i=0;
+  if(i>=letters.length)i=0;
 
-  run();
+  step();
 
 }
 
-window.onload = run;
+/* ================= AUTO RUN ================= */
+window.onload=()=>{
+
+  step();
+
+  setInterval(next,4000);
+
+};
 
 </script>
 
