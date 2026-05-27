@@ -3,20 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Toddler Arabic Learning World</title>
+<title>Arabic Learning World Engine</title>
 
 <style>
+
 body{
   margin:0;
   overflow:hidden;
   font-family:Arial;
   background:black;
   color:white;
-  text-align:center;
+}
+
+/* ===== BACKGROUND ENGINE (DUAL IMAGE) ===== */
+#bg1,#bg2{
+  position:fixed;
+  inset:0;
   background-size:cover;
   background-position:center;
-  transition:background-image 1s ease;
+  transition:opacity 1.2s ease;
+  z-index:-2;
 }
+
+#bg2{z-index:-1; opacity:0;}
 
 .overlay{
   position:absolute;
@@ -32,54 +41,30 @@ body{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  gap:15px;
+  gap:18px;
 }
 
+/* LETTER */
 #letter{
   font-size:150px;
-  background:rgba(255,255,255,0.15);
   padding:30px 60px;
+  background:rgba(255,255,255,0.15);
   border-radius:30px;
 }
 
-#actionAnim{
-  font-size:90px;
-  margin-top:10px;
-  animation: none;
-}
-
-#phrase{
-  font-size:26px;
-  color:#ffe08a;
-  font-weight:bold;
-}
-
-#speech{
-  font-size:22px;
-  opacity:0.95;
-}
-
-/* STAR */
-#starPopup{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%) scale(0);
+/* ACTION VISUAL */
+#action{
   font-size:120px;
-  opacity:0;
-  z-index:999;
+  transition:transform 0.3s ease;
 }
 
-.starAnim{
-  animation:pop 0.8s ease;
+/* PHRASE */
+#phrase{
+  font-size:28px;
+  color:#ffe08a;
 }
 
-@keyframes pop{
-  0%{transform:translate(-50%,-50%) scale(0);opacity:0;}
-  50%{transform:translate(-50%,-50%) scale(1.4);opacity:1;}
-  100%{transform:translate(-50%,-50%) scale(0);opacity:0;}
-}
-
+/* HUD */
 #hud{
   position:absolute;
   top:10px;
@@ -90,6 +75,27 @@ body{
   font-size:22px;
 }
 
+/* STAR POPUP */
+#starPopup{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  font-size:120px;
+  opacity:0;
+}
+
+.starAnim{
+  animation:pop 0.9s ease;
+}
+
+@keyframes pop{
+  0%{transform:translate(-50%,-50%) scale(0);opacity:0;}
+  50%{transform:translate(-50%,-50%) scale(1.4);opacity:1;}
+  100%{transform:translate(-50%,-50%) scale(0);opacity:0;}
+}
+
+/* BALLOON */
 .balloon{
   position:absolute;
   bottom:-100px;
@@ -101,31 +107,13 @@ body{
   to{transform:translateY(-120vh);opacity:0;}
 }
 
-/* SIMPLE ANIMATIONS */
-.clap { animation: clap 0.6s infinite; }
-.jump { animation: jump 0.6s infinite; }
-.spin { animation: spin 1s linear infinite; }
-
-@keyframes clap{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.2);}
-}
-
-@keyframes jump{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-40px);}
-}
-
-@keyframes spin{
-  from{transform:rotate(0deg);}
-  to{transform:rotate(360deg);}
-}
-
 </style>
 </head>
 
 <body>
 
+<div id="bg1"></div>
+<div id="bg2"></div>
 <div class="overlay"></div>
 
 <div id="hud">
@@ -139,87 +127,99 @@ body{
 
   <div id="letter">ا</div>
 
-  <div id="actionAnim">👋</div>
+  <div id="action">👋</div>
 
   <div id="phrase">Listen and watch</div>
-
-  <div id="speech">Clap your hands!</div>
 
 </div>
 
 <script>
 
+/* ===================== LETTERS ===================== */
 const letters = [
   {a:"ا", audio:"assets/sounds/letters/alif.mp3"},
   {a:"ب", audio:"assets/sounds/letters/ba.mp3"},
   {a:"ت", audio:"assets/sounds/letters/ta.mp3"}
 ];
 
+/* ===================== ACTIONS ===================== */
 const actions = [
-  {name:"clap", icon:"👏", text:"Clap your hands!"},
-  {name:"jump", icon:"🦘", text:"Jump fast!"},
-  {name:"spin", icon:"🌀", text:"Spin around!"}
+  {
+    icon:"👏",
+    name:"clap",
+    text:"Clap your hands!",
+    audio:"assets/sounds/actions/clap.mp3"
+  },
+  {
+    icon:"🦘",
+    name:"jump",
+    text:"Jump fast!",
+    audio:"assets/sounds/actions/jump.mp3"
+  },
+  {
+    icon:"🌀",
+    name:"spin",
+    text:"Spin around!",
+    audio:"assets/sounds/actions/spin.mp3"
+  }
 ];
 
-const worlds = [
-  "assets/images/themes/snow.webp",
-  "assets/images/themes/garden.webp",
-  "assets/images/themes/ocean.webp",
-  "assets/images/themes/rainbow.webp"
+/* ===================== PHRASES ===================== */
+const phrases = [
+  "Great job!",
+  "Amazing!",
+  "Well done!",
+  "Fantastic!",
+  "You did it!"
 ];
 
+/* ===================== THEMES (DUAL IMAGES) ===================== */
+const themes = [
+  ["assets/images/themes/snow.webp","assets/images/themes/snow_2.webp"],
+  ["assets/images/themes/garden.webp","assets/images/themes/garden_2.webp"],
+  ["assets/images/themes/ocean.webp","assets/images/themes/ocean_2.webp"],
+  ["assets/images/themes/rainbow.webp","assets/images/themes/rainbow_2.webp"]
+];
+
+/* ===================== STATE ===================== */
 let i=0;
 let stars=0;
 let level=1;
+let toggle=true;
 
-const audio = new Audio();
+const letterAudio = new Audio();
+const actionAudio = new Audio();
 
-function render(){
+/* ===================== PRELOAD ===================== */
+function preload(){
+  themes.flat().forEach(src=>{
+    const img=new Image();
+    img.src=src;
+  });
+}
+preload();
 
-  const L = letters[i];
-  const act = actions[Math.floor(Math.random()*actions.length)];
+/* ===================== THEME ENGINE ===================== */
+function setTheme(){
 
-  document.getElementById("letter").innerText = L.a;
+  const set = themes[level-1] || themes[0];
 
-  document.getElementById("actionAnim").innerText = act.icon;
-  document.getElementById("actionAnim").className = act.name;
+  const next = toggle ? document.getElementById("bg2") : document.getElementById("bg1");
+  const curr = toggle ? document.getElementById("bg1") : document.getElementById("bg2");
 
-  document.getElementById("speech").innerText = act.text;
-  document.getElementById("phrase").innerText = "Watch and imitate";
+  next.style.backgroundImage = `url('${set[i % 2]}')`;
+  next.style.opacity = 1;
+  curr.style.opacity = 0;
 
-  document.body.style.backgroundImage =
-    `url('${worlds[level-1] || worlds[0]}')`;
-
-  audio.src = L.audio;
-  audio.play().catch(()=>{});
-
+  toggle = !toggle;
 }
 
-function next(){
+/* ===================== STAR ===================== */
+function showStar(){
 
   stars++;
 
   document.getElementById("stars").innerText = `⭐ ${stars}`;
-
-  showStar();
-
-  i++;
-
-  if(i % 3 === 0){
-    level++;
-    document.getElementById("level").innerText = `Level ${level}`;
-    showBalloons();
-  }
-
-  if(i >= letters.length){
-    i=0;
-  }
-
-  render();
-
-}
-
-function showStar(){
 
   const s = document.getElementById("starPopup");
 
@@ -228,27 +228,71 @@ function showStar(){
   s.classList.remove("starAnim");
   void s.offsetWidth;
   s.classList.add("starAnim");
-
 }
 
-function showBalloons(){
+/* ===================== BALLOONS ===================== */
+function balloons(){
 
   for(let b=0;b<6;b++){
-
-    let el=document.createElement("div");
+    const el=document.createElement("div");
     el.className="balloon";
     el.innerText="🎈";
     el.style.left=Math.random()*100+"vw";
-
     document.body.appendChild(el);
-
     setTimeout(()=>el.remove(),5000);
-
   }
+}
+
+/* ===================== MAIN ENGINE ===================== */
+function run(){
+
+  const L = letters[i];
+  const A = actions[Math.floor(Math.random()*actions.length)];
+
+  /* LETTER */
+  document.getElementById("letter").innerText = L.a;
+  letterAudio.src = L.audio;
+  letterAudio.play().catch(()=>{});
+
+  /* ACTION */
+  const act = document.getElementById("action");
+  act.innerText = A.icon;
+  act.className = A.name;
+
+  /* PHRASE */
+  document.getElementById("phrase").innerText = A.text;
+
+  /* ACTION AUDIO */
+  setTimeout(()=>{
+    actionAudio.src = A.audio;
+    actionAudio.play().catch(()=>{});
+  },700);
+
+  /* THEME */
+  setTheme();
 
 }
 
-window.onload = render;
+/* ===================== NEXT ===================== */
+function next(){
+
+  showStar();
+
+  i++;
+
+  if(i % 2 === 0){
+    level++;
+    document.getElementById("level").innerText = `Level ${level}`;
+    balloons();
+  }
+
+  if(i >= letters.length) i=0;
+
+  run();
+
+}
+
+window.onload = run;
 
 </script>
 
