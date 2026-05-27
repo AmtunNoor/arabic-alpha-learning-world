@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Arabic Learning World</title>
+<title>Toddler Arabic Learning World</title>
 
 <style>
-
 body{
   margin:0;
   overflow:hidden;
-  font-family:Arial, sans-serif;
+  font-family:Arial;
+  background:black;
   color:white;
   text-align:center;
-  background:#000;
   background-size:cover;
   background-position:center;
   transition:background-image 1s ease;
@@ -33,96 +32,62 @@ body{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  gap:20px;
-  padding:20px;
+  gap:15px;
 }
 
 #letter{
-  font-size:140px;
-  font-weight:bold;
+  font-size:150px;
   background:rgba(255,255,255,0.15);
   padding:30px 60px;
   border-radius:30px;
-  min-width:220px;
-  backdrop-filter:none;
 }
 
-#action{
-  font-size:32px;
+#actionAnim{
+  font-size:90px;
+  margin-top:10px;
+  animation: none;
+}
+
+#phrase{
+  font-size:26px;
   color:#ffe08a;
   font-weight:bold;
 }
 
-#phrase{
+#speech{
   font-size:22px;
   opacity:0.95;
 }
 
-.controls{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  justify-content:center;
-}
-
-button{
-  padding:12px 18px;
-  border:none;
-  border-radius:12px;
-  font-size:16px;
-  cursor:pointer;
-}
-
-#starCounter{
-  position:absolute;
-  top:20px;
-  right:20px;
-  z-index:10;
-  font-size:28px;
-  font-weight:bold;
-}
-
-#levelText{
-  position:absolute;
-  top:20px;
-  left:20px;
-  z-index:10;
-  font-size:24px;
-  font-weight:bold;
-}
-
+/* STAR */
 #starPopup{
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%) scale(0);
-  font-size:110px;
-  z-index:999;
+  font-size:120px;
   opacity:0;
-  pointer-events:none;
-  filter: drop-shadow(0 0 10px black);
-}
-  
-.starAnimate{
-  animation:starPop 1s ease;
+  z-index:999;
 }
 
-@keyframes starPop{
+.starAnim{
+  animation:pop 0.8s ease;
+}
 
-  0%{
-    transform:translate(-50%,-50%) scale(0);
-    opacity:0;
-  }
+@keyframes pop{
+  0%{transform:translate(-50%,-50%) scale(0);opacity:0;}
+  50%{transform:translate(-50%,-50%) scale(1.4);opacity:1;}
+  100%{transform:translate(-50%,-50%) scale(0);opacity:0;}
+}
 
-  40%{
-    transform:translate(-50%,-50%) scale(1.4);
-    opacity:1;
-  }
-
-  100%{
-    transform:translate(-50%,-50%) scale(0);
-    opacity:0;
-  }
+#hud{
+  position:absolute;
+  top:10px;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  padding:0 20px;
+  font-size:22px;
 }
 
 .balloon{
@@ -130,19 +95,30 @@ button{
   bottom:-100px;
   font-size:50px;
   animation:floatUp 5s linear forwards;
-  z-index:15;
 }
 
 @keyframes floatUp{
-  from{
-    transform:translateY(0);
-    opacity:1;
-  }
+  to{transform:translateY(-120vh);opacity:0;}
+}
 
-  to{
-    transform:translateY(-120vh);
-    opacity:0;
-  }
+/* SIMPLE ANIMATIONS */
+.clap { animation: clap 0.6s infinite; }
+.jump { animation: jump 0.6s infinite; }
+.spin { animation: spin 1s linear infinite; }
+
+@keyframes clap{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.2);}
+}
+
+@keyframes jump{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-40px);}
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
 }
 
 </style>
@@ -152,355 +128,127 @@ button{
 
 <div class="overlay"></div>
 
-<div id="levelText">
-  Level 1
+<div id="hud">
+  <div id="level">Level 1 ❄️</div>
+  <div id="stars">⭐ 0</div>
 </div>
 
-<div id="starCounter">
-  ⭐ 0
-</div>
-
-<div id="starPopup">
-  ⭐ +1
-</div>
+<div id="starPopup">⭐</div>
 
 <div id="app">
 
-  <div id="letter">
-    ا
-  </div>
+  <div id="letter">ا</div>
 
-  <div id="action">
-    Tap Start
-  </div>
+  <div id="actionAnim">👋</div>
 
-  <div id="phrase">
-    Learning Arabic
-  </div>
+  <div id="phrase">Listen and watch</div>
 
-  <div class="controls">
-
-    <button onclick="nextLetter()">
-      Next
-    </button>
-
-    <button id="modeBtn" onclick="toggleMode()">
-      Auto Mode
-    </button>
-
-    <button onclick="setSpeed('slow')">
-      Slow
-    </button>
-
-    <button onclick="setSpeed('normal')">
-      Normal
-    </button>
-
-    <button onclick="setSpeed('fast')">
-      Fast
-    </button>
-
-  </div>
+  <div id="speech">Clap your hands!</div>
 
 </div>
 
 <script>
 
-/* =========================
-   LETTER DATA
-========================= */
-
 const letters = [
-
-  {
-    a:"ا",
-    audio:"assets/sounds/letters/alif.mp3"
-  },
-
-  {
-    a:"ب",
-    audio:"assets/sounds/letters/ba.mp3"
-  },
-
-  {
-    a:"ت",
-    audio:"assets/sounds/letters/ta.mp3"
-  }
-
+  {a:"ا", audio:"assets/sounds/letters/alif.mp3"},
+  {a:"ب", audio:"assets/sounds/letters/ba.mp3"},
+  {a:"ت", audio:"assets/sounds/letters/ta.mp3"}
 ];
-
-/* =========================
-   ACTIONS
-========================= */
 
 const actions = [
-
-  "Jump!",
-  "Clap your hands!",
-  "Run fast!",
-  "Spin around!",
-  "Hop like a bunny!",
-  "Wave your hands!",
-  "March slowly!",
-  "Dance happily!"
-
+  {name:"clap", icon:"👏", text:"Clap your hands!"},
+  {name:"jump", icon:"🦘", text:"Jump fast!"},
+  {name:"spin", icon:"🌀", text:"Spin around!"}
 ];
 
-/* =========================
-   PHRASES
-========================= */
-
-const phrases = [
-
-  "Great job!",
-  "Amazing work!",
-  "Keep learning Arabic!",
-  "Fantastic energy!",
-  "Wonderful listening!",
-  "You are a star!",
-  "Let's play together!"
-
-];
-
-/* =========================
-   THEMES
-========================= */
-
-const themes = [
-
+const worlds = [
   "assets/images/themes/snow.webp",
   "assets/images/themes/garden.webp",
-  "assets/images/themes/rainbow.webp",
   "assets/images/themes/ocean.webp",
-  "assets/images/themes/balloon.webp",
-  "assets/images/themes/desert.webp",
-  "assets/images/themes/forest.webp"
-
+  "assets/images/themes/rainbow.webp"
 ];
 
-/* =========================
-   GAME STATE
-========================= */
-
-let currentIndex = 0;
-
-let stars = 0;
-
-let level = 1;
-
-let autoMode = true;
-
-let speed = "normal";
-
-const speeds = {
-
-  slow:4000,
-  normal:2500,
-  fast:1500
-
-};
-
-let autoInterval;
+let i=0;
+let stars=0;
+let level=1;
 
 const audio = new Audio();
 
-/* =========================
-   RENDER
-========================= */
-
 function render(){
 
-  const L = letters[currentIndex];
+  const L = letters[i];
+  const act = actions[Math.floor(Math.random()*actions.length)];
 
   document.getElementById("letter").innerText = L.a;
 
-  document.getElementById("action").innerText =
-    actions[Math.floor(Math.random()*actions.length)];
+  document.getElementById("actionAnim").innerText = act.icon;
+  document.getElementById("actionAnim").className = act.name;
 
-  document.getElementById("phrase").innerText =
-    phrases[Math.floor(Math.random()*phrases.length)];
+  document.getElementById("speech").innerText = act.text;
+  document.getElementById("phrase").innerText = "Watch and imitate";
 
   document.body.style.backgroundImage =
-    `url('${themes[(level-1)%themes.length]}')`;
+    `url('${worlds[level-1] || worlds[0]}')`;
 
   audio.src = L.audio;
-
-  audio.play().catch(err=>{
-    console.log("Audio blocked until user interaction");
-  });
-
-}
-
-/* =========================
-   NEXT LETTER
-========================= */
-
-function nextLetter(){
-
-  // 1. move letter
-  currentIndex++;
-
-  if(currentIndex >= letters.length){
-    currentIndex = 0;
-  }
-
-  // 2. reward ALWAYS triggers first (important for dopamine loop)
-  stars++;
-
-  updateStars();
-
-  showStarReward();
-
-  playRewardSound();
-
-  // 3. level logic
-  if(currentIndex % 5 === 0){
-
-    level++;
-
-    updateLevel();
-
-    showBalloons();
-
-  }
-
-  // 4. render next state
-  render();
-}
-/* =========================
-   STAR SYSTEM
-========================= */
-
-function updateStars(){
-
-  const el = document.getElementById("starCounter");
-
-  el.innerText = `⭐ ${stars}`;
-
-  // small pulse effect
-  el.style.transform = "scale(1.2)";
-
-  setTimeout(()=>{
-    el.style.transform = "scale(1)";
-  },150);
-
-}
-function showStarReward(){
-
-  const star = document.getElementById("starPopup");
-
-  // ALWAYS show +1 per interaction (not cumulative confusion)
-  star.innerText = "⭐ +1";
-
-  star.style.display = "block";
-  star.style.opacity = "1";
-
-  star.classList.remove("starAnimate");
-
-  void star.offsetWidth; // restart animation
-
-  star.classList.add("starAnimate");
-
-}
-  /* =========================
-   Guarenteed Reward Sound
-========================= */
-  function playRewardSound(){
-
-  const audio = new Audio("assets/sounds/rewards/great_job.mp3");
-
-  audio.volume = 0.8;
-
   audio.play().catch(()=>{});
 
 }
 
-/* =========================
-   LEVEL SYSTEM
-========================= */
+function next(){
 
-function updateLevel(){
+  stars++;
 
-  document.getElementById("levelText").innerText =
-    `Level ${level}`;
+  document.getElementById("stars").innerText = `⭐ ${stars}`;
 
-}
+  showStar();
 
-/* =========================
-   BALLOONS
-========================= */
-function showBalloons(){
+  i++;
 
-  for(let i=0;i<8;i++){
-
-    const b = document.createElement("div");
-
-    b.className = "balloon";
-
-    b.innerText = "🎈";
-
-    b.style.left = (Math.random()*100) + "vw";
-
-    b.style.fontSize = (30 + Math.random()*30) + "px";
-
-    document.body.appendChild(b);
-
-    setTimeout(()=> b.remove(), 5000);
+  if(i % 3 === 0){
+    level++;
+    document.getElementById("level").innerText = `Level ${level}`;
+    showBalloons();
   }
-}
 
-  /* =========================
-   AUTO MODE
-========================= */
-
-function startAutoMode(){
-
-  clearInterval(autoInterval);
-
-  autoInterval = setInterval(()=>{
-
-    if(autoMode){
-
-      nextLetter();
-
-    }
-
-  }, speeds[speed]);
-
-}
-
-function toggleMode(){
-
-  autoMode = !autoMode;
-
-  document.getElementById("modeBtn").innerText =
-    autoMode ? "Auto Mode" : "Manual Mode";
-
-}
-
-/* =========================
-   SPEED MODES
-========================= */
-
-function setSpeed(newSpeed){
-
-  speed = newSpeed;
-
-  startAutoMode();
-
-}
-
-/* =========================
-   START
-========================= */
-
-window.onload = ()=>{
+  if(i >= letters.length){
+    i=0;
+  }
 
   render();
 
-  startAutoMode();
+}
 
-};
+function showStar(){
+
+  const s = document.getElementById("starPopup");
+
+  s.innerText = "⭐ " + stars;
+
+  s.classList.remove("starAnim");
+  void s.offsetWidth;
+  s.classList.add("starAnim");
+
+}
+
+function showBalloons(){
+
+  for(let b=0;b<6;b++){
+
+    let el=document.createElement("div");
+    el.className="balloon";
+    el.innerText="🎈";
+    el.style.left=Math.random()*100+"vw";
+
+    document.body.appendChild(el);
+
+    setTimeout(()=>el.remove(),5000);
+
+  }
+
+}
+
+window.onload = render;
 
 </script>
 
