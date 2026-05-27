@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Arabic Learning World</title>
 
 <style>
-body {
+
+body{
   margin:0;
-  font-family: Arial;
   overflow:hidden;
-  background:#000;
+  font-family:Arial, sans-serif;
   color:white;
   text-align:center;
+  background:#000;
   background-size:cover;
   background-position:center;
-  transition: background-image 1s ease;
+  transition:background-image 1s ease;
 }
 
-.overlay {
+.overlay{
   position:absolute;
   inset:0;
   background:rgba(0,0,0,0.35);
 }
 
-#app {
+#app{
   position:relative;
   z-index:2;
   height:100vh;
@@ -33,31 +34,116 @@ body {
   justify-content:center;
   align-items:center;
   gap:20px;
+  padding:20px;
 }
 
-#letter {
+#letter{
   font-size:140px;
+  font-weight:bold;
   background:rgba(255,255,255,0.15);
   padding:30px 60px;
-  border-radius:25px;
+  border-radius:30px;
+  min-width:220px;
+  backdrop-filter:none;
 }
 
-#action {
-  font-size:28px;
-  color:#ffd36e;
+#action{
+  font-size:32px;
+  color:#ffe08a;
+  font-weight:bold;
 }
 
-#phrase {
-  font-size:20px;
-  opacity:0.9;
+#phrase{
+  font-size:22px;
+  opacity:0.95;
 }
 
-button {
-  padding:10px 20px;
-  font-size:18px;
+.controls{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+button{
+  padding:12px 18px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
+  font-size:16px;
+  cursor:pointer;
 }
+
+#starCounter{
+  position:absolute;
+  top:20px;
+  right:20px;
+  z-index:10;
+  font-size:28px;
+  font-weight:bold;
+}
+
+#levelText{
+  position:absolute;
+  top:20px;
+  left:20px;
+  z-index:10;
+  font-size:24px;
+  font-weight:bold;
+}
+
+#starPopup{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  font-size:90px;
+  opacity:0;
+  z-index:20;
+  pointer-events:none;
+}
+
+.starAnimate{
+  animation:starPop 1s ease;
+}
+
+@keyframes starPop{
+
+  0%{
+    transform:translate(-50%,-50%) scale(0);
+    opacity:0;
+  }
+
+  40%{
+    transform:translate(-50%,-50%) scale(1.4);
+    opacity:1;
+  }
+
+  100%{
+    transform:translate(-50%,-50%) scale(0);
+    opacity:0;
+  }
+}
+
+.balloon{
+  position:absolute;
+  bottom:-100px;
+  font-size:50px;
+  animation:floatUp 5s linear forwards;
+  z-index:15;
+}
+
+@keyframes floatUp{
+  from{
+    transform:translateY(0);
+    opacity:1;
+  }
+
+  to{
+    transform:translateY(-120vh);
+    opacity:0;
+  }
+}
+
 </style>
 </head>
 
@@ -65,35 +151,165 @@ button {
 
 <div class="overlay"></div>
 
-<div id="app">
-  <div id="letter">ا</div>
-  <div id="action">Tap Start</div>
-  <div id="phrase">Learning Arabic</div>
+<div id="levelText">
+  Level 1
+</div>
 
-  <button onclick="next()">Next</button>
+<div id="starCounter">
+  ⭐ 0
+</div>
+
+<div id="starPopup">
+  ⭐ +1
+</div>
+
+<div id="app">
+
+  <div id="letter">
+    ا
+  </div>
+
+  <div id="action">
+    Tap Start
+  </div>
+
+  <div id="phrase">
+    Learning Arabic
+  </div>
+
+  <div class="controls">
+
+    <button onclick="nextLetter()">
+      Next
+    </button>
+
+    <button id="modeBtn" onclick="toggleMode()">
+      Auto Mode
+    </button>
+
+    <button onclick="setSpeed('slow')">
+      Slow
+    </button>
+
+    <button onclick="setSpeed('normal')">
+      Normal
+    </button>
+
+    <button onclick="setSpeed('fast')">
+      Fast
+    </button>
+
+  </div>
+
 </div>
 
 <script>
+
+/* =========================
+   LETTER DATA
+========================= */
+
 const letters = [
-  {a:"ا", audio:"assets/sounds/letters/alif.mp3"},
-  {a:"ب", audio:"assets/sounds/letters/ba.mp3"},
-  {a:"ت", audio:"assets/sounds/letters/ta.mp3"}
+
+  {
+    a:"ا",
+    audio:"assets/sounds/letters/alif.mp3"
+  },
+
+  {
+    a:"ب",
+    audio:"assets/sounds/letters/ba.mp3"
+  },
+
+  {
+    a:"ت",
+    audio:"assets/sounds/letters/ta.mp3"
+  }
+
 ];
 
-const actions = ["Jump!", "Clap!", "Run!", "Spin!"];
-const phrases = ["Great job!", "Well done!", "Amazing!", "Keep going!"];
+/* =========================
+   ACTIONS
+========================= */
+
+const actions = [
+
+  "Jump!",
+  "Clap your hands!",
+  "Run fast!",
+  "Spin around!",
+  "Hop like a bunny!",
+  "Wave your hands!",
+  "March slowly!",
+  "Dance happily!"
+
+];
+
+/* =========================
+   PHRASES
+========================= */
+
+const phrases = [
+
+  "Great job!",
+  "Amazing work!",
+  "Keep learning Arabic!",
+  "Fantastic energy!",
+  "Wonderful listening!",
+  "You are a star!",
+  "Let's play together!"
+
+];
+
+/* =========================
+   THEMES
+========================= */
 
 const themes = [
+
   "assets/images/themes/snow.webp",
   "assets/images/themes/garden.webp",
-  "assets/images/themes/rainbow.webp"
+  "assets/images/themes/rainbow.webp",
+  "assets/images/themes/ocean.webp",
+  "assets/images/themes/balloon.webp",
+  "assets/images/themes/desert.webp",
+  "assets/images/themes/forest.webp"
+
 ];
 
-let i=0;
+/* =========================
+   GAME STATE
+========================= */
+
+let currentIndex = 0;
+
+let stars = 0;
+
+let level = 1;
+
+let autoMode = true;
+
+let speed = "normal";
+
+const speeds = {
+
+  slow:4000,
+  normal:2500,
+  fast:1500
+
+};
+
+let autoInterval;
+
 const audio = new Audio();
 
+/* =========================
+   RENDER
+========================= */
+
 function render(){
-  const L = letters[i];
+
+  const L = letters[currentIndex];
 
   document.getElementById("letter").innerText = L.a;
 
@@ -103,20 +319,167 @@ function render(){
   document.getElementById("phrase").innerText =
     phrases[Math.floor(Math.random()*phrases.length)];
 
-  audio.src = L.audio;
-  audio.play();
-
   document.body.style.backgroundImage =
-    `url('${themes[i % themes.length]}')`;
+    `url('${themes[(level-1)%themes.length]}')`;
+
+  audio.src = L.audio;
+
+  audio.play().catch(err=>{
+    console.log("Audio blocked until user interaction");
+  });
+
 }
 
-function next(){
-  i++;
-  if(i>=letters.length) i=0;
+/* =========================
+   NEXT LETTER
+========================= */
+
+function nextLetter(){
+
+  currentIndex++;
+
+  stars++;
+
+  updateStars();
+
+  showStarReward();
+
+  if(currentIndex % 5 === 0){
+
+    level++;
+
+    updateLevel();
+
+    showBalloons();
+
+  }
+
+  if(currentIndex >= letters.length){
+
+    currentIndex = 0;
+
+  }
+
   render();
+
 }
 
-window.onload = render;
+/* =========================
+   STAR SYSTEM
+========================= */
+
+function updateStars(){
+
+  document.getElementById("starCounter").innerText =
+    `⭐ ${stars}`;
+
+}
+
+function showStarReward(){
+
+  const star = document.getElementById("starPopup");
+
+  star.innerText = `⭐ +${stars}`;
+
+  star.classList.remove("starAnimate");
+
+  void star.offsetWidth;
+
+  star.classList.add("starAnimate");
+
+}
+
+/* =========================
+   LEVEL SYSTEM
+========================= */
+
+function updateLevel(){
+
+  document.getElementById("levelText").innerText =
+    `Level ${level}`;
+
+}
+
+/* =========================
+   BALLOONS
+========================= */
+
+function showBalloons(){
+
+  for(let i=0;i<5;i++){
+
+    const balloon = document.createElement("div");
+
+    balloon.className = "balloon";
+
+    balloon.innerText = "🎈";
+
+    balloon.style.left =
+      Math.random()*100 + "vw";
+
+    document.body.appendChild(balloon);
+
+    setTimeout(()=>{
+      balloon.remove();
+    },5000);
+
+  }
+
+}
+
+/* =========================
+   AUTO MODE
+========================= */
+
+function startAutoMode(){
+
+  clearInterval(autoInterval);
+
+  autoInterval = setInterval(()=>{
+
+    if(autoMode){
+
+      nextLetter();
+
+    }
+
+  }, speeds[speed]);
+
+}
+
+function toggleMode(){
+
+  autoMode = !autoMode;
+
+  document.getElementById("modeBtn").innerText =
+    autoMode ? "Auto Mode" : "Manual Mode";
+
+}
+
+/* =========================
+   SPEED MODES
+========================= */
+
+function setSpeed(newSpeed){
+
+  speed = newSpeed;
+
+  startAutoMode();
+
+}
+
+/* =========================
+   START
+========================= */
+
+window.onload = ()=>{
+
+  render();
+
+  startAutoMode();
+
+};
+
 </script>
 
 </body>
