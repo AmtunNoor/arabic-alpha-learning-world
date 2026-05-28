@@ -20,7 +20,7 @@ html,body{
   color:#fff;
 }
 
-/* BACKGROUND LAYERS */
+/* BACKGROUND */
 .bg{
   position:fixed;
   inset:0;
@@ -31,28 +31,60 @@ html,body{
   z-index:-10;
 }
 #bg1{opacity:1;}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.18);z-index:-9;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:-9;}
 
-/* PARTICLES (THEME SPECIFIC) */
+/* PARTICLES */
 #particles{
   position:fixed;
   inset:0;
-  overflow:hidden;
   pointer-events:none;
   z-index:-8;
 }
-
 .floatObj{
   position:absolute;
-  animation:float 10s linear infinite;
+  animation:float 8s linear infinite;
 }
-
 @keyframes float{
   from{transform:translateY(-10vh);}
   to{transform:translateY(120vh);}
 }
 
-/* HUD */
+/* INTRO SYSTEM */
+.intro{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  z-index:9999;
+  transition:opacity 1s ease;
+}
+
+.introBox1{
+  font-size:70px;
+  padding:25px 40px;
+  border-radius:40px;
+  background:linear-gradient(135deg,#ff4d4d,#ffd700,#4dd0ff);
+  animation:pop 2s infinite alternate;
+}
+
+.introBox2{
+  font-size:55px;
+  margin-top:20px;
+  padding:20px 35px;
+  border-radius:40px;
+  background:linear-gradient(135deg,#7cfc00,#ff69b4,#ffa500);
+  animation:pop 2.5s infinite alternate;
+}
+
+@keyframes pop{
+  from{transform:scale(1);}
+  to{transform:scale(1.08);}
+}
+
+/* GAME UI */
 #hud{
   position:fixed;
   top:10px;
@@ -60,58 +92,31 @@ html,body{
   display:flex;
   justify-content:space-between;
   padding:0 15px;
-  font-size:20px;
   z-index:100;
 }
 
-/* LETTER */
 #letter{
   font-size:160px;
-  padding:20px 50px;
-  border-radius:30px;
+  padding:25px 50px;
   background:rgba(255,255,255,.12);
-  backdrop-filter:blur(6px);
+  border-radius:30px;
 }
 
-/* ACTION */
-#action{
-  font-size:120px;
-}
+#action{font-size:120px;}
+#phrase{font-size:32px;color:#ffe082;}
 
-/* PHRASE */
-#phrase{
-  font-size:34px;
-  color:#ffe082;
-  min-height:50px;
-  text-align:center;
-}
-
-/* MASCOT */
-#mascot{
-  position:fixed;
-  bottom:90px;
-  right:20px;
-  font-size:60px;
-  animation:bounce 1.5s infinite;
-}
-@keyframes bounce{50%{transform:translateY(-10px);}}
-
-/* STAR CENTER */
 #star{
   position:fixed;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%) scale(0);
   font-size:200px;
-  opacity:0;
 }
-.starPop{
-  animation:pop 1s ease;
-}
-@keyframes pop{
-  0%{transform:translate(-50%,-50%) scale(0);opacity:0;}
-  50%{transform:translate(-50%,-50%) scale(1.4);opacity:1;}
-  100%{transform:translate(-50%,-50%) scale(0);opacity:0;}
+.starPop{animation:star 1s ease;}
+@keyframes star{
+  0%{transform:translate(-50%,-50%) scale(0);}
+  50%{transform:translate(-50%,-50%) scale(1.5);}
+  100%{transform:translate(-50%,-50%) scale(0);}
 }
 
 /* CONTROLS */
@@ -122,39 +127,14 @@ html,body{
   display:flex;
   justify-content:center;
   gap:10px;
-  z-index:200;
 }
-select,button{
+
+/* BUTTONS */
+button,select{
   padding:8px 12px;
-  border-radius:10px;
   border:none;
+  border-radius:10px;
   font-weight:bold;
-}
-
-/* SPLASH */
-#splash{
-  position:fixed;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  gap:30px;
-  background:rgba(0,0,0,.6);
-  z-index:9999;
-}
-
-.splashBox{
-  font-size:60px;
-  padding:20px 40px;
-  border-radius:30px;
-  background:linear-gradient(45deg,#ff4d4d,#ffd700,#4dd0ff,#7cff4d);
-  animation:pulse 2s infinite;
-  text-align:center;
-}
-
-@keyframes pulse{
-  50%{transform:scale(1.05);}
 }
 
 </style>
@@ -162,171 +142,137 @@ select,button{
 
 <body>
 
+<!-- BACKGROUNDS -->
 <div id="bg1" class="bg"></div>
 <div id="bg2" class="bg"></div>
 <div class="overlay"></div>
 
+<!-- PARTICLES -->
 <div id="particles"></div>
 
-<div id="splash">
-  <div class="splashBox">✨ Created by Amtun Noor</div>
-  <div class="splashBox">💖 For Mariam & Hamza</div>
+<!-- INTRO (PROPER 2 SCREEN FLOW) -->
+<div id="intro1" class="intro">
+  <div class="introBox1">✨ Created by Amtun Noor</div>
 </div>
 
+<div id="intro2" class="intro" style="opacity:0; display:none;">
+  <div class="introBox2">💖 For Mariam & Hamza</div>
+</div>
+
+<!-- GAME -->
 <div id="hud">
-  <div id="level">Level 1 ❄️</div>
+  <div id="level">Level 1</div>
   <div id="stars">⭐ 0</div>
 </div>
 
 <div id="star">⭐</div>
 
-<div id="mascot">🧸</div>
-
 <div id="letter">ا</div>
 <div id="action">👏</div>
-<div id="phrase">Welcome!</div>
+<div id="phrase">Loading...</div>
 
 <div id="controls">
-<select id="speed">
-<option value="fast">FAST</option>
-<option value="normal" selected>NORMAL</option>
-<option value="slow">SLOW</option>
-</select>
-
-<select id="order">
-<option value="seq" selected>SEQUENCE</option>
-<option value="rand">RANDOM</option>
-</select>
-
 <button onclick="start()">START</button>
 </div>
 
 <script>
 
-/* ===== DATA ===== */
-
-const letters=[{a:"ا",audio:"assets/sounds/letters/alif.mp3"},{a:"ب",audio:"assets/sounds/letters/ba.mp3"}];
-
-const actions=[
-{icon:"👏",audio:"assets/sounds/actions/clap.mp3"},
-{icon:"🦘",audio:"assets/sounds/actions/jump.mp3"},
-{icon:"🏃",audio:"assets/sounds/actions/run.mp3"}
-];
-
-const themes=[
-{img:["assets/images/themes/snow.webp","assets/images/themes/snow_2.webp"],objs:["❄️","☃️","✨"]},
-{img:["assets/images/themes/ocean.webp","assets/images/themes/ocean_2.webp"],objs:["🌊","🐟","🫧"]}
-];
-
-/* ===== STATE ===== */
-
+/* SAFE INIT */
+let started=false;
 let i=0;
+let stars=0;
 let level=1;
-let busy=false;
-let bgFlip=true;
 
-/* ===== SPEED ENGINE ===== */
+/* THEMES (MATCH YOUR REPO) */
+const themes=[
+["assets/images/themes/snow.webp","❄️"],
+["assets/images/themes/ocean.webp","🌊"],
+["assets/images/themes/garden.webp","🌸"],
+["assets/images/themes/forest.webp","🌲"],
+["assets/images/themes/rainbow.webp","🌈"]
+];
 
-const speedMap={
-fast:{a:500,b:400,c:400,d:600},
-normal:{a:1000,b:900,c:800,d:1200},
-slow:{a:1500,b:1200,c:1000,d:1800}
-};
-
-/* ===== UTIL ===== */
-
-const wait=t=>new Promise(r=>setTimeout(r,t));
-
-function play(src){
-  return new Promise(r=>{
-    const a=new Audio(src);
-    a.onended=r;
-    a.play().catch(r);
-  });
-}
-
-/* ===== THEME ===== */
-
+/* INIT BACKGROUND */
 function setTheme(){
   const t=themes[level%themes.length];
 
-  const bg=bgFlip?bg1:bg2;
-  const old=bgFlip?bg2:bg1;
+  const bg=bg1.style.opacity==1?bg2:bg1;
+  const old=bg1.style.opacity==1?bg1:bg2;
 
-  bg.style.backgroundImage=`url(${t.img[0]})`;
+  bg.style.backgroundImage=`url(${t[0]})`;
   bg.style.opacity=1;
   old.style.opacity=0;
 
-  bgFlip=!bgFlip;
-
   const p=document.getElementById("particles");
   p.innerHTML="";
-  t.objs.forEach(o=>{
+
+  for(let j=0;j<15;j++){
     let d=document.createElement("div");
     d.className="floatObj";
-    d.innerText=o;
+    d.innerText=t[1];
     d.style.left=Math.random()*100+"%";
     d.style.fontSize="30px";
     d.style.animationDuration=5+Math.random()*5+"s";
     p.appendChild(d);
-  });
+  }
 }
 
-/* ===== REWARDS (QUEUE) ===== */
-
-async function reward(){
-  const star=document.getElementById("star");
-  star.classList.add("starPop");
-  await wait(900);
-  star.classList.remove("starPop");
+/* STAR */
+function showStar(){
+  const s=document.getElementById("star");
+  s.classList.add("starPop");
+  stars++;
+  document.getElementById("stars").innerText="⭐ "+stars;
+  setTimeout(()=>s.classList.remove("starPop"),1000);
 }
 
-/* ===== MASTER TIMELINE ===== */
+/* GAME LOOP */
+async function loop(){
 
-async function run(){
-
-  if(busy) return;
-  busy=true;
-
-  const sp=speedMap[document.getElementById("speed").value];
-
-  const L=letters[i%letters.length];
-  const A=actions[Math.floor(Math.random()*actions.length)];
+  if(!started) return;
 
   setTheme();
 
-  document.getElementById("letter").innerText=L.a;
-  await play(L.audio);
-  await wait(sp.a);
-
-  document.getElementById("action").innerText=A.icon;
-  await play(A.audio);
-  await wait(sp.b);
-
+  document.getElementById("letter").innerText="ا";
+  document.getElementById("action").innerText="👏";
   document.getElementById("phrase").innerText="Great Job!";
-  await wait(sp.c);
 
-  await reward();
-  await wait(sp.d);
+  await new Promise(r=>setTimeout(r,1500));
+
+  showStar();
 
   i++;
-  if(i%3===0){
+  if(i%5==0){
     level++;
     document.getElementById("level").innerText="Level "+level;
   }
 
-  busy=false;
-
-  run(); // auto loop
+  setTimeout(loop,2000);
 }
 
-/* ===== START ===== */
-
+/* INTRO FLOW */
 async function start(){
-  await wait(4000);
-  document.getElementById("splash").style.display="none";
-  run();
+
+  document.getElementById("intro1").style.opacity=0;
+
+  setTimeout(()=>{
+    document.getElementById("intro1").style.display="none";
+    document.getElementById("intro2").style.display="flex";
+    document.getElementById("intro2").style.opacity=1;
+  },1200);
+
+  setTimeout(()=>{
+    document.getElementById("intro2").style.opacity=0;
+  },3000);
+
+  setTimeout(()=>{
+    document.getElementById("intro2").style.display="none";
+    started=true;
+    loop();
+  },4200);
 }
+
+window.onload=()=>{};
 
 </script>
 
