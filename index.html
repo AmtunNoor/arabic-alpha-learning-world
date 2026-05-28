@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Arabic Alpha Learning World V6.5</title>
+<title>Arabic Alpha Learning World — V6.6</title>
 
 <style>
 
@@ -19,14 +19,14 @@ body{
   color:white;
 }
 
-/* INTRO */
+/* ================= START SCREEN ================= */
 
-#introScreen{
+#tapOverlay{
   position:fixed;
   inset:0;
-  z-index:99999;
+  z-index:999999;
   background:
-    radial-gradient(circle at center,#152238,#05070f 70%);
+    radial-gradient(circle at center,#1b2942,#05070f 70%);
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -34,59 +34,61 @@ body{
   overflow:hidden;
 }
 
-#introGlow{
+.tapLetter{
   position:absolute;
-  width:420px;
-  height:420px;
-  border-radius:50%;
-  background:radial-gradient(circle,
-    rgba(255,255,255,.22),
-    transparent 70%);
-  animation:introRotate 10s linear infinite;
+  font-size:40px;
+  opacity:.12;
+  animation:floatLetter linear infinite;
 }
 
-#introMain{
-  font-size:72px;
+@keyframes floatLetter{
+  from{
+    transform:translateY(100vh) rotate(0deg);
+  }
+  to{
+    transform:translateY(-120vh) rotate(360deg);
+  }
+}
+
+#tapTitle{
+  font-size:74px;
   font-weight:900;
-  letter-spacing:5px;
   z-index:2;
   background:linear-gradient(90deg,#7ad7ff,#ffffff,#ffe28a);
   -webkit-background-clip:text;
   color:transparent;
-  animation:introPulse 2s ease-in-out infinite;
-  text-shadow:0 0 25px rgba(255,255,255,.3);
+  animation:titlePulse 2s infinite;
+  text-align:center;
 }
 
-#introSub{
+#tapSub{
   margin-top:20px;
   font-size:32px;
+  color:#ffe28a;
   z-index:2;
-  color:#ffdf7a;
-  animation:introFloat 2s ease-in-out infinite alternate;
+  animation:subFloat 2s infinite alternate;
 }
 
-@keyframes introPulse{
+#tapHint{
+  margin-top:35px;
+  font-size:22px;
+  color:white;
+  opacity:.8;
+}
+
+@keyframes titlePulse{
   50%{
     transform:scale(1.08);
   }
 }
 
-@keyframes introFloat{
+@keyframes subFloat{
   to{
     transform:translateY(-10px);
   }
 }
 
-@keyframes introRotate{
-  from{
-    transform:rotate(0deg);
-  }
-  to{
-    transform:rotate(360deg);
-  }
-}
-
-/* BACKGROUNDS */
+/* ================= BACKGROUND ================= */
 
 .bg{
   position:fixed;
@@ -94,32 +96,38 @@ body{
   background-size:cover;
   background-position:center;
   transition:opacity 1.5s ease;
-  z-index:-5;
+  z-index:-6;
 }
 
 #bg2{
   opacity:0;
 }
 
-/* OVERLAY */
-
 .overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.22);
-  z-index:-4;
+  background:rgba(0,0,0,.22);
+  z-index:-5;
 }
 
-/* PARTICLE CANVAS */
+/* ================= THEME OBJECTS ================= */
 
-#fx{
+#themeWorld{
   position:fixed;
   inset:0;
-  z-index:-3;
   pointer-events:none;
+  overflow:hidden;
+  z-index:-3;
 }
 
-/* MAIN APP */
+.themeObject{
+  position:absolute;
+  user-select:none;
+  opacity:.9;
+  will-change:transform;
+}
+
+/* ================= MAIN ================= */
 
 #app{
   height:100vh;
@@ -128,15 +136,15 @@ body{
   justify-content:center;
   align-items:center;
   text-align:center;
+  gap:22px;
   padding:20px;
-  gap:20px;
 }
 
-/* HUD */
+/* ================= HUD ================= */
 
 #hud{
   position:fixed;
-  top:10px;
+  top:12px;
   left:0;
   width:100%;
   display:flex;
@@ -147,48 +155,18 @@ body{
   font-weight:bold;
 }
 
-/* LETTER TILE */
+/* ================= TILE ================= */
 
 #letter{
   font-size:160px;
-  background:rgba(255,255,255,0.15);
+  background:rgba(255,255,255,.14);
   padding:25px 55px;
-  border-radius:30px;
-  backdrop-filter:blur(5px);
-  box-shadow:0 0 20px rgba(255,255,255,0.2);
-  animation:tilePulse 2s infinite;
-}
-
-/* ACTION */
-
-#action{
-  font-size:120px;
-}
-
-/* PHRASE */
-
-#phrase{
-  font-size:32px;
-  color:#ffe28a;
-  font-weight:bold;
-  min-height:40px;
-}
-
-/* TILE POP */
-
-.tilePop{
-  animation:tilePop .35s ease;
-}
-
-@keyframes tilePop{
-  0%{
-    transform:scale(.8);
-    opacity:.5;
-  }
-  100%{
-    transform:scale(1);
-    opacity:1;
-  }
+  border-radius:32px;
+  backdrop-filter:blur(6px);
+  box-shadow:
+    0 0 20px rgba(255,255,255,.15),
+    0 0 50px rgba(255,255,255,.08);
+  animation:tilePulse 3s infinite;
 }
 
 @keyframes tilePulse{
@@ -197,11 +175,26 @@ body{
   }
 }
 
-/* CONTROLS */
+/* ================= ACTION ================= */
+
+#action{
+  font-size:120px;
+}
+
+/* ================= PHRASE ================= */
+
+#phrase{
+  font-size:32px;
+  color:#ffe28a;
+  font-weight:bold;
+  min-height:45px;
+}
+
+/* ================= CONTROLS ================= */
 
 #controls{
   position:fixed;
-  bottom:18px;
+  bottom:16px;
   left:50%;
   transform:translateX(-50%);
   display:flex;
@@ -211,18 +204,18 @@ body{
   z-index:50;
 }
 
-#controls select,
-#controls button{
+#controls button,
+#controls select{
   border:none;
   border-radius:12px;
-  padding:10px 16px;
+  padding:10px 14px;
   font-size:15px;
   font-weight:bold;
   background:white;
   color:black;
 }
 
-/* STAR */
+/* ================= STAR ================= */
 
 #starWrap{
   position:fixed;
@@ -276,7 +269,7 @@ body{
   }
 }
 
-/* CONFETTI */
+/* ================= CONFETTI ================= */
 
 .confetti{
   position:fixed;
@@ -293,7 +286,7 @@ body{
   }
 }
 
-/* BALLOONS */
+/* ================= BALLOONS ================= */
 
 .balloon{
   position:fixed;
@@ -310,7 +303,7 @@ body{
   }
 }
 
-/* ACTION ANIMATIONS */
+/* ================= ACTION ANIMS ================= */
 
 .clap{animation:clapAnim .7s infinite;}
 .jump{animation:jumpAnim .7s infinite;}
@@ -344,9 +337,17 @@ body{
 @keyframes walkAnim{from{transform:translateX(-10px);}to{transform:translateX(10px);}}
 @keyframes waveAnim{50%{transform:rotate(18deg);}}
 
-/* MOBILE */
+/* ================= MOBILE ================= */
 
 @media(max-width:768px){
+
+  #tapTitle{
+    font-size:46px;
+  }
+
+  #tapSub{
+    font-size:22px;
+  }
 
   #letter{
     font-size:95px;
@@ -359,7 +360,6 @@ body{
 
   #phrase{
     font-size:22px;
-    padding:0 15px;
   }
 
   #hud{
@@ -368,21 +368,8 @@ body{
 
   #controls button,
   #controls select{
-    font-size:13px;
+    font-size:12px;
     padding:8px 10px;
-  }
-
-  #starWrap{
-    width:150px;
-    height:150px;
-  }
-
-  #starShape{
-    font-size:150px;
-  }
-
-  #starCount{
-    font-size:40px;
   }
 
 }
@@ -392,48 +379,78 @@ body{
 
 <body>
 
-<!-- INTRO -->
+<!-- ================= START ================= -->
 
-<div id="introScreen">
+<div id="tapOverlay">
 
-  <div id="introGlow"></div>
-
-  <div id="introMain">
-  Created by  AMTUN NOOR
+  <div id="tapTitle">
+  Created By  AMTUN NOOR
   </div>
 
-  <div id="introSub">
+  <div id="tapSub">
     For Mariam & Hamza
+  </div>
+
+  <div id="tapHint">
+    Tap Anywhere To Start Learning
   </div>
 
 </div>
 
-<!-- BACKGROUNDS -->
+<!-- floating letters -->
+<script>
+const arabicFloat = ["ا","ب","ت","ث","ج","ح","خ","د","ر","س","ش","ص"];
+
+for(let i=0;i<25;i++){
+
+  const l = document.createElement("div");
+
+  l.className = "tapLetter";
+
+  l.innerText =
+    arabicFloat[Math.floor(Math.random()*arabicFloat.length)];
+
+  l.style.left = Math.random()*100+"vw";
+
+  l.style.animationDuration =
+    (10+Math.random()*10)+"s";
+
+  l.style.fontSize =
+    (20+Math.random()*60)+"px";
+
+  document.addEventListener("DOMContentLoaded",()=>{
+    document.getElementById("tapOverlay").appendChild(l);
+  });
+
+}
+</script>
+
+<!-- ================= BG ================= -->
 
 <div id="bg1" class="bg"></div>
 <div id="bg2" class="bg"></div>
 
 <div class="overlay"></div>
 
-<!-- PARTICLES -->
+<!-- ================= WORLD ================= -->
 
-<canvas id="fx"></canvas>
+<div id="themeWorld"></div>
 
-<!-- HUD -->
+<!-- ================= HUD ================= -->
 
 <div id="hud">
   <div id="level">Level 1 ❄️</div>
   <div id="stars">⭐ 0</div>
 </div>
 
-<!-- STAR -->
+<!-- ================= STAR ================= -->
 
 <div id="starWrap">
   <div id="starShape">⭐</div>
   <div id="starCount">0</div>
 </div>
 
-<!-- MAIN -->
+<!-- ================= APP ================= -->
 
 <div id="app">
 
@@ -445,22 +462,29 @@ body{
 
 </div>
 
-<!-- CONTROLS -->
+<!-- ================= CONTROLS ================= -->
 
 <div id="controls">
 
-<select id="speedSelect" onchange="changeSpeed()">
-  <option value="2500">FAST</option>
-  <option value="4000" selected>NORMAL</option>
-  <option value="6000">SLOW</option>
+<select id="alphabetMode">
+  <option value="sequential">SEQUENTIAL</option>
+  <option value="random">RANDOM</option>
 </select>
 
-<select id="modeSelect" onchange="changeMode()">
+<select id="speedMode" onchange="changeSpeed()">
+  <option value="fast">FAST</option>
+  <option value="normal" selected>NORMAL</option>
+  <option value="slow">SLOW</option>
+</select>
+
+<select id="playMode">
   <option value="auto">AUTO</option>
   <option value="manual">MANUAL</option>
 </select>
 
-<button onclick="next()">NEXT</button>
+<button onclick="next()">
+NEXT
+</button>
 
 </div>
 
@@ -544,8 +568,7 @@ images:[
 "assets/images/themes/snow.webp",
 "assets/images/themes/snow_2.webp"
 ],
-particle:"snow",
-ambient:"assets/sounds/system/snow.mp3"
+objects:["❄️","✨","🌨️"]
 },
 
 {
@@ -554,8 +577,7 @@ images:[
 "assets/images/themes/garden.webp",
 "assets/images/themes/garden_2.webp"
 ],
-particle:"petals",
-ambient:"assets/sounds/system/garden.mp3"
+objects:["🌸","🦋","🌼","🐝"]
 },
 
 {
@@ -564,8 +586,7 @@ images:[
 "assets/images/themes/ocean.webp",
 "assets/images/themes/ocean_2.webp"
 ],
-particle:"bubbles",
-ambient:"assets/sounds/system/ocean.mp3"
+objects:["🫧","🐟","🌊","🪼"]
 },
 
 {
@@ -574,8 +595,7 @@ images:[
 "assets/images/themes/rainbow.webp",
 "assets/images/themes/rainbow_2.webp"
 ],
-particle:"sparkles",
-ambient:"assets/sounds/system/rainbow.mp3"
+objects:["🌈","⭐","💖","✨"]
 },
 
 {
@@ -584,8 +604,7 @@ images:[
 "assets/images/themes/forest.webp",
 "assets/images/themes/forest_2.webp"
 ],
-particle:"leaves",
-ambient:"assets/sounds/system/forest.mp3"
+objects:["🍃","🐦","🌿","✨"]
 }
 
 ];
@@ -596,9 +615,9 @@ let current=0;
 let stars=0;
 let level=1;
 let speed=4000;
-let autoMode=true;
-let bgFlip=true;
 let running=false;
+let bgFlip=true;
+let autoMode=true;
 
 /* ================= AUDIO QUEUE ================= */
 
@@ -614,10 +633,10 @@ const AudioQueue = {
 
         const a = new Audio(src);
 
-        a.volume = .9;
+        a.volume=.9;
 
-        a.onended = resolve;
-        a.onerror = resolve;
+        a.onended=resolve;
+        a.onerror=resolve;
 
         a.play().catch(resolve);
 
@@ -626,119 +645,31 @@ const AudioQueue = {
     });
 
     return this.queue;
+
   }
+
 };
 
-/* ================= AMBIENT ================= */
+/* ================= SPEED ================= */
 
-let ambientAudio = null;
+function changeSpeed(){
 
-function playAmbient(src){
+  const v =
+    document.getElementById("speedMode").value;
 
-  if(ambientAudio){
-    ambientAudio.pause();
+  if(v==="fast"){
+    speed=2200;
   }
 
-  ambientAudio = new Audio(src);
+  if(v==="normal"){
+    speed=4000;
+  }
 
-  ambientAudio.loop = true;
-  ambientAudio.volume = .18;
-
-  ambientAudio.play().catch(()=>{});
-
-}
-
-/* ================= PARTICLES ================= */
-
-const canvas = document.getElementById("fx");
-const ctx = canvas.getContext("2d");
-
-function resizeCanvas(){
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-}
-
-resizeCanvas();
-
-window.addEventListener("resize",resizeCanvas);
-
-let particles = [];
-
-function makeParticles(type){
-
-  particles=[];
-
-  const count = 60;
-
-  for(let i=0;i<count;i++){
-
-    particles.push({
-
-      x:Math.random()*canvas.width,
-      y:Math.random()*canvas.height,
-      r:Math.random()*4+1,
-      d:Math.random()*2+0.5,
-      type
-
-    });
-
+  if(v==="slow"){
+    speed=6500;
   }
 
 }
-
-function drawParticles(){
-
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  particles.forEach(p=>{
-
-    if(p.type==="snow"){
-      ctx.fillStyle="white";
-    }
-
-    if(p.type==="petals"){
-      ctx.fillStyle="pink";
-    }
-
-    if(p.type==="bubbles"){
-      ctx.fillStyle="rgba(255,255,255,.6)";
-    }
-
-    if(p.type==="sparkles"){
-      ctx.fillStyle="gold";
-    }
-
-    if(p.type==="leaves"){
-      ctx.fillStyle="lightgreen";
-    }
-
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fill();
-
-    if(p.type==="bubbles"){
-      p.y -= p.d*1.2;
-    }else{
-      p.y += p.d;
-    }
-
-    p.x += Math.sin(p.y/30)*0.4;
-
-    if(p.y > canvas.height+10){
-      p.y = -10;
-    }
-
-    if(p.y < -10){
-      p.y = canvas.height+10;
-    }
-
-  });
-
-  requestAnimationFrame(drawParticles);
-
-}
-
-drawParticles();
 
 /* ================= THEME ================= */
 
@@ -749,11 +680,13 @@ function setTheme(){
   document.getElementById("level").innerText =
     `Level ${level} ${theme.name}`;
 
-  const nextBg = bgFlip
+  const nextBg =
+    bgFlip
     ? document.getElementById("bg2")
     : document.getElementById("bg1");
 
-  const currentBg = bgFlip
+  const currentBg =
+    bgFlip
     ? document.getElementById("bg1")
     : document.getElementById("bg2");
 
@@ -767,19 +700,79 @@ function setTheme(){
     nextBg.style.backgroundImage =
       `url('${img}')`;
 
-    nextBg.style.opacity = 1;
+    nextBg.style.opacity=1;
 
-    currentBg.style.opacity = 0;
+    currentBg.style.opacity=0;
 
   };
 
   preload.src = img;
 
-  bgFlip = !bgFlip;
+  bgFlip=!bgFlip;
 
-  makeParticles(theme.particle);
+  spawnThemeObjects(theme);
 
-  playAmbient(theme.ambient);
+}
+
+/* ================= IMMERSIVE OBJECTS ================= */
+
+function spawnThemeObjects(theme){
+
+  const world =
+    document.getElementById("themeWorld");
+
+  world.innerHTML="";
+
+  for(let i=0;i<24;i++){
+
+    const obj =
+      document.createElement("div");
+
+    obj.className="themeObject";
+
+    obj.innerText =
+      theme.objects[
+        Math.floor(Math.random()*theme.objects.length)
+      ];
+
+    obj.style.left =
+      Math.random()*100+"vw";
+
+    obj.style.top =
+      Math.random()*100+"vh";
+
+    obj.style.fontSize =
+      (20+Math.random()*50)+"px";
+
+    const dur =
+      8 + Math.random()*12;
+
+    obj.animate([
+
+      {
+        transform:
+          `translate(0px,0px) rotate(0deg)`
+      },
+
+      {
+        transform:
+          `translate(${Math.random()*120-60}px,
+                     ${Math.random()*120-60}px)
+           rotate(${Math.random()*360}deg)`
+      }
+
+    ],{
+
+      duration:dur*1000,
+      direction:"alternate",
+      iterations:Infinity,
+      easing:"ease-in-out"
+
+    });
+
+    world.appendChild(obj);
+
+  }
 
 }
 
@@ -814,13 +807,12 @@ function confetti(){
     .querySelectorAll(".confetti")
     .forEach(x=>x.remove());
 
-  const colors = [
-    "red","yellow","blue","green","orange","pink"
-  ];
+  const colors =
+    ["red","yellow","blue","green","orange","pink"];
 
   for(let i=0;i<20;i++){
 
-    const c = document.createElement("div");
+    const c=document.createElement("div");
 
     c.className="confetti";
 
@@ -845,7 +837,8 @@ function balloons(){
     .querySelectorAll(".balloon")
     .forEach(x=>x.remove());
 
-  const emojis = ["🎈","🎉","🌟","🪅"];
+  const emojis =
+    ["🎈","🎉","🌟","🪅"];
 
   for(let i=0;i<6;i++){
 
@@ -866,31 +859,25 @@ function balloons(){
 
 }
 
-/* ================= SETTINGS ================= */
-
-function changeSpeed(){
-
-  speed =
-    parseInt(document.getElementById("speedSelect").value);
-
-}
-
-function changeMode(){
-
-  autoMode =
-    document.getElementById("modeSelect").value === "auto";
-
-}
-
 /* ================= STEP ================= */
 
 async function step(){
 
   if(running) return;
 
-  running = true;
+  running=true;
 
-  const L = letters[current];
+  const alphabetMode =
+    document.getElementById("alphabetMode").value;
+
+  let index = current;
+
+  if(alphabetMode==="random"){
+    index =
+      Math.floor(Math.random()*letters.length);
+  }
+
+  const L = letters[index];
 
   const A =
     actions[Math.floor(Math.random()*actions.length)];
@@ -902,14 +889,8 @@ async function step(){
 
   /* LETTER */
 
-  const letter =
-    document.getElementById("letter");
-
-  letter.classList.remove("tilePop");
-  void letter.offsetWidth;
-  letter.classList.add("tilePop");
-
-  letter.innerText = L.a;
+  document.getElementById("letter").innerText =
+    L.a;
 
   /* ACTION */
 
@@ -921,23 +902,20 @@ async function step(){
   void action.offsetWidth;
 
   action.classList.add(A.name);
-  action.classList.add("tilePop");
 
-  action.innerText = A.icon;
+  action.innerText=A.icon;
 
   /* PHRASE */
 
-  document.getElementById("phrase").innerText = "";
+  document.getElementById("phrase").innerText="";
 
   /* LETTER AUDIO */
 
   await AudioQueue.play(L.audio);
 
-  /* STAR */
-
   showStar();
 
-  /* ACTION AUDIO */
+  /* ACTION */
 
   await AudioQueue.play(A.audio);
 
@@ -953,7 +931,7 @@ async function step(){
       .replace(".mp3","")
       .replace("-"," ");
 
-  running = false;
+  running=false;
 
 }
 
@@ -966,26 +944,25 @@ async function next(){
   current++;
 
   if(current>=letters.length){
-
     current=0;
-
   }
 
   if(current>0 && current%5===0){
-
     level++;
-
   }
 
   await step();
 
 }
 
-/* ================= AUTO LOOP ================= */
+/* ================= LOOP ================= */
 
 async function autoLoop(){
 
   while(true){
+
+    autoMode =
+      document.getElementById("playMode").value==="auto";
 
     if(autoMode && !running){
 
@@ -1001,23 +978,27 @@ async function autoLoop(){
 
 /* ================= START ================= */
 
-window.onload = ()=>{
+async function startGame(){
+
+  const unlock = new Audio();
+
+  unlock.play().catch(()=>{});
+
+  document.getElementById("tapOverlay").remove();
+
+  changeSpeed();
 
   setTheme();
 
-  setTimeout(()=>{
-
-    document
-      .getElementById("introScreen")
-      .remove();
-
-  },3000);
-
-  step();
+  await step();
 
   autoLoop();
 
-};
+}
+
+document
+  .getElementById("tapOverlay")
+  .addEventListener("click",startGame);
 
 </script>
 
