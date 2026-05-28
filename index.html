@@ -1,322 +1,332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Learning World V2</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Arabic Alpha World</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  overflow:hidden;
-  font-family:Arial;
-  background:#000;
-}
 
-/* ================= SCREENS ================= */
-.screen{
-  position:absolute;
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html,body{
   width:100%;
   height:100%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  opacity:0;
-  transition:1s;
-}
-.active{opacity:1;z-index:10}
-
-/* ================= CREDIT ================= */
-.credit{
-  font-size:2.3rem;
-  font-weight:bold;
-  padding:20px 30px;
-  border-radius:25px;
+  overflow:hidden;
+  font-family:'Baloo 2','Fredoka',cursive;
+  background:#000;
   color:#fff;
-  animation:pulse 2s infinite alternate;
+}
+
+/* BACKGROUND LAYERS */
+.bg{
+  position:fixed;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  transition:opacity 1.5s ease;
+  opacity:0;
+  z-index:-10;
+}
+#bg1{opacity:1;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.18);z-index:-9;}
+
+/* PARTICLES (THEME SPECIFIC) */
+#particles{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:-8;
+}
+
+.floatObj{
+  position:absolute;
+  animation:float 10s linear infinite;
+}
+
+@keyframes float{
+  from{transform:translateY(-10vh);}
+  to{transform:translateY(120vh);}
+}
+
+/* HUD */
+#hud{
+  position:fixed;
+  top:10px;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  padding:0 15px;
+  font-size:20px;
+  z-index:100;
+}
+
+/* LETTER */
+#letter{
+  font-size:160px;
+  padding:20px 50px;
+  border-radius:30px;
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(6px);
+}
+
+/* ACTION */
+#action{
+  font-size:120px;
+}
+
+/* PHRASE */
+#phrase{
+  font-size:34px;
+  color:#ffe082;
+  min-height:50px;
   text-align:center;
 }
-@keyframes pulse{
-  0%{transform:scale(1);filter:brightness(1);}
-  100%{transform:scale(1.2);filter:brightness(1.5);}
+
+/* MASCOT */
+#mascot{
+  position:fixed;
+  bottom:90px;
+  right:20px;
+  font-size:60px;
+  animation:bounce 1.5s infinite;
+}
+@keyframes bounce{50%{transform:translateY(-10px);}}
+
+/* STAR CENTER */
+#star{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  font-size:200px;
+  opacity:0;
+}
+.starPop{
+  animation:pop 1s ease;
+}
+@keyframes pop{
+  0%{transform:translate(-50%,-50%) scale(0);opacity:0;}
+  50%{transform:translate(-50%,-50%) scale(1.4);opacity:1;}
+  100%{transform:translate(-50%,-50%) scale(0);opacity:0;}
 }
 
-/* ================= THEMES ================= */
-#c1{background:linear-gradient(45deg,#ff0066,#ffcc00);}
-#c2{background:linear-gradient(45deg,#00c6ff,#0072ff);}
-
-/* ================= GAME ================= */
-#game{
-  background:radial-gradient(circle,#111,#000);
-}
-
-/* ================= LETTER CARDS ================= */
-.board{
+/* CONTROLS */
+#controls{
+  position:fixed;
+  bottom:10px;
+  width:100%;
   display:flex;
-  flex-wrap:wrap;
   justify-content:center;
   gap:10px;
+  z-index:200;
 }
-.card{
-  width:120px;
-  height:120px;
-  background:#fff;
-  border-radius:18px;
+select,button{
+  padding:8px 12px;
+  border-radius:10px;
+  border:none;
+  font-weight:bold;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
   display:flex;
+  flex-direction:column;
   justify-content:center;
   align-items:center;
-  font-size:2rem;
-  transition:0.2s;
-  user-select:none;
-}
-.card:hover{transform:scale(1.1)}
-
-/* ================= UI ================= */
-#hud{
-  position:absolute;
-  top:10px;
-  left:10px;
-  color:white;
-  font-size:14px;
-  background:rgba(0,0,0,0.4);
-  padding:10px;
-  border-radius:10px;
+  gap:30px;
+  background:rgba(0,0,0,.6);
+  z-index:9999;
 }
 
-#reward{
-  position:absolute;
-  top:20px;
-  right:20px;
-  background:gold;
-  color:black;
-  padding:10px 20px;
+.splashBox{
+  font-size:60px;
+  padding:20px 40px;
   border-radius:30px;
-  font-weight:bold;
-  display:none;
-  animation:pop 0.8s ease;
+  background:linear-gradient(45deg,#ff4d4d,#ffd700,#4dd0ff,#7cff4d);
+  animation:pulse 2s infinite;
+  text-align:center;
 }
 
-@keyframes pop{
-  from{transform:scale(0);}
-  to{transform:scale(1);}
+@keyframes pulse{
+  50%{transform:scale(1.05);}
 }
 
-/* ================= MASCOT ================= */
-#mascot{
-  position:absolute;
-  bottom:15px;
-  right:15px;
-  width:80px;
-  animation:bounce 2s infinite;
-}
-@keyframes bounce{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-15px)}
-}
-
-/* ================= PARTICLES ================= */
-.particle{
-  position:absolute;
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  animation:float linear infinite;
-}
-@keyframes float{
-  from{transform:translateY(100vh);opacity:0}
-  50%{opacity:1}
-  to{transform:translateY(-10vh);opacity:0}
-}
 </style>
 </head>
 
 <body>
 
-<!-- CREDIT 1 -->
-<div id="s1" class="screen active">
-  <div id="c1" class="credit">Created by Amtun Noor</div>
+<div id="bg1" class="bg"></div>
+<div id="bg2" class="bg"></div>
+<div class="overlay"></div>
+
+<div id="particles"></div>
+
+<div id="splash">
+  <div class="splashBox">✨ Created by Amtun Noor</div>
+  <div class="splashBox">💖 For Mariam & Hamza</div>
 </div>
 
-<!-- CREDIT 2 -->
-<div id="s2" class="screen">
-  <div id="c2" class="credit">For Mariam & Hamza</div>
+<div id="hud">
+  <div id="level">Level 1 ❄️</div>
+  <div id="stars">⭐ 0</div>
 </div>
 
-<!-- GAME -->
-<div id="game" class="screen">
+<div id="star">⭐</div>
 
-  <div id="hud"></div>
-  <div id="reward">+ Coins</div>
+<div id="mascot">🧸</div>
 
-  <div class="board" id="board"></div>
+<div id="letter">ا</div>
+<div id="action">👏</div>
+<div id="phrase">Welcome!</div>
 
-  <img id="mascot" src="https://i.imgur.com/4AiXzf8.png">
+<div id="controls">
+<select id="speed">
+<option value="fast">FAST</option>
+<option value="normal" selected>NORMAL</option>
+<option value="slow">SLOW</option>
+</select>
+
+<select id="order">
+<option value="seq" selected>SEQUENCE</option>
+<option value="rand">RANDOM</option>
+</select>
+
+<button onclick="start()">START</button>
 </div>
 
 <script>
 
-/* ================= STATE ENGINE ================= */
-const state = {
-  step:0,
-  level:1,
-  coins:0,
-  streak:0,
-  speed:"normal",
-  lastItems:[],
-  coop:{p1:0,p2:0},
-  sessionStart:Date.now()
+/* ===== DATA ===== */
+
+const letters=[{a:"ا",audio:"assets/sounds/letters/alif.mp3"},{a:"ب",audio:"assets/sounds/letters/ba.mp3"}];
+
+const actions=[
+{icon:"👏",audio:"assets/sounds/actions/clap.mp3"},
+{icon:"🦘",audio:"assets/sounds/actions/jump.mp3"},
+{icon:"🏃",audio:"assets/sounds/actions/run.mp3"}
+];
+
+const themes=[
+{img:["assets/images/themes/snow.webp","assets/images/themes/snow_2.webp"],objs:["❄️","☃️","✨"]},
+{img:["assets/images/themes/ocean.webp","assets/images/themes/ocean_2.webp"],objs:["🌊","🐟","🫧"]}
+];
+
+/* ===== STATE ===== */
+
+let i=0;
+let level=1;
+let busy=false;
+let bgFlip=true;
+
+/* ===== SPEED ENGINE ===== */
+
+const speedMap={
+fast:{a:500,b:400,c:400,d:600},
+normal:{a:1000,b:900,c:800,d:1200},
+slow:{a:1500,b:1200,c:1000,d:1800}
 };
 
-/* ================= SAVE SYSTEM ================= */
-function save(){
-  localStorage.setItem("mw_v2",JSON.stringify(state));
-}
-function load(){
-  let d=localStorage.getItem("mw_v2");
-  if(d)Object.assign(state,JSON.parse(d));
-}
-load();
+/* ===== UTIL ===== */
 
-/* ================= SPEED ENGINE ================= */
-function getDelay(){
-  if(state.speed==="fast") return 800;
-  if(state.speed==="slow") return 2500;
-  return 1500;
+const wait=t=>new Promise(r=>setTimeout(r,t));
+
+function play(src){
+  return new Promise(r=>{
+    const a=new Audio(src);
+    a.onended=r;
+    a.play().catch(r);
+  });
 }
 
-/* ================= ANTI-REPEAT SYSTEM ================= */
-const letters = "ابتثجحخدذرزسشصضطظعغفقكلمنهوي".split("");
+/* ===== THEME ===== */
 
-function pickLetter(){
-  let filtered = letters.filter(l=>!state.lastItems.includes(l));
-  if(filtered.length===0) filtered=letters;
+function setTheme(){
+  const t=themes[level%themes.length];
 
-  let choice = filtered[Math.floor(Math.random()*filtered.length)];
+  const bg=bgFlip?bg1:bg2;
+  const old=bgFlip?bg2:bg1;
 
-  state.lastItems.push(choice);
-  if(state.lastItems.length>5) state.lastItems.shift();
+  bg.style.backgroundImage=`url(${t.img[0]})`;
+  bg.style.opacity=1;
+  old.style.opacity=0;
 
-  return choice;
-}
+  bgFlip=!bgFlip;
 
-/* ================= ENGINE TIMELINE ================= */
-function next(){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-
-  if(state.step===0){
-    document.getElementById("s1").classList.add("active");
-    setTimeout(next,3000);
-  }
-
-  else if(state.step===1){
-    document.getElementById("s2").classList.add("active");
-    setTimeout(next,3000);
-  }
-
-  else{
-    document.getElementById("game").classList.add("active");
-    startGame();
-  }
-
-  state.step++;
-}
-
-/* ================= GAME CORE ================= */
-function startGame(){
-  createParticles();
-  loopGame();
-}
-
-/* ================= GAME LOOP ================= */
-function loopGame(){
-  renderBoard();
-  updateHUD();
-  save();
-
-  setTimeout(loopGame,getDelay());
-}
-
-/* ================= BOARD ================= */
-function renderBoard(){
-  const board=document.getElementById("board");
-  board.innerHTML="";
-
-  for(let i=0;i<6;i++){
+  const p=document.getElementById("particles");
+  p.innerHTML="";
+  t.objs.forEach(o=>{
     let d=document.createElement("div");
-    d.className="card";
-    d.innerText=pickLetter();
+    d.className="floatObj";
+    d.innerText=o;
+    d.style.left=Math.random()*100+"%";
+    d.style.fontSize="30px";
+    d.style.animationDuration=5+Math.random()*5+"s";
+    p.appendChild(d);
+  });
+}
 
-    d.onclick=()=>{
-      reward();
-      state.coop.p1++;
-    };
+/* ===== REWARDS (QUEUE) ===== */
 
-    board.appendChild(d);
+async function reward(){
+  const star=document.getElementById("star");
+  star.classList.add("starPop");
+  await wait(900);
+  star.classList.remove("starPop");
+}
+
+/* ===== MASTER TIMELINE ===== */
+
+async function run(){
+
+  if(busy) return;
+  busy=true;
+
+  const sp=speedMap[document.getElementById("speed").value];
+
+  const L=letters[i%letters.length];
+  const A=actions[Math.floor(Math.random()*actions.length)];
+
+  setTheme();
+
+  document.getElementById("letter").innerText=L.a;
+  await play(L.audio);
+  await wait(sp.a);
+
+  document.getElementById("action").innerText=A.icon;
+  await play(A.audio);
+  await wait(sp.b);
+
+  document.getElementById("phrase").innerText="Great Job!";
+  await wait(sp.c);
+
+  await reward();
+  await wait(sp.d);
+
+  i++;
+  if(i%3===0){
+    level++;
+    document.getElementById("level").innerText="Level "+level;
   }
+
+  busy=false;
+
+  run(); // auto loop
 }
 
-/* ================= REWARD ENGINE ================= */
-function reward(){
-  state.coins += 10 * (1 + state.streak*0.1);
-  state.streak++;
+/* ===== START ===== */
 
-  let r=document.getElementById("reward");
-  r.style.display="block";
-
-  setTimeout(()=>r.style.display="none",800);
-
-  if(state.streak % 5 === 0){
-    levelUp();
-  }
+async function start(){
+  await wait(4000);
+  document.getElementById("splash").style.display="none";
+  run();
 }
-
-function levelUp(){
-  state.level++;
-  state.speed = state.level>3 ? "fast" : state.level>1 ? "normal" : "slow";
-
-  flashMessage("LEVEL UP!");
-}
-
-/* ================= HUD ================= */
-function updateHUD(){
-  document.getElementById("hud").innerHTML=`
-    Level: ${state.level}<br>
-    Coins: ${Math.floor(state.coins)}<br>
-    Speed: ${state.speed}<br>
-    P1 Score: ${state.coop.p1}
-  `;
-}
-
-/* ================= PARTICLES ================= */
-function createParticles(){
-  for(let i=0;i<25;i++){
-    let p=document.createElement("div");
-    p.className="particle";
-    p.style.left=Math.random()*100+"%";
-    p.style.background=["#ff0","#0ff","#f0f","#0f0"][Math.floor(Math.random()*4)];
-    p.style.animationDuration=(3+Math.random()*4)+"s";
-
-    document.body.appendChild(p);
-  }
-}
-
-/* ================= SYSTEM NOTIFICATION ================= */
-function flashMessage(msg){
-  let r=document.getElementById("reward");
-  r.innerText=msg;
-  r.style.display="block";
-
-  setTimeout(()=>{
-    r.innerText="+ Coins";
-    r.style.display="none";
-  },1500);
-}
-
-/* ================= START ================= */
-window.onload=()=>{
-  next();
-};
 
 </script>
 
