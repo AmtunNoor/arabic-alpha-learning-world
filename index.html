@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Arabic Alpha Learning World</title>
 
@@ -10,246 +10,245 @@ body{
   margin:0;
   overflow:hidden;
   font-family:Arial;
-  background:#05060a;
   transition:background 1s ease;
 }
 
-/* ================= SCENES ================= */
-.scene{
-  position:absolute;
-  inset:0;
+/* ================= BRAND INTRO ================= */
+#intro{
+  position:absolute; inset:0;
   display:flex;
   justify-content:center;
   align-items:center;
-  opacity:0;
-  transition:opacity 1s ease;
+  flex-direction:column;
+  background:#0b0f1a;
   color:white;
 }
-.scene.active{opacity:1}
 
-/* ================= CINEMATIC INTRO ================= */
-#intro{
-  flex-direction:column;
-  background:radial-gradient(circle at center,#0b0f1a,#05060a);
+.bigBubble{
+  font-size:70px;
+  font-weight:900;
+  letter-spacing:6px;
+  padding:20px 40px;
+  border-radius:60px;
+  background:linear-gradient(135deg,#ff4fd8,#6cc7ff,#ffe66d);
+  background-size:300% 300%;
+  animation:move 4s infinite;
 }
 
-.noor{
-  font-size:64px;
-  font-weight:900;
-  letter-spacing:10px;
-  text-shadow:0 0 30px rgba(120,180,255,0.4);
-  animation:fade 3s ease;
+@keyframes move{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
 .sub{
-  margin-top:10px;
-  font-size:14px;
-  opacity:.7;
+  margin-top:15px;
+  font-size:18px;
+  opacity:0.8;
 }
 
-@keyframes fade{
-  0%{opacity:0;transform:scale(1.2)}
-  40%{opacity:1;transform:scale(1)}
-  100%{opacity:0;transform:scale(.95)}
+/* ================= SECOND SCREEN ================= */
+#dedication{
+  position:absolute; inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#05060a;
+  color:white;
 }
 
-/* ================= KID BUBBLE ================= */
-.bubble{
-  font-size:40px;
-  padding:20px 40px;
+.kidBubble{
+  font-size:42px;
+  padding:18px 30px;
   border-radius:50px;
-  background:linear-gradient(135deg,#ff9ad5,#7ad7ff);
+  background:linear-gradient(135deg,#7ad7ff,#ff9ad5);
   animation:bounce 2s infinite;
 }
+
 @keyframes bounce{
   0%,100%{transform:translateY(0)}
   50%{transform:translateY(-12px)}
 }
 
 /* ================= GAME ================= */
-#stage{
-  text-align:center;
+#game{
+  position:absolute; inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
 }
 
-/* LETTER */
-.letter{
-  font-size:80px;
-  transition:all .4s ease;
+/* STAR COUNTER */
+.star{
+  position:absolute;
+  top:20px;
+  right:20px;
+  font-size:28px;
+  animation:pop .4s ease;
+}
+@keyframes pop{
+  from{transform:scale(0)}
+  to{transform:scale(1)}
 }
 
-/* ACTION */
-.action{
-  font-size:42px;
-  color:#7ad7ff;
-  transform-origin:center;
+/* CONFETTI */
+.confetti{
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:yellow;
+  animation:fall 2s linear forwards;
 }
-
-/* PHRASE */
-.phrase{
-  font-size:30px;
-  opacity:.85;
+@keyframes fall{
+  to{
+    transform:translateY(600px) rotate(720deg);
+    opacity:0;
+  }
 }
-
-/* THEME FX */
-.theme-dream{ filter: blur(0px) saturate(1.2); }
-.theme-soft{ filter: brightness(1.1); }
-.theme-dark{ filter: contrast(1.3); }
 </style>
 </head>
 
 <body>
 
 <!-- INTRO -->
-<div id="intro" class="scene active">
-  <div class="noor">AMTUN NOOR</div>
+<div id="intro">
+  <div class="bigBubble">AMTUN NOOR</div>
   <div class="sub">CREATED BY AMTUN NOOR</div>
 </div>
 
-<!-- BUBBLE -->
-<div id="dedication" class="scene">
-  <div class="bubble">For Mariam & Hamza</div>
+<!-- DEDICATION -->
+<div id="dedication">
+  <div class="kidBubble">For Mariam & Hamza</div>
 </div>
 
 <!-- GAME -->
-<div id="game" class="scene">
-  <div id="stage"></div>
-</div>
+<div id="game"></div>
 
 <script>
 
-/* ================= SPEED ENGINE ================= */
+/* ================= SPEED ================= */
 const Speed={
   m:1,
   set(m){this.m=m==="fast"?1.8:m==="slow"?0.6:1},
   t(x){return x/this.m}
 }
-const wait=(x)=>new Promise(r=>setTimeout(r,Speed.t(x)))
+const wait=x=>new Promise(r=>setTimeout(r,Speed.t(x)))
 
 /* ================= AUDIO LOCK ================= */
 const AudioLock={
   busy:false,
   async play(src){
-    while(this.busy) await wait(50)
+    while(this.busy) await wait(30)
     this.busy=true
-    return new Promise(res=>{
+    return new Promise(r=>{
       const a=new Audio(src)
-      a.onended=()=>{this.busy=false;res()}
-      a.onerror=()=>{this.busy=false;res()}
-      a.play().catch(()=>{this.busy=false;res()})
+      a.onended=()=>{this.busy=false;r()}
+      a.onerror=()=>{this.busy=false;r()}
+      a.play().catch(()=>{this.busy=false;r()})
     })
   }
 }
 
-/* ================= THEMES ================= */
-const Themes={
-  list:["default","soft","dark"],
+/* ================= THEME ================= */
+const Theme={
   apply(name){
-    document.body.className=""
-    document.body.classList.add("theme-"+name)
-    document.body.style.backgroundImage=
-      `url(images/themes/${name}.webp)`
-    document.body.style.backgroundSize="cover"
-    document.body.style.backgroundPosition="center"
+    const img=new Image()
+    const path=`images/themes/${name}.webp`
+    img.onload=()=>{
+      document.body.style.backgroundImage=`url('${path}')`
+      document.body.style.backgroundSize="cover"
+    }
+    img.src=path
   }
 }
 
-/* ================= GAME ENGINE ================= */
+/* ================= GAME CORE ================= */
 const Game={
 
   level:0,
+  stars:0,
 
-  themes:["default","soft","dark"],
+  themes:["theme1","theme2","theme3"],
 
-  data:[
-    {letters:["ا","ب","ت"],theme:"default"},
-    {letters:["ث","ج","ح"],theme:"soft"},
-    {letters:["خ","د","ذ"],theme:"dark"}
-  ],
-
-  async start(){
-    await this.runIntro()
-    await this.runDedication()
-    await this.runGame()
+  start(){
+    setTimeout(()=>this.run(),4000)
   },
 
-  async runIntro(){
-    await show("intro")
-    await wait(3500)
+  async run(){
+    document.getElementById("intro").remove()
+    document.getElementById("dedication").remove()
+
+    this.loop()
   },
 
-  async runDedication(){
-    await show("dedication")
-    await wait(3000)
-  },
+  async loop(){
 
-  async runGame(){
-    await show("game")
-    await this.playLevel()
-  },
+    Theme.apply(this.themes[this.level] || "theme1")
 
-  async playLevel(){
+    const letters=["ا","ب","ت","ث"] // fallback safe only
 
-    const set=this.data[this.level]
-    if(!set){return this.end()}
+    for(const l of letters){
 
-    Themes.apply(set.theme)
-
-    for(const l of set.letters){
-
-      await this.showLetter(l)
+      await this.show(l)
       await AudioLock.play(`sounds/letters/${l}.mp3`)
 
-      const action=this.random(["jump","spin","glow"])
-      await this.showAction(action)
-      await AudioLock.play(`sounds/actions/${action}.mp3`)
+      this.star()
 
-      const phrase=this.random(["good","excellent","try again"])
-      await this.showPhrase(phrase)
-      await AudioLock.play(`sounds/phrases/${phrase}.mp3`)
+      await this.effect("action")
+      await AudioLock.play(`sounds/actions/action.mp3`)
+
+      await this.effect("phrase")
+      await AudioLock.play(`sounds/phrases/phrase.mp3`)
 
       await wait(600)
     }
 
     this.level++
-    this.playLevel()
+    this.loop()
   },
 
-  showLetter(l){
-    return render(`<div class="letter">${l}</div>`)
+  async show(l){
+    document.getElementById("game").innerHTML=
+      `<div style="font-size:90px">${l}</div>`
+    await wait(600)
   },
 
-  showAction(a){
-    const r=Math.random()*30-15
-    return render(`<div class="action" style="transform:rotate(${r}deg)">${a}</div>`)
+  async effect(type){
+
+    const game=document.getElementById("game")
+
+    game.innerHTML=
+      `<div style="font-size:40px">${type}</div>`
+
+    this.confetti()
+    await wait(500)
   },
 
-  showPhrase(p){
-    return render(`<div class="phrase">${p}</div>`)
+  star(){
+    this.stars++
+
+    const s=document.createElement("div")
+    s.className="star"
+    s.innerText=`⭐ ${this.stars}`
+    document.body.appendChild(s)
+
+    setTimeout(()=>s.remove(),800)
   },
 
-  random(a){
-    return a[Math.floor(Math.random()*a.length)]
-  },
-
-  end(){
-    render("<h2>Completed</h2>")
+  confetti(){
+    for(let i=0;i<12;i++){
+      const c=document.createElement("div")
+      c.className="confetti"
+      c.style.left=Math.random()*window.innerWidth+"px"
+      c.style.background=["#ff0","#0ff","#f0f","#0f0"][i%4]
+      document.body.appendChild(c)
+      setTimeout(()=>c.remove(),2000)
+    }
   }
+
 }
 
-/* ================= RENDER ================= */
-function render(html){
-  document.getElementById("stage").innerHTML=html
-  return new Promise(r=>setTimeout(r,Speed.t(500)))
-}
-
-/* ================= SCENES ================= */
-async function show(id){
-  document.querySelectorAll(".scene").forEach(s=>s.classList.remove("active"))
-  document.getElementById(id).classList.add("active")
-  return new Promise(r=>setTimeout(r,50))
-}
-
-/* ================= BOOT ================= */
 Game.start()
 
 </script>
