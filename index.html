@@ -9,8 +9,9 @@
 body{
   margin:0;
   overflow:hidden;
+  font-family:Arial;
   background:#05060a;
-  font-family:Arial, sans-serif;
+  transition:background 1s ease;
 }
 
 /* ================= SCENES ================= */
@@ -21,153 +22,236 @@ body{
   justify-content:center;
   align-items:center;
   opacity:0;
-  transition:opacity 1.2s ease;
+  transition:opacity 1s ease;
   color:white;
 }
+.scene.active{opacity:1}
 
-.scene.active{ opacity:1; }
-
-/* ================= BRAND INTRO ================= */
+/* ================= CINEMATIC INTRO ================= */
 #intro{
   flex-direction:column;
-  background:radial-gradient(circle at center, #0b0f1a, #05060a 70%);
+  background:radial-gradient(circle at center,#0b0f1a,#05060a);
 }
 
-.nameBig{
+.noor{
   font-size:64px;
   font-weight:900;
-  letter-spacing:12px;
-  color:#e6f0ff;
-  text-shadow:0 0 30px rgba(120,180,255,0.35);
-  animation:fadeIn 3.5s ease-in-out;
+  letter-spacing:10px;
+  text-shadow:0 0 30px rgba(120,180,255,0.4);
+  animation:fade 3s ease;
 }
 
-.smallTag{
-  margin-top:12px;
-  font-size:16px;
-  color:#7aa7ff;
-  letter-spacing:6px;
-  animation:fadeIn 3.5s ease-in-out;
+.sub{
+  margin-top:10px;
+  font-size:14px;
+  opacity:.7;
 }
 
-@keyframes fadeIn{
-  0%{opacity:0; transform:scale(1.2);}
-  40%{opacity:1; transform:scale(1);}
-  100%{opacity:0; transform:scale(0.98);}
+@keyframes fade{
+  0%{opacity:0;transform:scale(1.2)}
+  40%{opacity:1;transform:scale(1)}
+  100%{opacity:0;transform:scale(.95)}
 }
 
-/* ================= DEDICATION (KID BUBBLE STYLE) ================= */
-#dedication{
-  flex-direction:column;
-  background:#05060a;
-}
-
-.bubbleText{
+/* ================= KID BUBBLE ================= */
+.bubble{
   font-size:40px;
-  font-weight:700;
-  color:#fff;
-  padding:20px 30px;
-  border-radius:40px;
+  padding:20px 40px;
+  border-radius:50px;
   background:linear-gradient(135deg,#ff9ad5,#7ad7ff);
-  box-shadow:0 0 25px rgba(255,255,255,0.2);
-  animation:bounce 2s ease-in-out infinite;
+  animation:bounce 2s infinite;
 }
-
 @keyframes bounce{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-10px);}
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-12px)}
 }
 
 /* ================= GAME ================= */
-#game{
-  flex-direction:column;
-  color:white;
+#stage{
+  text-align:center;
 }
+
+/* LETTER */
+.letter{
+  font-size:80px;
+  transition:all .4s ease;
+}
+
+/* ACTION */
+.action{
+  font-size:42px;
+  color:#7ad7ff;
+  transform-origin:center;
+}
+
+/* PHRASE */
+.phrase{
+  font-size:30px;
+  opacity:.85;
+}
+
+/* THEME FX */
+.theme-dream{ filter: blur(0px) saturate(1.2); }
+.theme-soft{ filter: brightness(1.1); }
+.theme-dark{ filter: contrast(1.3); }
 </style>
 </head>
 
 <body>
 
-<!-- ================= INTRO ================= -->
+<!-- INTRO -->
 <div id="intro" class="scene active">
-  <div class="nameBig">AMTUN NOOR</div>
-  <div class="smallTag">CREATED BY AMTUN NOOR</div>
+  <div class="noor">AMTUN NOOR</div>
+  <div class="sub">CREATED BY AMTUN NOOR</div>
 </div>
 
-<!-- ================= DEDICATION ================= -->
+<!-- BUBBLE -->
 <div id="dedication" class="scene">
-  <div class="bubbleText">For Mariam & Hamza</div>
+  <div class="bubble">For Mariam & Hamza</div>
 </div>
 
-<!-- ================= GAME ================= -->
-<div id="game" class="scene"></div>
+<!-- GAME -->
+<div id="game" class="scene">
+  <div id="stage"></div>
+</div>
 
 <script>
 
-/* ================= SAFE SPEED ENGINE ================= */
-const Speed = {
-  m: 1,
-  set(mode){
-    this.m = mode==="fast"?1.8:mode==="slow"?0.6:1;
-  },
-  t(ms){ return ms/this.m; }
-};
-
-const delay = ms => new Promise(r => setTimeout(r, Speed.t(ms)));
-
-/* ================= SCENE CONTROL (NO DEAD END) ================= */
-function show(id){
-  return new Promise(res=>{
-    document.querySelectorAll(".scene")
-      .forEach(s=>s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-    setTimeout(res,50);
-  });
+/* ================= SPEED ENGINE ================= */
+const Speed={
+  m:1,
+  set(m){this.m=m==="fast"?1.8:m==="slow"?0.6:1},
+  t(x){return x/this.m}
 }
+const wait=(x)=>new Promise(r=>setTimeout(r,Speed.t(x)))
 
-/* ================= THEME SAFE LOAD ================= */
-function loadTheme(){
-  const img = new Image();
-  img.src = "images/themes/default.webp";
-}
-
-/* ================= GAME START (FORCED SAFE ENTRY) ================= */
-function startGame(){
-  const g = document.getElementById("game");
-
-  // IMPORTANT: your real game must attach here
-  g.innerHTML = "<div style='text-align:center'>GAME LOADED</div>";
-
-  console.log("GAME STARTED SUCCESSFULLY");
-}
-
-/* ================= BOOT SEQUENCE ================= */
-async function boot(){
-  try{
-
-    await show("intro");
-    await delay(3800);
-
-    await show("dedication");
-    await delay(3200);
-
-    loadTheme();
-
-    await show("game");
-
-    // 🔥 THIS WAS MISSING IN YOUR SYSTEM BEFORE
-    startGame();
-
-  }catch(e){
-    console.error("BOOT FAILED",e);
-    document.body.innerHTML =
-      "<div style='color:white;background:black;height:100vh;display:flex;align-items:center;justify-content:center;'>Recovery Mode</div>";
+/* ================= AUDIO LOCK ================= */
+const AudioLock={
+  busy:false,
+  async play(src){
+    while(this.busy) await wait(50)
+    this.busy=true
+    return new Promise(res=>{
+      const a=new Audio(src)
+      a.onended=()=>{this.busy=false;res()}
+      a.onerror=()=>{this.busy=false;res()}
+      a.play().catch(()=>{this.busy=false;res()})
+    })
   }
 }
 
-boot();
+/* ================= THEMES ================= */
+const Themes={
+  list:["default","soft","dark"],
+  apply(name){
+    document.body.className=""
+    document.body.classList.add("theme-"+name)
+    document.body.style.backgroundImage=
+      `url(images/themes/${name}.webp)`
+    document.body.style.backgroundSize="cover"
+    document.body.style.backgroundPosition="center"
+  }
+}
+
+/* ================= GAME ENGINE ================= */
+const Game={
+
+  level:0,
+
+  themes:["default","soft","dark"],
+
+  data:[
+    {letters:["ا","ب","ت"],theme:"default"},
+    {letters:["ث","ج","ح"],theme:"soft"},
+    {letters:["خ","د","ذ"],theme:"dark"}
+  ],
+
+  async start(){
+    await this.runIntro()
+    await this.runDedication()
+    await this.runGame()
+  },
+
+  async runIntro(){
+    await show("intro")
+    await wait(3500)
+  },
+
+  async runDedication(){
+    await show("dedication")
+    await wait(3000)
+  },
+
+  async runGame(){
+    await show("game")
+    await this.playLevel()
+  },
+
+  async playLevel(){
+
+    const set=this.data[this.level]
+    if(!set){return this.end()}
+
+    Themes.apply(set.theme)
+
+    for(const l of set.letters){
+
+      await this.showLetter(l)
+      await AudioLock.play(`sounds/letters/${l}.mp3`)
+
+      const action=this.random(["jump","spin","glow"])
+      await this.showAction(action)
+      await AudioLock.play(`sounds/actions/${action}.mp3`)
+
+      const phrase=this.random(["good","excellent","try again"])
+      await this.showPhrase(phrase)
+      await AudioLock.play(`sounds/phrases/${phrase}.mp3`)
+
+      await wait(600)
+    }
+
+    this.level++
+    this.playLevel()
+  },
+
+  showLetter(l){
+    return render(`<div class="letter">${l}</div>`)
+  },
+
+  showAction(a){
+    const r=Math.random()*30-15
+    return render(`<div class="action" style="transform:rotate(${r}deg)">${a}</div>`)
+  },
+
+  showPhrase(p){
+    return render(`<div class="phrase">${p}</div>`)
+  },
+
+  random(a){
+    return a[Math.floor(Math.random()*a.length)]
+  },
+
+  end(){
+    render("<h2>Completed</h2>")
+  }
+}
+
+/* ================= RENDER ================= */
+function render(html){
+  document.getElementById("stage").innerHTML=html
+  return new Promise(r=>setTimeout(r,Speed.t(500)))
+}
+
+/* ================= SCENES ================= */
+async function show(id){
+  document.querySelectorAll(".scene").forEach(s=>s.classList.remove("active"))
+  document.getElementById(id).classList.add("active")
+  return new Promise(r=>setTimeout(r,50))
+}
+
+/* ================= BOOT ================= */
+Game.start()
 
 </script>
-
 </body>
 </html>
