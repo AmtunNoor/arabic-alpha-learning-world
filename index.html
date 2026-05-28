@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Arabic Alpha Learning World</title>
+<title>Arabic Alpha Learning World V6.5</title>
 
 <style>
 *{box-sizing:border-box}
@@ -27,20 +27,10 @@ body{
 }
 #bg2{opacity:0}
 
-/* OVERLAY */
 .overlay{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,0.25);
-  z-index:-4;
-}
-
-/* FX */
-#fx{
-  position:fixed;
-  inset:0;
-  z-index:-3;
-  pointer-events:none;
 }
 
 /* HUD */
@@ -51,11 +41,11 @@ body{
   display:flex;
   justify-content:space-between;
   padding:0 15px;
-  font-size:20px;
+  font-size:18px;
   z-index:10;
 }
 
-/* MAIN */
+/* CORE */
 #app{
   height:100vh;
   display:flex;
@@ -63,10 +53,9 @@ body{
   justify-content:center;
   align-items:center;
   gap:20px;
-  text-align:center;
 }
 
-/* TILE CORE */
+/* TILE */
 #letter{
   font-size:150px;
   background:rgba(255,255,255,0.12);
@@ -74,36 +63,40 @@ body{
   border-radius:25px;
 }
 
-#action{
-  font-size:110px;
-}
+#action{font-size:110px}
+#phrase{font-size:28px;color:#ffe28a}
 
-#phrase{
-  font-size:28px;
-  color:#ffe28a;
-}
-
-/* STAR */
-#starWrap{
+/* INTRO */
+#intro{
   position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%) scale(0);
-  font-size:160px;
-  opacity:0;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:#05070f;
+  z-index:999;
 }
 
-.starPop{
-  animation:pop 0.8s ease;
+#intro h1{
+  font-size:70px;
+  background:linear-gradient(90deg,#ff4fd8,#6cc7ff,#ffe66d);
+  -webkit-background-clip:text;
+  color:transparent;
+  animation:glow 2s infinite;
 }
 
-@keyframes pop{
-  0%{transform:translate(-50%,-50%) scale(0);opacity:0}
-  50%{transform:translate(-50%,-50%) scale(1.3);opacity:1}
-  100%{transform:translate(-50%,-50%) scale(0);opacity:0}
+#intro h2{
+  font-size:26px;
+  margin-top:10px;
+  color:#7ad7ff;
 }
 
-/* CONFETTI */
+@keyframes glow{
+  50%{transform:scale(1.05)}
+}
+
+/* FX */
 .confetti{
   position:fixed;
   width:10px;
@@ -114,32 +107,13 @@ body{
   to{transform:translateY(100vh) rotate(720deg);opacity:0}
 }
 
-/* BALLOONS */
-.balloon{
-  position:fixed;
-  bottom:-100px;
-  font-size:40px;
-  animation:rise 5s linear forwards;
-}
-@keyframes rise{
-  to{transform:translateY(-120vh);opacity:0}
-}
-
-/* ACTION ANIMS (your existing preserved logic style) */
-.clap{animation:clap .7s infinite}
-.jump{animation:jump .7s infinite}
+/* ACTIONS */
+.clap{animation:clap .6s infinite}
+.jump{animation:jump .6s infinite}
 .spin{animation:spin 1s linear infinite}
 .fly{animation:fly 1s infinite alternate}
 .hop{animation:hop .6s infinite}
-.look{animation:look 1s infinite alternate}
-.quiet{animation:quiet 2s infinite}
 .run{animation:run .5s infinite alternate}
-.sit{animation:sit 1.5s infinite}
-.sleep{animation:sleep 2s infinite}
-.stomp{animation:stomp .4s infinite}
-.stretch{animation:stretch 1s infinite alternate}
-.strong{animation:strong 1s infinite alternate}
-.walk{animation:walk 1s infinite alternate}
 .wave{animation:wave 1s infinite}
 
 @keyframes clap{50%{transform:scale(1.3)}}
@@ -147,22 +121,13 @@ body{
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fly{from{transform:translateX(-20px)}to{transform:translateX(20px)}}
 @keyframes hop{50%{transform:translateY(-20px)}}
-@keyframes look{from{transform:translateX(-10px)}to{transform:translateX(10px)}}
-@keyframes quiet{50%{opacity:.5}}
 @keyframes run{from{transform:translateX(-15px)}to{transform:translateX(15px)}}
-@keyframes sit{50%{transform:translateY(10px)}}
-@keyframes sleep{50%{opacity:.3}}
-@keyframes stomp{50%{transform:translateY(10px)}}
-@keyframes stretch{to{transform:scaleY(1.2)}}
-@keyframes strong{to{transform:scale(1.2)}}
-@keyframes walk{from{transform:translateX(-10px)}to{transform:translateX(10px)}}
 @keyframes wave{50%{transform:rotate(15deg)}}
 
 button{
   padding:10px;
   border:none;
   border-radius:10px;
-  font-weight:bold;
 }
 
 #controls{
@@ -178,17 +143,20 @@ button{
 
 <body>
 
+<!-- INTRO -->
+<div id="intro">
+  <h1>AMTUN NOOR</h1>
+  <h2>For Mariam & Hamza</h2>
+</div>
+
 <div id="bg1" class="bg"></div>
 <div id="bg2" class="bg"></div>
 <div class="overlay"></div>
-<canvas id="fx"></canvas>
 
 <div id="hud">
   <div id="level">Level 1</div>
   <div id="stars">⭐ 0</div>
 </div>
-
-<div id="starWrap">⭐</div>
 
 <div id="app">
   <div id="letter">ا</div>
@@ -197,48 +165,24 @@ button{
 </div>
 
 <div id="controls">
-  <button onclick="setSpeed(2500)">FAST</button>
+  <button onclick="setSpeed(2000)">FAST</button>
   <button onclick="setSpeed(4000)">NORMAL</button>
   <button onclick="setSpeed(6000)">SLOW</button>
-  <button onclick="autoMode=true">AUTO</button>
-  <button onclick="autoMode=false">MANUAL</button>
-  <button onclick="next()">NEXT</button>
+  <button onclick="autoMode=!autoMode">AUTO</button>
 </div>
 
 <script>
 
-/* ===== STATE ===== */
+/* ================= STATE ================= */
 let current=0;
 let level=1;
 let stars=0;
 let speed=4000;
 let autoMode=true;
 let busy=false;
-let bgFlip=true;
+let weakMap = {}; // adaptive memory
 
-/* ===== AUDIO LOCK (V6 FIX) ===== */
-const AudioSync = {
-  current:null,
-
-  play(src){
-    return new Promise(res=>{
-
-      if(this.current){
-        this.current.pause();
-      }
-
-      const a=new Audio(src);
-      this.current=a;
-
-      a.onended=()=>res();
-      a.onerror=()=>res();
-
-      a.play().catch(()=>res());
-    });
-  }
-};
-
-/* ===== DATA ===== */
+/* ================= DATA ================= */
 const letters = [
 {a:"ا",audio:"assets/sounds/letters/alif.mp3"},
 {a:"ب",audio:"assets/sounds/letters/ba.mp3"},
@@ -256,112 +200,116 @@ const phrases = [
 "assets/sounds/phrases/well-done.mp3"
 ];
 
-/* ===== SPEED ===== */
-function setSpeed(v){ speed=v }
+/* ================= AUDIO QUEUE ================= */
+const AudioQ = {
+  q: Promise.resolve(),
 
-/* ===== WAIT ===== */
-const wait = ms => new Promise(r=>setTimeout(r,ms));
+  play(src){
+    this.q = this.q.then(()=>new Promise(res=>{
+      const a=new Audio(src);
+      a.onended=res;
+      a.onerror=res;
+      a.play().catch(res);
+    }));
+    return this.q;
+  }
+};
 
-/* ===== STAR ===== */
-function star(){
-  stars++;
-  document.getElementById("stars").innerText="⭐ "+stars;
-
-  const s=document.getElementById("starWrap");
-  s.classList.remove("starPop");
-  void s.offsetWidth;
-  s.classList.add("starPop");
+/* ================= THEME FX ================= */
+function themeIntensity(){
+  const base = 1 + (level * 0.15);
+  return Math.min(base, 2);
 }
 
-/* ===== THEME (simple safe fallback) ===== */
-function setTheme(){
-  const img=`assets/images/themes/theme${(level%3)+1}.webp`;
+/* ================= INTRO REMOVE ================= */
+setTimeout(()=>{
+  document.getElementById("intro")?.remove();
+}, 2500);
 
-  const bg = bgFlip ? bg2 : bg1;
-  const prev = bgFlip ? bg1 : bg2;
-
-  bg.style.backgroundImage=`url('${img}')`;
-  bg.style.opacity=1;
-  prev.style.opacity=0;
-
-  bgFlip=!bgFlip;
-}
-
-/* ===== FX ===== */
+/* ================= FX ================= */
 function confetti(){
-  for(let i=0;i<20;i++){
+  for(let i=0;i<15;i++){
     const c=document.createElement("div");
     c.className="confetti";
     c.style.left=Math.random()*100+"vw";
-    c.style.top="-10px";
-    c.style.background=["red","yellow","blue","green"][i%4];
     document.body.appendChild(c);
     setTimeout(()=>c.remove(),2500);
   }
 }
 
-function balloons(){
-  for(let i=0;i<6;i++){
-    const b=document.createElement("div");
-    b.className="balloon";
-    b.innerText="🎈";
-    b.style.left=Math.random()*100+"vw";
-    document.body.appendChild(b);
-    setTimeout(()=>b.remove(),5000);
-  }
+/* ================= STAR ================= */
+function star(){
+  stars++;
+  document.getElementById("stars").innerText="⭐ "+stars;
 }
 
-/* ===== CORE SEQUENCE (V6 FIX) ===== */
+/* ================= THEME ================= */
+function setTheme(){
+  const img = `assets/images/themes/theme${(level%3)+1}.webp`;
+  const bg = bg1.style.opacity==1?bg2:bg1;
+
+  bg.style.backgroundImage=`url('${img}')`;
+  bg.style.opacity=1;
+
+  const prev = bg===bg1?bg2:bg1;
+  prev.style.opacity=0;
+}
+
+/* ================= ADAPTIVE LOGIC ================= */
+function markWeak(letter){
+  weakMap[letter]=(weakMap[letter]||0)+1;
+}
+
+/* ================= PICK LETTER ================= */
+function getLetter(){
+  const weak = Object.entries(weakMap).sort((a,b)=>b[1]-a[1]);
+
+  if(weak.length && Math.random()<0.5){
+    return letters.find(l=>l.a===weak[0][0]) || letters[current];
+  }
+
+  return letters[current];
+}
+
+/* ================= CORE ================= */
 async function run(){
 
   if(busy) return;
   busy=true;
 
-  const L = letters[current];
+  const L = getLetter();
   const A = actions[Math.floor(Math.random()*actions.length)];
   const P = phrases[Math.floor(Math.random()*phrases.length)];
 
   setTheme();
 
-  /* LETTER */
   letter.innerText=L.a;
   action.innerText=A.icon;
   phrase.innerText="";
 
-  await AudioSync.play(L.audio);
+  await AudioQ.play(L.audio);
 
   star();
   confetti();
 
-  /* ACTION */
-  action.className=A.name;
-  await AudioSync.play(A.audio);
+  await AudioQ.play(A.audio);
 
-  balloons();
-
-  /* PHRASE */
-  phrase.innerText="...";
-  await AudioSync.play(P);
+  await AudioQ.play(P);
 
   phrase.innerText=P.split("/").pop().replace(".mp3","");
 
   busy=false;
 }
 
-/* ===== NEXT ===== */
-function next(){
-  current++;
-  if(current>=letters.length){
-    current=0;
-    level++;
-  }
-  run();
-}
-
-/* ===== LOOP ===== */
+/* ================= LOOP ================= */
 setInterval(()=>{
   if(autoMode && !busy){
-    next();
+    current++;
+    if(current>=letters.length){
+      current=0;
+      level++;
+    }
+    run();
   }
 }, speed);
 
