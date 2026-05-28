@@ -6,15 +6,42 @@
 <title>Arabic Alpha Learning World V7.5</title>
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
   margin:0;
   overflow:hidden;
-  font-family:Arial, sans-serif;
+  font-family:Arial,sans-serif;
   background:black;
+  color:white;
+}
+
+/* ================= INTRO ================= */
+
+#intro{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:radial-gradient(circle at center,#18243a,#05070f);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+#title{
+  font-size:86px;
+  font-weight:900;
+  background:linear-gradient(90deg,#ff4fd8,#ffd166,#7cf7ff,#7dff9b);
+  -webkit-background-clip:text;
+  color:transparent;
+  text-align:center;
+}
+
+#sub{
+  font-size:40px;
+  font-weight:900;
+  margin-top:20px;
   color:white;
 }
 
@@ -58,7 +85,7 @@ body{
 #letter{
   font-size:150px;
   background:rgba(255,255,255,0.12);
-  padding:25px 50px;
+  padding:25px 55px;
   border-radius:30px;
   transition:transform .4s ease;
 }
@@ -75,7 +102,6 @@ body{
   font-size:28px;
   color:#ffe28a;
   min-height:40px;
-  text-align:center;
 }
 
 /* ================= CONTROLS ================= */
@@ -118,60 +144,22 @@ button,select{
   100%{transform:translate(-50%,-50%) scale(0);}
 }
 
-/* ================= V7.5 CINEMATIC SCENES ================= */
+/* ================= V7.5 SCENES ================= */
 
-.calm{
-  animation:softFloat 2.6s ease-in-out;
-}
+.calm{animation:soft 2.5s ease-in-out;}
+.fun{animation:bounce .8s infinite;}
+.surprise{animation:spin .6s ease;}
 
-.fun{
-  animation:bounce 0.9s infinite;
-}
-
-.surprise{
-  animation:popSpin 0.6s ease;
-}
-
-@keyframes softFloat{
-  0%,100%{transform:translateY(0);}
+@keyframes soft{
   50%{transform:translateY(-10px);}
 }
 
 @keyframes bounce{
-  50%{transform:translateY(-22px);}
+  50%{transform:translateY(-25px);}
 }
 
-@keyframes popSpin{
-  0%{transform:scale(0.6) rotate(0deg);}
-  100%{transform:scale(1) rotate(360deg);}
-}
-
-/* ================= INTRO ================= */
-
-#intro{
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  background:radial-gradient(circle,#1a2438,#05070f);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-}
-
-#title{
-  font-size:78px;
-  font-weight:900;
-  background:linear-gradient(90deg,#ff4fd8,#ffd166,#7cf7ff,#7dff9b);
-  -webkit-background-clip:text;
-  color:transparent;
-  text-align:center;
-}
-
-#sub{
-  font-size:36px;
-  font-weight:900;
-  margin-top:20px;
+@keyframes spin{
+  100%{transform:rotate(360deg) scale(1);}
 }
 
 </style>
@@ -216,22 +204,28 @@ button,select{
 </select>
 
 <button onclick="next()">NEXT</button>
+<button onclick="toggle()">PAUSE</button>
 
 </div>
 
 <script>
 
-/* ================= CORE STATE ================= */
+/* ================= FULL CORE RESTORED ================= */
 
-let i=0;
+let current=0;
 let stars=0;
-let bgFlip=true;
+let speed=2500;
+let paused=false;
+let auto=true;
+let flip=true;
 
-/* ================= AUDIO (SAFE) ================= */
+/* AUDIO (CORE SAFE) */
+const laudio=new Audio();
+const aaudio=new Audio();
+const praiseAudio=new Audio();
+const starSound=new Audio("assets/sounds/system/star.mp3");
 
-const starSound = new Audio("assets/sounds/system/star.mp3");
-
-/* ================= CINEMATIC LAYER ================= */
+/* ================= V7.5 LAYER ================= */
 
 const scenes=["calm","fun","surprise"];
 
@@ -244,24 +238,42 @@ function applyScene(el,scene){
   el.classList.add(scene);
 }
 
-function cinematicSurprise(){
-  if(Math.random()<0.22){
-    const el=document.getElementById("letter");
-    el.style.transform="scale(1.35) rotate(6deg)";
-    setTimeout(()=>el.style.transform="scale(1)",400);
+function surpriseFX(){
+  if(Math.random()<0.2){
+    letter.style.transform="scale(1.3)";
+    setTimeout(()=>letter.style.transform="scale(1)",300);
   }
 }
 
 function familiarity(){
-  if(i>0 && i%6===0){
-    phrase.innerText="YES! You already know this ⭐";
+  if(current%6===0 && current>0){
+    phrase.innerText="YES! You know this ⭐";
   }
+}
+
+/* ================= SPEED ENGINE FIX ================= */
+
+function setSpeedValue(){
+  const v=speedSelect.value;
+  speed = v==="fast"?1200 : v==="normal"?2500 : 4500;
+  restartLoop();
+}
+
+/* ================= THEME ================= */
+
+function setTheme(){
+  const t=["snow","garden","ocean"];
+  const bg=flip?bg2:bg1;
+  const old=flip?bg1:bg2;
+  bg.style.backgroundImage=`url(assets/images/themes/${t[current%3]}.webp)`;
+  bg.style.opacity=1;
+  old.style.opacity=0;
+  flip=!flip;
 }
 
 /* ================= STAR ================= */
 
-function showStar(){
-
+function star(){
   stars++;
   document.getElementById("stars").innerText="⭐ "+stars;
 
@@ -272,18 +284,9 @@ function showStar(){
 
   starSound.currentTime=0;
   starSound.play().catch(()=>{});
-
 }
 
-/* ================= THEMES ================= */
-
-const themes=[
-  "assets/images/themes/snow.webp",
-  "assets/images/themes/garden.webp",
-  "assets/images/themes/ocean.webp"
-];
-
-/* ================= STEP ================= */
+/* ================= STEP (CORE SAFE) ================= */
 
 function step(){
 
@@ -291,30 +294,54 @@ function step(){
 
   const letterEl=document.getElementById("letter");
 
-  letterEl.innerText=letters[i%letters.length];
+  letterEl.innerText=letters[current%letters.length];
 
   const scene=getScene();
   applyScene(letterEl,scene);
-  cinematicSurprise();
+  surpriseFX();
   familiarity();
 
-  i++;
+  setTheme();
 
-  showStar();
+  star();
+
+  current++;
 
 }
 
 /* ================= NEXT ================= */
 
 function next(){
+  if(paused) return;
   step();
 }
 
-/* ================= INTRO ================= */
+/* ================= LOOP ENGINE FIX ================= */
+
+let loop;
+
+function restartLoop(){
+  clearInterval(loop);
+  loop=setInterval(()=>{
+    if(auto && !paused){
+      step();
+    }
+  },speed);
+}
+
+/* ================= PAUSE ================= */
+
+function toggle(){
+  paused=!paused;
+}
+
+/* ================= INTRO START ================= */
 
 document.body.addEventListener("click",()=>{
 
   document.getElementById("intro").remove();
+
+  restartLoop();
 
   step();
 
