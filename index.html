@@ -2,254 +2,371 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Arabic Alpha Learning World</title>
 
 <style>
+*{box-sizing:border-box}
+
 body{
   margin:0;
   overflow:hidden;
   font-family:Arial;
-  transition:background 1s ease;
+  background:black;
+  color:white;
 }
 
-/* ================= BRAND INTRO ================= */
-#intro{
-  position:absolute; inset:0;
+/* BACKGROUND */
+.bg{
+  position:fixed;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  transition:opacity 1.2s ease;
+  z-index:-5;
+}
+#bg2{opacity:0}
+
+/* OVERLAY */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.25);
+  z-index:-4;
+}
+
+/* FX */
+#fx{
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  pointer-events:none;
+}
+
+/* HUD */
+#hud{
+  position:fixed;
+  top:10px;
+  width:100%;
   display:flex;
-  justify-content:center;
-  align-items:center;
+  justify-content:space-between;
+  padding:0 15px;
+  font-size:20px;
+  z-index:10;
+}
+
+/* MAIN */
+#app{
+  height:100vh;
+  display:flex;
   flex-direction:column;
-  background:#0b0f1a;
-  color:white;
-}
-
-.bigBubble{
-  font-size:70px;
-  font-weight:900;
-  letter-spacing:6px;
-  padding:20px 40px;
-  border-radius:60px;
-  background:linear-gradient(135deg,#ff4fd8,#6cc7ff,#ffe66d);
-  background-size:300% 300%;
-  animation:move 4s infinite;
-}
-
-@keyframes move{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
-
-.sub{
-  margin-top:15px;
-  font-size:18px;
-  opacity:0.8;
-}
-
-/* ================= SECOND SCREEN ================= */
-#dedication{
-  position:absolute; inset:0;
-  display:flex;
   justify-content:center;
   align-items:center;
-  background:#05060a;
-  color:white;
+  gap:20px;
+  text-align:center;
 }
 
-.kidBubble{
-  font-size:42px;
-  padding:18px 30px;
-  border-radius:50px;
-  background:linear-gradient(135deg,#7ad7ff,#ff9ad5);
-  animation:bounce 2s infinite;
+/* TILE CORE */
+#letter{
+  font-size:150px;
+  background:rgba(255,255,255,0.12);
+  padding:20px 50px;
+  border-radius:25px;
 }
 
-@keyframes bounce{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
+#action{
+  font-size:110px;
 }
 
-/* ================= GAME ================= */
-#game{
-  position:absolute; inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:white;
-}
-
-/* STAR COUNTER */
-.star{
-  position:absolute;
-  top:20px;
-  right:20px;
+#phrase{
   font-size:28px;
-  animation:pop .4s ease;
+  color:#ffe28a;
 }
+
+/* STAR */
+#starWrap{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  font-size:160px;
+  opacity:0;
+}
+
+.starPop{
+  animation:pop 0.8s ease;
+}
+
 @keyframes pop{
-  from{transform:scale(0)}
-  to{transform:scale(1)}
+  0%{transform:translate(-50%,-50%) scale(0);opacity:0}
+  50%{transform:translate(-50%,-50%) scale(1.3);opacity:1}
+  100%{transform:translate(-50%,-50%) scale(0);opacity:0}
 }
 
 /* CONFETTI */
 .confetti{
-  position:absolute;
-  width:6px;
-  height:6px;
-  background:yellow;
-  animation:fall 2s linear forwards;
+  position:fixed;
+  width:10px;
+  height:10px;
+  animation:fall 2.5s linear forwards;
 }
 @keyframes fall{
-  to{
-    transform:translateY(600px) rotate(720deg);
-    opacity:0;
-  }
+  to{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+
+/* BALLOONS */
+.balloon{
+  position:fixed;
+  bottom:-100px;
+  font-size:40px;
+  animation:rise 5s linear forwards;
+}
+@keyframes rise{
+  to{transform:translateY(-120vh);opacity:0}
+}
+
+/* ACTION ANIMS (your existing preserved logic style) */
+.clap{animation:clap .7s infinite}
+.jump{animation:jump .7s infinite}
+.spin{animation:spin 1s linear infinite}
+.fly{animation:fly 1s infinite alternate}
+.hop{animation:hop .6s infinite}
+.look{animation:look 1s infinite alternate}
+.quiet{animation:quiet 2s infinite}
+.run{animation:run .5s infinite alternate}
+.sit{animation:sit 1.5s infinite}
+.sleep{animation:sleep 2s infinite}
+.stomp{animation:stomp .4s infinite}
+.stretch{animation:stretch 1s infinite alternate}
+.strong{animation:strong 1s infinite alternate}
+.walk{animation:walk 1s infinite alternate}
+.wave{animation:wave 1s infinite}
+
+@keyframes clap{50%{transform:scale(1.3)}}
+@keyframes jump{50%{transform:translateY(-30px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fly{from{transform:translateX(-20px)}to{transform:translateX(20px)}}
+@keyframes hop{50%{transform:translateY(-20px)}}
+@keyframes look{from{transform:translateX(-10px)}to{transform:translateX(10px)}}
+@keyframes quiet{50%{opacity:.5}}
+@keyframes run{from{transform:translateX(-15px)}to{transform:translateX(15px)}}
+@keyframes sit{50%{transform:translateY(10px)}}
+@keyframes sleep{50%{opacity:.3}}
+@keyframes stomp{50%{transform:translateY(10px)}}
+@keyframes stretch{to{transform:scaleY(1.2)}}
+@keyframes strong{to{transform:scale(1.2)}}
+@keyframes walk{from{transform:translateX(-10px)}to{transform:translateX(10px)}}
+@keyframes wave{50%{transform:rotate(15deg)}}
+
+button{
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+}
+
+#controls{
+  position:fixed;
+  bottom:10px;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  gap:10px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- INTRO -->
-<div id="intro">
-  <div class="bigBubble">AMTUN NOOR</div>
-  <div class="sub">CREATED BY AMTUN NOOR</div>
+<div id="bg1" class="bg"></div>
+<div id="bg2" class="bg"></div>
+<div class="overlay"></div>
+<canvas id="fx"></canvas>
+
+<div id="hud">
+  <div id="level">Level 1</div>
+  <div id="stars">⭐ 0</div>
 </div>
 
-<!-- DEDICATION -->
-<div id="dedication">
-  <div class="kidBubble">For Mariam & Hamza</div>
+<div id="starWrap">⭐</div>
+
+<div id="app">
+  <div id="letter">ا</div>
+  <div id="action">👏</div>
+  <div id="phrase">...</div>
 </div>
 
-<!-- GAME -->
-<div id="game"></div>
+<div id="controls">
+  <button onclick="setSpeed(2500)">FAST</button>
+  <button onclick="setSpeed(4000)">NORMAL</button>
+  <button onclick="setSpeed(6000)">SLOW</button>
+  <button onclick="autoMode=true">AUTO</button>
+  <button onclick="autoMode=false">MANUAL</button>
+  <button onclick="next()">NEXT</button>
+</div>
 
 <script>
 
-/* ================= SPEED ================= */
-const Speed={
-  m:1,
-  set(m){this.m=m==="fast"?1.8:m==="slow"?0.6:1},
-  t(x){return x/this.m}
-}
-const wait=x=>new Promise(r=>setTimeout(r,Speed.t(x)))
+/* ===== STATE ===== */
+let current=0;
+let level=1;
+let stars=0;
+let speed=4000;
+let autoMode=true;
+let busy=false;
+let bgFlip=true;
 
-/* ================= AUDIO LOCK ================= */
-const AudioLock={
-  busy:false,
-  async play(src){
-    while(this.busy) await wait(30)
-    this.busy=true
-    return new Promise(r=>{
-      const a=new Audio(src)
-      a.onended=()=>{this.busy=false;r()}
-      a.onerror=()=>{this.busy=false;r()}
-      a.play().catch(()=>{this.busy=false;r()})
-    })
+/* ===== AUDIO LOCK (V6 FIX) ===== */
+const AudioSync = {
+  current:null,
+
+  play(src){
+    return new Promise(res=>{
+
+      if(this.current){
+        this.current.pause();
+      }
+
+      const a=new Audio(src);
+      this.current=a;
+
+      a.onended=()=>res();
+      a.onerror=()=>res();
+
+      a.play().catch(()=>res());
+    });
+  }
+};
+
+/* ===== DATA ===== */
+const letters = [
+{a:"ا",audio:"assets/sounds/letters/alif.mp3"},
+{a:"ب",audio:"assets/sounds/letters/ba.mp3"},
+{a:"ت",audio:"assets/sounds/letters/ta.mp3"}
+];
+
+const actions = [
+{name:"clap",icon:"👏",audio:"assets/sounds/actions/clap.mp3"},
+{name:"jump",icon:"🦘",audio:"assets/sounds/actions/jump.mp3"},
+{name:"spin",icon:"🌀",audio:"assets/sounds/actions/spin.mp3"}
+];
+
+const phrases = [
+"assets/sounds/phrases/amazing.mp3",
+"assets/sounds/phrases/well-done.mp3"
+];
+
+/* ===== SPEED ===== */
+function setSpeed(v){ speed=v }
+
+/* ===== WAIT ===== */
+const wait = ms => new Promise(r=>setTimeout(r,ms));
+
+/* ===== STAR ===== */
+function star(){
+  stars++;
+  document.getElementById("stars").innerText="⭐ "+stars;
+
+  const s=document.getElementById("starWrap");
+  s.classList.remove("starPop");
+  void s.offsetWidth;
+  s.classList.add("starPop");
+}
+
+/* ===== THEME (simple safe fallback) ===== */
+function setTheme(){
+  const img=`assets/images/themes/theme${(level%3)+1}.webp`;
+
+  const bg = bgFlip ? bg2 : bg1;
+  const prev = bgFlip ? bg1 : bg2;
+
+  bg.style.backgroundImage=`url('${img}')`;
+  bg.style.opacity=1;
+  prev.style.opacity=0;
+
+  bgFlip=!bgFlip;
+}
+
+/* ===== FX ===== */
+function confetti(){
+  for(let i=0;i<20;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.top="-10px";
+    c.style.background=["red","yellow","blue","green"][i%4];
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),2500);
   }
 }
 
-/* ================= THEME ================= */
-const Theme={
-  apply(name){
-    const img=new Image()
-    const path=`images/themes/${name}.webp`
-    img.onload=()=>{
-      document.body.style.backgroundImage=`url('${path}')`
-      document.body.style.backgroundSize="cover"
-    }
-    img.src=path
+function balloons(){
+  for(let i=0;i<6;i++){
+    const b=document.createElement("div");
+    b.className="balloon";
+    b.innerText="🎈";
+    b.style.left=Math.random()*100+"vw";
+    document.body.appendChild(b);
+    setTimeout(()=>b.remove(),5000);
   }
 }
 
-/* ================= GAME CORE ================= */
-const Game={
+/* ===== CORE SEQUENCE (V6 FIX) ===== */
+async function run(){
 
-  level:0,
-  stars:0,
+  if(busy) return;
+  busy=true;
 
-  themes:["theme1","theme2","theme3"],
+  const L = letters[current];
+  const A = actions[Math.floor(Math.random()*actions.length)];
+  const P = phrases[Math.floor(Math.random()*phrases.length)];
 
-  start(){
-    setTimeout(()=>this.run(),4000)
-  },
+  setTheme();
 
-  async run(){
-    document.getElementById("intro").remove()
-    document.getElementById("dedication").remove()
+  /* LETTER */
+  letter.innerText=L.a;
+  action.innerText=A.icon;
+  phrase.innerText="";
 
-    this.loop()
-  },
+  await AudioSync.play(L.audio);
 
-  async loop(){
+  star();
+  confetti();
 
-    Theme.apply(this.themes[this.level] || "theme1")
+  /* ACTION */
+  action.className=A.name;
+  await AudioSync.play(A.audio);
 
-    const letters=["ا","ب","ت","ث"] // fallback safe only
+  balloons();
 
-    for(const l of letters){
+  /* PHRASE */
+  phrase.innerText="...";
+  await AudioSync.play(P);
 
-      await this.show(l)
-      await AudioLock.play(`sounds/letters/${l}.mp3`)
+  phrase.innerText=P.split("/").pop().replace(".mp3","");
 
-      this.star()
-
-      await this.effect("action")
-      await AudioLock.play(`sounds/actions/action.mp3`)
-
-      await this.effect("phrase")
-      await AudioLock.play(`sounds/phrases/phrase.mp3`)
-
-      await wait(600)
-    }
-
-    this.level++
-    this.loop()
-  },
-
-  async show(l){
-    document.getElementById("game").innerHTML=
-      `<div style="font-size:90px">${l}</div>`
-    await wait(600)
-  },
-
-  async effect(type){
-
-    const game=document.getElementById("game")
-
-    game.innerHTML=
-      `<div style="font-size:40px">${type}</div>`
-
-    this.confetti()
-    await wait(500)
-  },
-
-  star(){
-    this.stars++
-
-    const s=document.createElement("div")
-    s.className="star"
-    s.innerText=`⭐ ${this.stars}`
-    document.body.appendChild(s)
-
-    setTimeout(()=>s.remove(),800)
-  },
-
-  confetti(){
-    for(let i=0;i<12;i++){
-      const c=document.createElement("div")
-      c.className="confetti"
-      c.style.left=Math.random()*window.innerWidth+"px"
-      c.style.background=["#ff0","#0ff","#f0f","#0f0"][i%4]
-      document.body.appendChild(c)
-      setTimeout(()=>c.remove(),2000)
-    }
-  }
-
+  busy=false;
 }
 
-Game.start()
+/* ===== NEXT ===== */
+function next(){
+  current++;
+  if(current>=letters.length){
+    current=0;
+    level++;
+  }
+  run();
+}
+
+/* ===== LOOP ===== */
+setInterval(()=>{
+  if(autoMode && !busy){
+    next();
+  }
+}, speed);
+
+/* START */
+run();
 
 </script>
 </body>
