@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,17 +24,17 @@ html,body{
   color:white;
 }
 
-/* BACKGROUND */
+/* BACKGROUNDS */
 
 .bg{
   position:fixed;
   inset:0;
   background-size:cover;
   background-position:center;
-  transition:opacity 1.4s ease;
   opacity:0;
+  transition:opacity 2s ease;
+  transform:scale(1.05);
   z-index:-10;
-  transform:scale(1.04);
 }
 
 #bg1{
@@ -49,7 +48,7 @@ html,body{
   z-index:-9;
 }
 
-/* FLOAT OBJECTS */
+/* PARTICLES */
 
 #particles{
   position:fixed;
@@ -61,11 +60,11 @@ html,body{
 
 .floatObj{
   position:absolute;
-  opacity:.85;
-  animation:floatDown linear infinite;
+  opacity:.9;
+  animation:floatAnim linear infinite;
 }
 
-@keyframes floatDown{
+@keyframes floatAnim{
 
   from{
     transform:translateY(-15vh) rotate(0deg);
@@ -73,6 +72,48 @@ html,body{
 
   to{
     transform:translateY(120vh) rotate(360deg);
+  }
+
+}
+
+/* SPLASH */
+
+#splash{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  gap:30px;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(8px);
+}
+
+.splashText{
+  font-size:70px;
+  font-weight:bold;
+  text-align:center;
+  padding:20px 40px;
+  border-radius:40px;
+  background:linear-gradient(135deg,#ff69b4,#ffd700,#7cfc00,#00bfff);
+  color:white;
+  text-shadow:
+    0 0 10px rgba(255,255,255,.5),
+    0 0 20px rgba(255,255,255,.3);
+  animation:bubblePop 2s infinite alternate;
+  box-shadow:0 0 30px rgba(255,255,255,.25);
+}
+
+@keyframes bubblePop{
+
+  from{
+    transform:scale(1);
+  }
+
+  to{
+    transform:scale(1.06);
   }
 
 }
@@ -100,7 +141,6 @@ html,body{
   width:100%;
   display:flex;
   justify-content:space-between;
-  align-items:center;
   padding:0 18px;
   z-index:100;
   font-size:22px;
@@ -110,39 +150,36 @@ html,body{
 /* LETTER */
 
 #letter{
-  font-size:165px;
+  font-size:170px;
   background:rgba(255,255,255,.15);
-  padding:26px 55px;
-  border-radius:30px;
-  backdrop-filter:blur(5px);
-  box-shadow:0 0 25px rgba(255,255,255,.2);
-  min-width:230px;
-  text-shadow:0 0 15px rgba(255,255,255,.3);
+  padding:25px 55px;
+  border-radius:35px;
+  backdrop-filter:blur(6px);
+  min-width:240px;
+  box-shadow:0 0 30px rgba(255,255,255,.2);
 }
 
 /* ACTION */
 
 #action{
   font-size:120px;
-  will-change:transform;
-  filter:drop-shadow(0 0 15px rgba(255,255,255,.35));
+  filter:drop-shadow(0 0 15px rgba(255,255,255,.3));
 }
 
 /* PHRASE */
 
 #phrase{
-  min-height:55px;
-  font-size:34px;
+  min-height:60px;
+  font-size:36px;
   color:#ffe083;
   font-weight:bold;
   text-shadow:
-    0 0 10px rgba(255,255,255,.4),
-    0 0 20px rgba(255,200,0,.25);
-  animation:phraseBounce .8s ease;
-  letter-spacing:1px;
+    0 0 10px rgba(255,255,255,.5),
+    0 0 20px rgba(255,200,0,.3);
+  animation:bounceText 1s ease;
 }
 
-@keyframes phraseBounce{
+@keyframes bounceText{
 
   0%{
     transform:scale(.7);
@@ -171,12 +208,12 @@ html,body{
   gap:10px;
   flex-wrap:wrap;
   justify-content:center;
-  z-index:200;
+  z-index:300;
 }
 
 select,button{
   border:none;
-  border-radius:12px;
+  border-radius:14px;
   padding:10px 14px;
   font-size:15px;
   font-weight:bold;
@@ -194,11 +231,11 @@ button{
   position:fixed;
   top:50%;
   left:50%;
-  width:220px;
-  height:220px;
+  width:240px;
+  height:240px;
   transform:translate(-50%,-50%) scale(0);
   opacity:0;
-  z-index:500;
+  z-index:700;
 }
 
 #starShape{
@@ -207,7 +244,7 @@ button{
   display:flex;
   justify-content:center;
   align-items:center;
-  font-size:220px;
+  font-size:240px;
 }
 
 #starCount{
@@ -216,7 +253,7 @@ button{
   display:flex;
   justify-content:center;
   align-items:center;
-  font-size:58px;
+  font-size:62px;
   font-weight:bold;
   color:black;
 }
@@ -244,32 +281,13 @@ button{
 
 }
 
-/* BALLOONS */
-
-.balloon{
-  position:fixed;
-  bottom:-120px;
-  font-size:55px;
-  z-index:300;
-  animation:balloonUp 5s linear forwards;
-}
-
-@keyframes balloonUp{
-
-  to{
-    transform:translateY(-130vh);
-    opacity:0;
-  }
-
-}
-
 /* CONFETTI */
 
 .confetti{
   position:fixed;
   width:14px;
   height:14px;
-  z-index:300;
+  z-index:600;
   animation:confettiFall 3s linear forwards;
 }
 
@@ -282,48 +300,58 @@ button{
 
 }
 
+/* BALLOONS */
+
+.balloon{
+  position:fixed;
+  bottom:-120px;
+  font-size:60px;
+  animation:balloonUp 5s linear forwards;
+  z-index:650;
+}
+
+@keyframes balloonUp{
+
+  to{
+    transform:translateY(-130vh);
+    opacity:0;
+  }
+
+}
+
 /* ACTION ANIMS */
 
 .clap{animation:clap .7s infinite;}
-.jump{animation:jump .7s infinite;}
-.spin{animation:spin 1.1s linear infinite;}
+.jump{animation:jump .8s infinite;}
+.spin{animation:spin 1.2s linear infinite;}
 .fly{animation:fly 1s infinite alternate;}
-.hop{animation:hop .6s infinite;}
-.look{animation:look 1s infinite alternate;}
-.quiet{animation:quiet 2s infinite;}
 .run{animation:run .5s infinite alternate;}
-.sit{animation:sit 1.5s infinite;}
-.sleep{animation:sleep 2s infinite;}
-.stomp{animation:stomp .4s infinite;}
-.stretch{animation:stretch 1s infinite alternate;}
-.strong{animation:strong 1s infinite alternate;}
-.walk{animation:walk 1s infinite alternate;}
 .wave{animation:wave 1s infinite;}
+.hop{animation:hop .7s infinite;}
+.stretch{animation:stretch 1s infinite alternate;}
 
 @keyframes clap{50%{transform:scale(1.3);}}
 @keyframes jump{50%{transform:translateY(-40px);}}
 @keyframes spin{to{transform:rotate(360deg);}}
-@keyframes fly{to{transform:translateX(24px);}}
-@keyframes hop{50%{transform:translateY(-25px);}}
-@keyframes look{to{transform:translateX(10px);}}
-@keyframes quiet{50%{opacity:.35;}}
+@keyframes fly{to{transform:translateX(20px);}}
 @keyframes run{to{transform:translateX(20px);}}
-@keyframes sit{50%{transform:translateY(10px);}}
-@keyframes sleep{50%{opacity:.3;}}
-@keyframes stomp{50%{transform:translateY(12px);}}
-@keyframes stretch{to{transform:scaleY(1.2);}}
-@keyframes strong{to{transform:scale(1.12);}}
-@keyframes walk{to{transform:translateX(10px);}}
 @keyframes wave{50%{transform:rotate(18deg);}}
+@keyframes hop{50%{transform:translateY(-25px);}}
+@keyframes stretch{to{transform:scaleY(1.2);}}
 
 /* MOBILE */
 
 @media(max-width:768px){
 
+  .splashText{
+    font-size:38px;
+    padding:18px 26px;
+  }
+
   #letter{
     font-size:95px;
-    padding:20px 35px;
     min-width:150px;
+    padding:18px 35px;
   }
 
   #action{
@@ -331,7 +359,7 @@ button{
   }
 
   #phrase{
-    font-size:22px;
+    font-size:24px;
   }
 
   #hud{
@@ -341,19 +369,6 @@ button{
   select,button{
     font-size:13px;
     padding:8px 10px;
-  }
-
-  #starWrap{
-    width:150px;
-    height:150px;
-  }
-
-  #starShape{
-    font-size:150px;
-  }
-
-  #starCount{
-    font-size:40px;
   }
 
 }
@@ -369,6 +384,18 @@ button{
 <div class="overlay"></div>
 
 <div id="particles"></div>
+
+<div id="splash">
+
+<div class="splashText">
+✨ Created By Amtun Noor ✨
+</div>
+
+<div class="splashText">
+💖 For Mariam & Hamza 💖
+</div>
+
+</div>
 
 <div id="hud">
 
@@ -414,15 +441,15 @@ Level 1 ❄️
 
 <select id="speedSelect">
 
-<option value="2500">
+<option value="fast">
 FAST
 </option>
 
-<option value="4000" selected>
+<option value="normal" selected>
 NORMAL
 </option>
 
-<option value="6000">
+<option value="slow">
 SLOW
 </option>
 
@@ -452,7 +479,7 @@ RANDOM
 
 </select>
 
-<button onclick="next()">
+<button onclick="nextStep()">
 NEXT
 </button>
 
@@ -495,39 +522,6 @@ const letters=[
 
 ];
 
-/* ACTIONS */
-
-const actions=[
-
-{icon:"👏",name:"clap",audio:"assets/sounds/actions/clap.mp3"},
-{icon:"✈️",name:"fly",audio:"assets/sounds/actions/fly.mp3"},
-{icon:"🐸",name:"hop",audio:"assets/sounds/actions/hop.mp3"},
-{icon:"🦘",name:"jump",audio:"assets/sounds/actions/jump.mp3"},
-{icon:"👀",name:"look",audio:"assets/sounds/actions/look.mp3"},
-{icon:"🤫",name:"quiet",audio:"assets/sounds/actions/quiet.mp3"},
-{icon:"🏃",name:"run",audio:"assets/sounds/actions/run.mp3"},
-{icon:"🧎",name:"sit",audio:"assets/sounds/actions/sit.mp3"},
-{icon:"💤",name:"sleep",audio:"assets/sounds/actions/sleep.mp3"},
-{icon:"🌀",name:"spin",audio:"assets/sounds/actions/spin.mp3"},
-{icon:"🦶",name:"stomp",audio:"assets/sounds/actions/stomp.mp3"},
-{icon:"🤸",name:"stretch",audio:"assets/sounds/actions/stretch.mp3"},
-{icon:"💪",name:"strong",audio:"assets/sounds/actions/strong.mp3"},
-{icon:"🚶",name:"walk",audio:"assets/sounds/actions/walk.mp3"},
-{icon:"🙌",name:"wave",audio:"assets/sounds/actions/wave.mp3"}
-
-];
-
-/* PRAISE */
-
-const praise=[
-
-"🌟 Amazing!",
-"🎉 Fantastic!",
-"✨ Keep Going!",
-"💖 Well Done!"
-
-];
-
 /* THEMES */
 
 const themes=[
@@ -538,7 +532,7 @@ images:[
 "assets/images/themes/snow.webp",
 "assets/images/themes/snow_2.webp"
 ],
-objects:["❄️","☃️","⭐","✨","🧊"]
+objects:["❄️","⭐","✨","☃️","🧊"]
 },
 
 {
@@ -565,7 +559,7 @@ images:[
 "assets/images/themes/rainbow.webp",
 "assets/images/themes/rainbow_2.webp"
 ],
-objects:["🌈","⭐","☁️","💖","✨"]
+objects:["🌈","⭐","💖","☁️","✨"]
 },
 
 {
@@ -579,34 +573,78 @@ objects:["🍃","🌲","🦜","🪵","🪲"]
 
 ];
 
+/* ACTIONS */
+
+const actions=[
+
+{icon:"👏",name:"clap",audio:"assets/sounds/actions/clap.mp3"},
+{icon:"🦘",name:"jump",audio:"assets/sounds/actions/jump.mp3"},
+{icon:"🌀",name:"spin",audio:"assets/sounds/actions/spin.mp3"},
+{icon:"✈️",name:"fly",audio:"assets/sounds/actions/fly.mp3"},
+{icon:"🏃",name:"run",audio:"assets/sounds/actions/run.mp3"},
+{icon:"🙌",name:"wave",audio:"assets/sounds/actions/wave.mp3"},
+{icon:"🐸",name:"hop",audio:"assets/sounds/actions/hop.mp3"},
+{icon:"🤸",name:"stretch",audio:"assets/sounds/actions/stretch.mp3"}
+
+];
+
+const praise=[
+"🌟 Amazing!",
+"🎉 Fantastic!",
+"✨ Great Job!",
+"💖 Keep Going!"
+];
+
 /* AUDIO */
 
-const laudio=new Audio();
-const aaudio=new Audio();
-const praiseAudio=new Audio();
-const systemAudio=new Audio();
+const letterAudio=new Audio();
+const actionAudio=new Audio();
 
 /* STATE */
 
 let current=0;
 let stars=0;
 let level=1;
-let speed=4000;
+let busy=false;
 let autoMode=true;
 let bgFlip=true;
-let loopBusy=false;
+
+/* SPEEDS */
+
+const speeds={
+
+fast:{
+letter:700,
+action:700,
+praise:500,
+next:1000
+},
+
+normal:{
+letter:1200,
+action:1200,
+praise:900,
+next:1800
+},
+
+slow:{
+letter:1800,
+action:1800,
+praise:1300,
+next:2600
+}
+
+};
 
 /* PARTICLES */
 
 function generateThemeObjects(){
 
-  const holder=
-    document.getElementById("particles");
+  const holder=document.getElementById("particles");
 
   holder.innerHTML="";
 
-  const theme=
-    themes[(level-1)%themes.length];
+  const theme=themes[(level-1)%themes.length];
 
   for(let i=0;i<18;i++){
 
@@ -622,7 +660,7 @@ function generateThemeObjects(){
     obj.style.left=Math.random()*100+"vw";
 
     obj.style.fontSize=
-      (18+Math.random()*20)+"px";
+      (18+Math.random()*22)+"px";
 
     obj.style.animationDuration=
       (10+Math.random()*10)+"s";
@@ -636,12 +674,11 @@ function generateThemeObjects(){
 
 }
 
-/* THEME */
+/* THEMES */
 
 function setTheme(){
 
-  const theme=
-    themes[(level-1)%themes.length];
+  const theme=themes[(level-1)%themes.length];
 
   document.getElementById("level").innerText=
     `Level ${level} ${theme.name}`;
@@ -665,7 +702,7 @@ function setTheme(){
 
     active.style.opacity=0;
 
-  },50);
+  },100);
 
   bgFlip=!bgFlip;
 
@@ -673,9 +710,37 @@ function setTheme(){
 
 }
 
+/* AUDIO */
+
+function playAudio(audio,src){
+
+  return new Promise(resolve=>{
+
+    audio.pause();
+
+    audio.currentTime=0;
+
+    audio.src=src;
+
+    audio.onended=()=>resolve();
+
+    audio.play().catch(()=>resolve());
+
+  });
+
+}
+
+/* WAIT */
+
+function wait(ms){
+
+  return new Promise(r=>setTimeout(r,ms));
+
+}
+
 /* STAR */
 
-function showStar(){
+async function showStar(){
 
   stars++;
 
@@ -685,8 +750,7 @@ function showStar(){
   document.getElementById("starCount").innerText=
     stars;
 
-  const wrap=
-    document.getElementById("starWrap");
+  const wrap=document.getElementById("starWrap");
 
   wrap.classList.remove("starPop");
 
@@ -694,11 +758,13 @@ function showStar(){
 
   wrap.classList.add("starPop");
 
+  await wait(900);
+
 }
 
 /* CONFETTI */
 
-function confetti(){
+async function showConfetti(){
 
   document
     .querySelectorAll(".confetti")
@@ -709,7 +775,7 @@ function confetti(){
     "green","pink","orange"
   ];
 
-  for(let i=0;i<18;i++){
+  for(let i=0;i<16;i++){
 
     const c=document.createElement("div");
 
@@ -728,19 +794,19 @@ function confetti(){
 
   }
 
+  await wait(1200);
+
 }
 
 /* BALLOONS */
 
-function balloons(){
+async function showBalloons(){
 
   document
     .querySelectorAll(".balloon")
     .forEach(e=>e.remove());
 
-  const arr=[
-    "🎈","🎉","🌟","🪅"
-  ];
+  const arr=["🎈","🎉","🌟","🪅"];
 
   for(let i=0;i<5;i++){
 
@@ -759,113 +825,22 @@ function balloons(){
 
   }
 
-}
-
-/* AUDIO */
-
-function playAudio(audio,src){
-
-  return new Promise(resolve=>{
-
-    audio.pause();
-
-    audio.currentTime=0;
-
-    audio.onended=null;
-
-    audio.src=src;
-
-    audio.onended=()=>resolve();
-
-    audio.play()
-      .then(()=>{})
-      .catch(()=>resolve());
-
-  });
+  await wait(1400);
 
 }
 
-/* STEP */
+/* MAIN ENGINE */
 
-async function step(){
+async function nextStep(){
 
-  if(loopBusy)return;
+  if(busy)return;
 
-  loopBusy=true;
+  busy=true;
 
-  const L=letters[current];
+  const speedType=
+    document.getElementById("speedSelect").value;
 
-  const A=
-    actions[
-      Math.floor(Math.random()*actions.length)
-    ];
-
-  document.getElementById("letter").innerText=L.a;
-
-  const act=
-    document.getElementById("action");
-
-  act.innerText=A.icon;
-
-  act.className="";
-
-  void act.offsetWidth;
-
-  act.classList.add(A.name);
-
-  document.getElementById("phrase").innerText="";
-
-  setTheme();
-
-  /* LETTER */
-
-  await playAudio(
-    laudio,
-    L.audio
-  );
-
-  /* BUFFER */
-
-  await new Promise(r=>setTimeout(r,450));
-
-  /* ACTION */
-
-  document.getElementById("phrase").innerText=
-    "🎯 Watch & Do!";
-
-  await playAudio(
-    aaudio,
-    A.audio
-  );
-
-  /* BUFFER */
-
-  await new Promise(r=>setTimeout(r,650));
-
-  /* PRAISE */
-
-  document.getElementById("phrase").innerText=
-    praise[
-      Math.floor(Math.random()*praise.length)
-    ];
-
-  await new Promise(r=>setTimeout(r,800));
-
-  showStar();
-
-  confetti();
-
-  balloons();
-
-  loopBusy=false;
-
-}
-
-/* NEXT */
-
-async function next(){
-
-  if(loopBusy)return;
+  const timing=speeds[speedType];
 
   const orderMode=
     document.getElementById("orderMode").value;
@@ -876,104 +851,123 @@ async function next(){
       Math.floor(Math.random()*letters.length);
 
   }
-  else{
 
-    current++;
+  const L=letters[current];
 
-  }
+  const A=
+    actions[
+      Math.floor(Math.random()*actions.length)
+    ];
+
+  setTheme();
+
+  /* LETTER */
+
+  document.getElementById("letter").innerText=L.a;
+
+  document.getElementById("phrase").innerText="";
+
+  const action=document.getElementById("action");
+
+  action.innerText=A.icon;
+
+  action.className="";
+
+  void action.offsetWidth;
+
+  action.classList.add(A.name);
+
+  await playAudio(letterAudio,L.audio);
+
+  await wait(timing.letter);
+
+  /* ACTION */
+
+  document.getElementById("phrase").innerText=
+    "🎯 Watch & Do!";
+
+  await playAudio(actionAudio,A.audio);
+
+  await wait(timing.action);
+
+  /* PRAISE */
+
+  document.getElementById("phrase").innerText=
+    praise[
+      Math.floor(Math.random()*praise.length)
+    ];
+
+  await wait(timing.praise);
+
+  /* REWARDS */
+
+  await showStar();
+
+  await showConfetti();
+
+  await showBalloons();
 
   /* LEVEL */
 
-  if(current>0 && current%5===0){
+  current++;
+
+  if(current%5===0){
 
     level++;
 
-    systemAudio.src=
-      "assets/sounds/system/level_up.mp3";
+    document.getElementById("phrase").innerText=
+      "🏆 LEVEL COMPLETE!";
 
-    systemAudio.play().catch(()=>{});
-
-  }
-
-  /* PAUSE */
-
-  if(current>0 && current%10===0){
-
-    setTimeout(()=>{
-
-      systemAudio.src=
-        "assets/sounds/system/pause.mp3";
-
-      systemAudio.play().catch(()=>{});
-
-    },1000);
+    await wait(1800);
 
   }
-
-  /* RESET */
 
   if(current>=letters.length){
 
     current=0;
 
-    setTimeout(()=>{
-
-      systemAudio.src=
-        "assets/sounds/system/start.mp3";
-
-      systemAudio.play().catch(()=>{});
-
-    },1000);
-
   }
 
-  await step();
+  busy=false;
+
+  if(autoMode){
+
+    await wait(timing.next);
+
+    nextStep();
+
+  }
 
 }
 
-/* SETTINGS */
+/* CONTROLS */
 
 document
-  .getElementById("speedSelect")
-  .addEventListener("change",e=>{
+.getElementById("modeSelect")
+.addEventListener("change",e=>{
 
-    speed=parseInt(e.target.value);
+  autoMode=
+    e.target.value==="auto";
 
-  });
-
-document
-  .getElementById("modeSelect")
-  .addEventListener("change",e=>{
-
-    autoMode=
-      e.target.value==="auto";
-
-  });
-
-/* AUTO LOOP */
-
-setInterval(()=>{
-
-  if(autoMode && !loopBusy){
-
-    next();
-
-  }
-
-},1000);
+});
 
 /* START */
 
-window.onload=async()=>{
+async function startGame(){
 
   setTheme();
 
-  await step();
+  await wait(5000);
 
-};
+  document.getElementById("splash").style.display="none";
+
+  nextStep();
+
+}
+
+window.onload=startGame;
 
 </script>
 
 </body>
 </html>
-```
