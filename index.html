@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Arabic Learning World - Final</title>
+<title>Arabic Learning World - Stable v9</title>
 
 <style>
 body{
@@ -41,7 +41,7 @@ body{
   z-index:-1;
 }
 
-/* UI */
+/* MAIN UI */
 #app{
   position:relative;
   z-index:2;
@@ -87,7 +87,9 @@ body{
   transform:translate(-50%,-50%) scale(0);
   font-size:140px;
   text-align:center;
+  opacity:0;
 }
+
 #star span{
   display:block;
   font-size:30px;
@@ -103,7 +105,20 @@ body{
   100%{transform:translate(-50%,-50%) scale(0);}
 }
 
-/* ACTION ANIMATIONS */
+/* BALLOONS */
+.balloon{
+  position:fixed;
+  bottom:-100px;
+  font-size:50px;
+  z-index:9999;
+  animation:floatUp 4s linear forwards;
+}
+
+@keyframes floatUp{
+  to{transform:translateY(-120vh);opacity:0;}
+}
+
+/* ACTION ANIMATION */
 .clap{animation:clap 0.7s infinite;}
 .jump{animation:jump 0.7s infinite;}
 .spin{animation:spin 1s linear infinite;}
@@ -145,6 +160,18 @@ body{
   <div id="phrase"></div>
 </div>
 
+<button onclick="next()" style="
+position:fixed;
+bottom:20px;
+right:20px;
+z-index:9999;
+padding:10px;
+font-size:16px;
+opacity:0.6;
+">
+NEXT
+</button>
+
 <script>
 
 /* ================= DATA ================= */
@@ -161,13 +188,15 @@ const actions=[
   {icon:"🌀",name:"spin",text:"Spin around!",audio:"assets/sounds/actions/spin.mp3"}
 ];
 
-/* THEMES (YOUR REAL FILES) */
+/* THEMES */
 const themes=[
   ["assets/images/themes/forest.webp","assets/images/themes/forest_2.webp"],
   ["assets/images/themes/garden.webp","assets/images/themes/garden_2.webp"],
   ["assets/images/themes/ocean.webp","assets/images/themes/ocean_2.webp"],
   ["assets/images/themes/rainbow.webp","assets/images/themes/rainbow_2.webp"]
 ];
+
+const worldMap=["forest","garden","ocean","rainbow"];
 
 /* ================= AMBIENCE ================= */
 
@@ -197,13 +226,14 @@ const aaudio=new Audio();
 
 const canvas=document.getElementById("fx");
 const ctx=canvas.getContext("2d");
-
 canvas.width=innerWidth;
 canvas.height=innerHeight;
 
 let particles=[];
+let currentWorld="forest";
 
 function setParticles(type){
+  currentWorld=type;
   particles=[];
   for(let i=0;i<70;i++){
     particles.push({
@@ -249,7 +279,6 @@ function draw(){
       if(p.y>canvas.height)p.y=0;
       ctx.fillRect(p.x,p.y,p.r,p.r);
     }
-
   });
 
   requestAnimationFrame(draw);
@@ -258,23 +287,20 @@ draw();
 
 /* ================= THEME ================= */
 
-let flipBg=true;
-
 function setTheme(){
 
   const set=themes[level-1]||themes[0];
 
-  const next=flipBg?bg2:bg1;
-  const curr=flipBg?bg1:bg2;
+  const next=flip?bg2:bg1;
+  const curr=flip?bg1:bg2;
 
   next.style.backgroundImage=`url('${set[i%2]}')`;
   next.style.opacity=1;
   curr.style.opacity=0;
 
-  flipBg=!flipBg;
+  flip=!flip;
 
-  const map=["forest","garden","ocean","rainbow"];
-  const world=map[level-1]||"forest";
+  const world=worldMap[level-1]||"forest";
 
   setParticles(world);
 
@@ -295,6 +321,7 @@ function showStar(){
   document.getElementById("stars").innerText=`⭐ ${stars}`;
 
   const s=document.getElementById("star");
+
   s.innerHTML=`⭐<span>${stars}</span>`;
 
   s.classList.remove("starAnim");
@@ -303,7 +330,20 @@ function showStar(){
 
 }
 
-/* ================= STEP ================= */
+/* ================= BALLOONS ================= */
+
+function balloons(){
+  for(let i=0;i<6;i++){
+    const el=document.createElement("div");
+    el.className="balloon";
+    el.innerText="🎈";
+    el.style.left=Math.random()*100+"vw";
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),4000);
+  }
+}
+
+/* ================= CORE ================= */
 
 function step(){
 
@@ -312,6 +352,8 @@ function step(){
 
   document.getElementById("letter").innerText=L.a;
 
+  laudio.pause();
+  laudio.currentTime=0;
   laudio.src=L.audio;
   laudio.play().catch(()=>{});
 
@@ -324,31 +366,34 @@ function step(){
   document.getElementById("phrase").innerText=A.text;
 
   setTimeout(()=>{
+
+    aaudio.pause();
+    aaudio.currentTime=0;
     aaudio.src=A.audio;
     aaudio.play().catch(()=>{});
-  },700);
+
+  },800);
 
   setTheme();
-
 }
 
-/* ================= LOOP ================= */
+/* ================= NEXT ================= */
 
 function next(){
 
   showStar();
 
-  i++;
-
   if(i%2===0){
     level++;
     document.getElementById("level").innerText=`Level ${level}`;
+    balloons();
   }
+
+  i++;
 
   if(i>=letters.length)i=0;
 
   step();
-
 }
 
 /* ================= START ================= */
