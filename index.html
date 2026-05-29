@@ -366,6 +366,15 @@ button,select{
 
 }
 
+/* FIX DROPDOWN OPTIONS */
+
+select option{
+
+  background:#10151f;
+  color:white;
+
+}
+
 button:hover,
 select:hover{
 
@@ -974,6 +983,9 @@ function playSequence(letterObj,actionObj){
   aaudio.currentTime=0;
   praiseAudio.currentTime=0;
 
+  laudio.onended=null;
+  aaudio.onended=null;
+
   laudio.src=
     letterObj.audio;
 
@@ -996,11 +1008,17 @@ function playSequence(letterObj,actionObj){
       )
     ];
 
+  /* LETTER */
+
   laudio.play().catch(()=>{});
+
+  /* ACTION AFTER LETTER */
 
   laudio.onended=()=>{
 
     aaudio.play().catch(()=>{});
+
+    /* PRAISE AFTER ACTION */
 
     aaudio.onended=()=>{
 
@@ -1011,7 +1029,6 @@ function playSequence(letterObj,actionObj){
   };
 
 }
-
 /* ================= STEP ================= */
 
 function step(){
@@ -1048,7 +1065,13 @@ function step(){
 
   action.innerText=
     A.icon;
+action.className="";
 
+void action.offsetWidth;
+
+action.classList.add(
+  A.name
+);
   phrase.innerText=
     A.phrase;
 
@@ -1136,12 +1159,13 @@ orderSelect.onchange=function(){
 };
 
 /* ================= PAUSE ================= */
-
 function togglePause(){
 
   paused=!paused;
 
   if(paused){
+
+    clearInterval(window.loop);
 
     ambient.pause();
 
@@ -1149,10 +1173,11 @@ function togglePause(){
 
     ambient.play().catch(()=>{});
 
+    restartLoop();
+
   }
 
 }
-
 /* ================= START ================= */
 
 function startGame(){
@@ -1163,14 +1188,27 @@ function startGame(){
 
   intro.remove();
 
-  ambient.play().catch(()=>{});
+  /* SAFE AMBIENT START */
+
+  ambient.currentTime=0;
+
+  const playAmbient=()=>{
+
+    ambient.play().then(()=>{
+
+      ambient.volume=.24;
+
+    }).catch(()=>{});
+
+  };
+
+  playAmbient();
 
   step();
 
   restartLoop();
 
 }
-
 /* ================= AUTO START ================= */
 
 window.addEventListener(
