@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,114 +5,54 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Arabic Alpha Learning World</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
-
 <style>
-
-*{box-sizing:border-box}
-
 body{
   margin:0;
   overflow:hidden;
   background:black;
   color:white;
-  font-family:'Fredoka',sans-serif;
-
+  font-family:Arial;
   touch-action:manipulation;
-  overscroll-behavior:none;
 }
 
-/* BACKGROUNDS */
+/* BACKGROUND */
 .bg{
   position:fixed;
   inset:0;
   background-size:cover;
   background-position:center;
-  transition:opacity 1.5s ease;
-  z-index:-7;
-}
-#bg2{opacity:0}
-
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.2);
-  z-index:-6;
-}
-
-/* WORLD */
-#world{
-  position:fixed;
-  inset:0;
-  overflow:hidden;
-  pointer-events:none;
-  z-index:-5;
-}
-
-.obj{
-  position:absolute;
-  animation-timing-function:linear;
-  animation-iteration-count:infinite;
-}
-
-/* ANIMS */
-.snowAnim{animation:snowFall linear infinite}
-@keyframes snowFall{
-  from{transform:translateY(-10vh)}
-  to{transform:translateY(120vh)}
-}
-
-.gardenAnim{animation:gardenFloat linear infinite}
-@keyframes gardenFloat{
-  from{transform:translateY(110vh)}
-  to{transform:translateY(-20vh)}
-}
-
-.oceanAnim{animation:oceanMove linear infinite}
-@keyframes oceanMove{
-  from{transform:translateX(-20vw)}
-  to{transform:translateX(120vw)}
-}
-
-.forestAnim{animation:forestDrift linear infinite}
-@keyframes forestDrift{
-  from{transform:translateY(-10vh)}
-  to{transform:translateY(120vh)}
+  transition:opacity 1.2s ease;
 }
 
 /* HUD */
 #hud{
   position:fixed;
   top:10px;
-  left:0;
   width:100%;
   display:flex;
   justify-content:space-between;
-  padding:0 18px;
-  z-index:50;
+  padding:0 16px;
   font-size:20px;
   font-weight:bold;
+  z-index:10;
 }
 
 /* APP */
 #app{
-  min-height:100vh;
-  width:100vw;
+  height:100vh;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  text-align:center;
-  gap:20px;
+  gap:18px;
 }
 
 /* LETTER */
 #letter{
-  font-size:155px;
-  background:rgba(255,255,255,.13);
-  padding:25px 55px;
-  border-radius:30px;
-  backdrop-filter:blur(6px);
+  font-size:150px;
+  padding:25px 50px;
+  background:rgba(255,255,255,.12);
+  border-radius:25px;
 }
 
 /* ACTION */
@@ -121,81 +60,46 @@ body{
 
 /* PHRASE */
 #phrase{
+  font-size:28px;
+  color:#ffe08a;
   min-height:40px;
-  font-size:30px;
-  font-weight:bold;
-  color:#ffe28a;
 }
 
 /* CONTROLS */
 #controls{
   position:fixed;
-  bottom:14px;
-  left:50%;
-  transform:translateX(-50%);
+  bottom:10px;
+  width:100%;
   display:flex;
+  justify-content:center;
   gap:10px;
   flex-wrap:wrap;
+  z-index:20;
 }
 
 button,select{
+  padding:10px 14px;
+  border-radius:12px;
   border:none;
-  border-radius:16px;
-  padding:12px 16px;
-  font-size:14px;
-  font-weight:800;
-  color:white;
-  background:rgba(255,255,255,.15);
-  backdrop-filter:blur(8px);
-  cursor:pointer;
+  font-weight:bold;
+  background:white;
+  color:black;
 }
 
-select option{
-  background:#111;
-  color:white;
-}
+/* ACTION ANIMS (RESTORED) */
+.clap{animation:clap .7s infinite}
+.jump{animation:jump .7s infinite}
+.spin{animation:spin 1s linear infinite}
+.run{animation:run .6s infinite alternate}
+.walk{animation:walk .8s infinite alternate}
+.wave{animation:wave 1s infinite}
 
-/* STAR */
-#starWrap{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%) scale(0);
-  font-size:180px;
-  opacity:0;
-  z-index:999;
-}
-
-.starPop{animation:starPop .8s ease}
-
-@keyframes starPop{
-  0%{transform:translate(-50%,-50%) scale(0);opacity:0}
-  50%{transform:translate(-50%,-50%) scale(1.4);opacity:1}
-  100%{transform:translate(-50%,-50%) scale(0);opacity:0}
-}
-
-/* ACTION FIX */
-.clap{animation:clapAnim .7s infinite}
-.jump{animation:jumpAnim .7s infinite}
-.spin{animation:spinAnim 1s linear infinite}
-.fly{animation:flyAnim 1s infinite alternate}
-.run{animation:runAnim .5s infinite alternate}
-.walk{animation:walkAnim 1s infinite alternate}
-.wave{animation:waveAnim 1s infinite}
-
-@keyframes clapAnim{50%{transform:scale(1.3)}}
-@keyframes jumpAnim{50%{transform:translateY(-40px)}}
-@keyframes spinAnim{to{transform:rotate(360deg)}}
-@keyframes flyAnim{to{transform:translateX(20px)}}
-@keyframes runAnim{to{transform:translateX(20px)}}
-@keyframes walkAnim{to{transform:translateX(10px)}}
-@keyframes waveAnim{50%{transform:rotate(15deg)}}
-
-/* MOBILE */
-@media(max-width:768px){
-  #letter{font-size:100px}
-  #action{font-size:80px}
-}
+@keyframes clap{50%{transform:scale(1.3)}}
+@keyframes jump{50%{transform:translateY(-35px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes run{to{transform:translateX(20px)}}
+@keyframes walk{to{transform:translateX(10px)}}
+@keyframes wave{50%{transform:rotate(15deg)}}
 
 </style>
 </head>
@@ -204,16 +108,11 @@ select option{
 
 <div id="bg1" class="bg"></div>
 <div id="bg2" class="bg"></div>
-<div class="overlay"></div>
-
-<div id="world"></div>
 
 <div id="hud">
   <div id="level">Level 1</div>
   <div id="stars">⭐ 0</div>
 </div>
-
-<div id="starWrap">⭐</div>
 
 <div id="app">
   <div id="letter">ا</div>
@@ -222,20 +121,20 @@ select option{
 </div>
 
 <div id="controls">
-  <select id="speedSelect">
+  <select id="speed">
     <option value="1200">FAST</option>
     <option value="2500" selected>NORMAL</option>
     <option value="4500">SLOW</option>
   </select>
 
-  <select id="modeSelect">
+  <select id="mode">
     <option value="auto">AUTO</option>
     <option value="manual">MANUAL</option>
   </select>
 
-  <select id="orderSelect">
-    <option value="sequence">SEQUENCE</option>
-    <option value="random">RANDOM</option>
+  <select id="order">
+    <option value="seq">SEQUENCE</option>
+    <option value="rand">RANDOM</option>
   </select>
 
   <button onclick="next()">NEXT</button>
@@ -245,138 +144,140 @@ select option{
 <script>
 
 /* CORE STATE */
-let current=0;
+let i=0;
 let stars=0;
 let level=1;
-let paused=false;
-let autoMode=true;
-let randomMode=false;
 let speed=2500;
-let started=false;
+let auto=true;
+let rand=false;
+let paused=false;
 
 /* AUDIO */
-const laudio=new Audio();
-const aaudio=new Audio();
-const praiseAudio=new Audio();
+const L=new Audio();
+const A=new Audio();
+const P=new Audio();
 
 const ambient=new Audio("assets/sounds/system/ambient.mp3");
 ambient.loop=true;
 ambient.volume=.08;
 
-const starSound=new Audio("assets/sounds/system/star.mp3");
-starSound.volume=.25;
+const star=new Audio("assets/sounds/system/star.mp3");
+star.volume=.2;
 
-/* DATA */
+/* DATA (UNCHANGED CORE STYLE) */
 const letters=["ا","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص"];
+
 const actions=[
-  {icon:"👏",name:"clap",audio:"assets/sounds/actions/clap.mp3"},
-  {icon:"🦋",name:"fly",audio:"assets/sounds/actions/fly.mp3"},
-  {icon:"🏃",name:"run",audio:"assets/sounds/actions/run.mp3"},
-  {icon:"🚶",name:"walk",audio:"assets/sounds/actions/walk.mp3"},
-  {icon:"🌀",name:"spin",audio:"assets/sounds/actions/spin.mp3"},
-  {icon:"🙌",name:"wave",audio:"assets/sounds/actions/wave.mp3"}
+{icon:"👏",name:"clap",audio:"assets/sounds/actions/clap.mp3"},
+{icon:"🦋",name:"wave",audio:"assets/sounds/actions/wave.mp3"},
+{icon:"🏃",name:"run",audio:"assets/sounds/actions/run.mp3"},
+{icon:"🚶",name:"walk",audio:"assets/sounds/actions/walk.mp3"},
+{icon:"🌀",name:"spin",audio:"assets/sounds/actions/spin.mp3"}
 ];
 
-/* ACTION ROTATION FIX */
-let lastAction=-1;
+const praise=[
+"assets/sounds/phrases/amazing.mp3",
+"assets/sounds/phrases/well-done.mp3"
+];
 
-/* STEP */
-function step(){
+/* ACTION FIX (NO REPETITION) */
+let last=-1;
+
+/* STEP ENGINE */
+async function step(){
 
   if(paused) return;
 
-  const L=letters[current%letters.length];
+  const Ltr=letters[i%letters.length];
 
-  let AIndex;
+  let idx;
   do{
-    AIndex=Math.floor(Math.random()*actions.length);
-  }while(AIndex===lastAction);
+    idx=Math.floor(Math.random()*actions.length);
+  }while(idx===last);
 
-  lastAction=AIndex;
-  const A=actions[AIndex];
+  last=idx;
+  const Act=actions[idx];
 
-  letter.innerText=L;
-  action.innerText=A.icon;
+  letter.innerText=Ltr;
 
+  action.innerText=Act.icon;
   action.className="";
   void action.offsetWidth;
-  action.classList.add(A.name);
+  action.classList.add(Act.name);
 
-  /* AUDIO SAFE QUEUE */
-  laudio.pause(); aaudio.pause(); praiseAudio.pause();
+  L.pause(); A.pause(); P.pause();
 
-  laudio.src=`assets/sounds/letters/${L}.mp3`;
-  aaudio.src=A.audio;
-  praiseAudio.src="assets/sounds/phrases/amazing.mp3";
+  L.src=`assets/sounds/letters/${Ltr}.mp3`;
+  A.src=Act.audio;
+  P.src=praise[Math.floor(Math.random()*praise.length)];
 
-  laudio.play().catch(()=>{});
+  L.play().catch(()=>{});
 
-  laudio.onended=()=>{
-    aaudio.play().catch(()=>{});
-
-    aaudio.onended=()=>{
-      praiseAudio.play().catch(()=>{});
+  L.onended=()=>{
+    A.play().catch(()=>{});
+    A.onended=()=>{
+      P.play().catch(()=>{});
     };
   };
 
-  current++;
-  showStar();
+  starPlay();
+
+  i++;
+  if(i%5===0) level++;
+
 }
 
 /* STAR */
-function showStar(){
+function starPlay(){
   stars++;
-  starsText.innerText="⭐ "+stars;
-
-  starWrap.classList.remove("starPop");
-  void starWrap.offsetWidth;
-  starWrap.classList.add("starPop");
-
-  starSound.currentTime=0;
-  starSound.play().catch(()=>{});
+  document.getElementById("stars").innerText="⭐ "+stars;
+  star.currentTime=0;
+  star.play().catch(()=>{});
 }
 
-/* PAUSE FIX */
-function togglePause(){
-
-  paused=!paused;
-
-  if(paused){
-    clearInterval(window.loop);
-    ambient.pause();
-  }else{
-    ambient.play().catch(()=>{});
-    restartLoop();
-  }
-}
+/* NEXT */
+function next(){ step(); }
 
 /* LOOP */
-function restartLoop(){
-  clearInterval(window.loop);
-  window.loop=setInterval(()=>{
-    if(autoMode && !paused) step();
+let loop;
+function start(){
+  clearInterval(loop);
+  loop=setInterval(()=>{
+    if(auto && !paused) step();
   },speed);
 }
 
 /* SPEED */
-speedSelect.onchange=function(){
+speed.onchange=function(){
   speed=+this.value;
-  restartLoop();
+  start();
 };
 
-modeSelect.onchange=function(){
-  autoMode=this.value==="auto";
+mode.onchange=function(){
+  auto=this.value==="auto";
 };
 
-orderSelect.onchange=function(){
-  randomMode=this.value==="random";
+order.onchange=function(){
+  rand=this.value==="rand";
 };
 
-/* START */
+/* PAUSE FIX */
+function togglePause(){
+  paused=!paused;
+  if(paused){
+    clearInterval(loop);
+    ambient.pause();
+  }else{
+    ambient.play().catch(()=>{});
+    start();
+  }
+}
+
+/* START SAFE */
 window.onload=()=>{
   ambient.play().catch(()=>{});
   step();
-  restartLoop();
+  start();
 };
 
 </script>
