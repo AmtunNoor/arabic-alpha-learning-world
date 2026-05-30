@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Arabic Alpha Learning World V3</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Arabic Alpha Learning World V7 - Locked Engine</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;}
+*{box-sizing:border-box}
 
 body{
   margin:0;
   overflow:hidden;
-  background:black;
-  font-family:'Fredoka',sans-serif;
-  color:white;
+  background:#000;
+  font-family:Fredoka,sans-serif;
+  color:#fff;
 }
 
-/* SAFE APP AREA */
 #app{
   height:100vh;
   display:flex;
@@ -26,58 +25,54 @@ body{
   justify-content:center;
   align-items:center;
   gap:18px;
-  padding:20px;
   padding-bottom:180px;
+  text-align:center;
 }
 
 /* TV MODE */
 @media(min-width:1200px){
-  #letter{font-size:240px!important;}
-  #action{font-size:160px!important;}
-  #phrase{font-size:48px!important;}
+  #letter{font-size:240px}
+  #action{font-size:140px}
+  #phrase{font-size:40px}
 }
 
-/* BACKGROUND */
+/* BACKGROUNDS */
 .bg{
   position:fixed;
   inset:0;
   background-size:cover;
   background-position:center;
-  transition:opacity 1.2s ease;
+  transition:opacity 1s ease;
   z-index:-10;
 }
-
-#bg2{opacity:0;}
+#bg2{opacity:0}
 
 .overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.18);
+  background:rgba(0,0,0,.25);
   z-index:-9;
 }
 
-/* LETTER */
+/* MAIN UI */
 #letter{
   font-size:150px;
-  background:rgba(255,255,255,.12);
-  padding:25px 50px;
-  border-radius:25px;
-  backdrop-filter:blur(8px);
+  padding:20px 40px;
+  background:rgba(255,255,255,.1);
+  border-radius:24px;
 }
 
-/* ACTION */
-#action{font-size:110px;}
+#action{
+  font-size:110px;
+}
 
-/* PHRASE SAFE */
 #phrase{
-  min-height:60px;
+  min-height:50px;
   font-size:28px;
-  color:#ffe28a;
-  text-align:center;
-  padding-bottom:10px;
+  color:#ffd86b;
 }
 
-/* CONTROLS SAFE ZONE */
+/* CONTROLS */
 #controls{
   position:fixed;
   bottom:12px;
@@ -86,46 +81,13 @@ body{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
-  z-index:100;
 }
 
-/* BUTTONS */
-button,select{
-  padding:12px 14px;
-  border-radius:14px;
+button{
+  padding:10px 14px;
   border:none;
+  border-radius:12px;
   font-weight:bold;
-  color:white;
-  background:rgba(255,255,255,.12);
-}
-
-/* HUD */
-#hud{
-  position:fixed;
-  top:10px;
-  left:0;
-  width:100%;
-  display:flex;
-  justify-content:space-between;
-  padding:0 16px;
-}
-
-/* STAR */
-#starWrap{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%) scale(0);
-  font-size:180px;
-  z-index:999;
-}
-
-.starPop{animation:pop .8s ease;}
-
-@keyframes pop{
-  0%{transform:translate(-50%,-50%) scale(0);}
-  50%{transform:translate(-50%,-50%) scale(1.4);}
-  100%{transform:translate(-50%,-50%) scale(0);}
 }
 </style>
 </head>
@@ -136,126 +98,145 @@ button,select{
 <div id="bg2" class="bg"></div>
 <div class="overlay"></div>
 
-<div id="hud">
-  <div id="level">Level 1</div>
-  <div id="stars">⭐ 0</div>
-</div>
-
-<div id="starWrap">⭐</div>
-
 <div id="app">
   <div id="letter">ا</div>
-  <div id="action">👏</div>
+  <div id="action">👋</div>
   <div id="phrase"></div>
 </div>
 
 <div id="controls">
-<select id="speed">
-<option value="fast">FAST</option>
-<option value="normal" selected>NORMAL</option>
-<option value="slow">SLOW</option>
-</select>
-
-<select id="mode">
-<option value="auto">AUTO</option>
-<option value="manual">MANUAL</option>
-</select>
-
-<select id="order">
-<option value="seq">SEQUENCE</option>
-<option value="rand">RANDOM</option>
-</select>
-
-<button onclick="next()">NEXT</button>
-<button onclick="togglePause()">PAUSE</button>
+  <button onclick="next()">NEXT</button>
 </div>
 
 <script>
 
-/* ================= FULL THEME SET ================= */
-const themes = [
-{bg:"assets/images/themes/snow.webp",anim:"snowAnim"},
-{bg:"assets/images/themes/snow_2.webp",anim:"snowAnim"},
-{bg:"assets/images/themes/garden.webp",anim:"gardenAnim"},
-{bg:"assets/images/themes/ocean.webp",anim:"oceanAnim"},
-{bg:"assets/images/themes/ocean_2.webp",anim:"oceanAnim"},
-{bg:"assets/images/themes/forest.webp",anim:"forestAnim"},
-{bg:"assets/images/themes/forest_2.webp",anim:"forestAnim"},
-{bg:"assets/images/themes/rainbow.webp",anim:"rainbowAnim"},
-{bg:"assets/images/themes/rainbow_2.webp",anim:"rainbowAnim"},
-{bg:"assets/images/themes/balloon.webp",anim:"balloonAnim"}
+/* ===================== LETTERS ===================== */
+const letters = [
+"ا","ب","ت","ث","ج","ح","خ","د","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"
 ];
 
-let level=1,stars=0,current=0;
-let auto=true,paused=false,random=false;
-let bgFlip=true,started=false;
+/* ===================== ALL ACTIONS FROM YOUR REPO ===================== */
+const actions = [
+{ name:"clap", icon:"👏", sound:"clap.mp3", anim:"clap" },
+{ name:"fly", icon:"🪶", sound:"fly.mp3", anim:"fly" },
+{ name:"hop", icon:"🐸", sound:"hop.mp3", anim:"hop" },
+{ name:"jump", icon:"🦘", sound:"jump.mp3", anim:"jump" },
+{ name:"look", icon:"👀", sound:"look.mp3", anim:"look" },
+{ name:"quiet", icon:"🤫", sound:"quiet.mp3", anim:"quiet" },
+{ name:"run", icon:"🏃", sound:"run.mp3", anim:"run" },
+{ name:"sit", icon:"🪑", sound:"sit.mp3", anim:"sit" },
+{ name:"sleep", icon:"😴", sound:"sleep.mp3", anim:"sleep" },
+{ name:"spin", icon:"🌀", sound:"spin.mp3", anim:"spin" },
+{ name:"stomp", icon:"👣", sound:"stomp.mp3", anim:"stomp" },
+{ name:"stretch", icon:"🤸", sound:"stretch.mp3", anim:"stretch" },
+{ name:"strong", icon:"💪", sound:"strong.mp3", anim:"strong" },
+{ name:"walk", icon:"🚶", sound:"walk.mp3", anim:"walk" },
+{ name:"wave", icon:"👋", sound:"wave.mp3", anim:"wave" }
+];
 
-/* AUDIO */
+/* ===================== THEMES ===================== */
+const themes = [
+"snow","snow_2",
+"garden",
+"ocean","ocean_2",
+"forest","forest_2",
+"rainbow","rainbow_2",
+"balloon"
+].map(t=>`assets/images/themes/${t}.webp`);
+
+/* preload */
+themes.forEach(src=>{
+  const i=new Image();
+  i.src=src;
+});
+
+/* ===================== STATE ===================== */
+let i=0;
+let bgFlip=true;
+
+/* ===================== DOM ===================== */
+const el = {
+  letter:document.getElementById("letter"),
+  action:document.getElementById("action"),
+  phrase:document.getElementById("phrase"),
+  bg1:document.getElementById("bg1"),
+  bg2:document.getElementById("bg2")
+};
+
+/* ===================== AUDIO ===================== */
 const ambient=new Audio("assets/sounds/system/ambient.mp3");
 ambient.loop=true;
+ambient.volume=0.15;
 
-/* AUDIO UNLOCK (CRITICAL FIX) */
+/* unlock audio */
 document.addEventListener("pointerdown",()=>{
   ambient.play().then(()=>ambient.pause()).catch(()=>{});
 },{once:true});
 
-/* PRELOAD ALL THEMES */
-themes.forEach(t=>{
-  const i=new Image();
-  i.src=t.bg;
+/* ===================== ROTATION ENGINE (KEY FIX) ===================== */
+/* Each LETTER gets its OWN action history pointer */
+const letterActionMap = {};
+
+/* init map */
+letters.forEach(l=>{
+  letterActionMap[l]=0;
 });
 
-/* THEME ENGINE */
-function setTheme(){
-  const t=themes[level%themes.length];
-  const next=bgFlip?bg2:bg1;
-  const old=bgFlip?bg1:bg2;
+function getActionForLetter(letter){
+  const idx = letterActionMap[letter];
+  const action = actions[idx % actions.length];
+  letterActionMap[letter] = idx + 1; // rotate per letter usage
+  return action;
+}
 
-  next.style.backgroundImage=`url('${t.bg}')`;
+/* ===================== STEP ===================== */
+function step(){
+
+  const letter = letters[i % letters.length];
+
+  /* ACTION ROTATION PER LETTER (FIXED) */
+  const action = getActionForLetter(letter);
+
+  /* UI */
+  el.letter.textContent = letter;
+  el.action.textContent = action.icon;
+  el.phrase.textContent = action.name.toUpperCase();
+
+  /* SOUND */
+  const audio = new Audio(`assets/sounds/actions/${action.sound}`);
+  audio.volume = 0.8;
+  audio.play().catch(()=>{});
+
+  /* AMBIENT MIX */
+  ambient.volume = 0.12;
+  ambient.play().catch(()=>{});
+
+  /* THEME ROTATION */
+  const bg = themes[i % themes.length];
+
+  const next = bgFlip ? el.bg2 : el.bg1;
+  const old = bgFlip ? el.bg1 : el.bg2;
+
+  next.style.backgroundImage=`url('${bg}')`;
   next.style.opacity=1;
   old.style.opacity=0;
 
-  bgFlip=!bgFlip;
+  bgFlip = !bgFlip;
+
+  i++;
 }
 
-/* CORE STEP */
-function step(){
-  setTheme();
-  current++;
-  if(current%5===0) level++;
-}
-
-/* NEXT */
-function next(){step();}
-
-/* PAUSE */
-function togglePause(){
-  paused=!paused;
-  if(paused) ambient.pause();
-  else ambient.play().catch(()=>{});
-}
-
-/* START */
-function start(){
-  if(started) return;
-  started=true;
-
-  document.getElementById("intro")?.remove();
-
-  ambient.play().catch(()=>{});
+/* ===================== NEXT ===================== */
+function next(){
   step();
-
-  setInterval(()=>{
-    if(auto && !paused) step();
-  },2000);
 }
 
-/* START SAFE */
+/* ===================== START ===================== */
 window.addEventListener("load",()=>{
-  setTimeout(start,2000);
+  setTimeout(step,1200);
 });
 
-document.body.addEventListener("click",start,{once:true});
+document.body.addEventListener("click",step,{once:true});
 
 </script>
 
