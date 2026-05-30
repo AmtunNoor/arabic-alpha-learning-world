@@ -3,262 +3,103 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>My Arabic Alpha Learning World</title>
+<title>Arabic Alpha Learning World V3</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
-
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
   margin:0;
   overflow:hidden;
   background:black;
-  color:white;
   font-family:'Fredoka',sans-serif;
+  color:white;
 }
 
-/* ================= INTRO ================= */
-
-#intro{
-  position:fixed;
-  inset:0;
-  z-index:99999;
-  background:
-    radial-gradient(circle at center,#18253d,#04070f);
+/* SAFE APP AREA */
+#app{
+  height:100vh;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  overflow:hidden;
+  gap:18px;
+  padding:20px;
+  padding-bottom:180px;
 }
 
-/* floating arabic letters */
-
-.introLetter{
-  position:absolute;
-  opacity:.10;
-  font-weight:bold;
-  animation:introFloat linear infinite;
+/* TV MODE */
+@media(min-width:1200px){
+  #letter{font-size:240px!important;}
+  #action{font-size:160px!important;}
+  #phrase{font-size:48px!important;}
 }
 
-@keyframes introFloat{
-
-  from{
-    transform:
-      translateY(120vh)
-      rotate(0deg);
-  }
-
-  to{
-    transform:
-      translateY(-120vh)
-      rotate(360deg);
-  }
-
-}
-
-#titleWrap{
-  position:relative;
-  z-index:2;
-  text-align:center;
-}
-
-#created{
-  font-size:26px;
-  opacity:.8;
-  letter-spacing:2px;
-  margin-bottom:10px;
-}
-
-#title{
-
-  font-family:'Baloo 2',cursive;
-
-  font-size:90px;
-  font-weight:800;
-
-  color:white;
-
-  text-shadow:
-    0 0 10px rgba(255,255,255,.35),
-    0 0 35px rgba(255,255,255,.18);
-
-  animation:titlePop 2.8s ease infinite;
-
-}
-
-@keyframes titlePop{
-
-  50%{
-    transform:
-      scale(1.08)
-      translateY(-6px);
-  }
-
-}
-
-#sub{
-
-  margin-top:30px;
-
-  font-family:'Baloo 2',cursive;
-
-  font-size:52px;
-
-  font-weight:800;
-
-  color:#fff2c7;
-
-  text-shadow:
-    0 0 16px rgba(255,255,255,.18);
-
-  animation:subFloat 3s ease infinite;
-
-}
-
-#sub small{
-  font-size:24px;
-  opacity:.9;
-  margin-right:8px;
-}
-
-@keyframes subFloat{
-
-  50%{
-    transform:
-      translateY(-10px)
-      scale(1.03);
-  }
-
-}
-
-/* ================= BACKGROUND ================= */
-
+/* BACKGROUND */
 .bg{
   position:fixed;
   inset:0;
   background-size:cover;
   background-position:center;
-  transition:opacity 1.5s ease;
-  z-index:-7;
+  transition:opacity 1.2s ease;
+  z-index:-10;
 }
 
-#bg2{
-  opacity:0;
-}
+#bg2{opacity:0;}
 
 .overlay{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,.18);
-  z-index:-6;
+  z-index:-9;
 }
 
-/* ================= WORLD OBJECTS ================= */
+/* LETTER */
+#letter{
+  font-size:150px;
+  background:rgba(255,255,255,.12);
+  padding:25px 50px;
+  border-radius:25px;
+  backdrop-filter:blur(8px);
+}
 
-#world{
+/* ACTION */
+#action{font-size:110px;}
+
+/* PHRASE SAFE */
+#phrase{
+  min-height:60px;
+  font-size:28px;
+  color:#ffe28a;
+  text-align:center;
+  padding-bottom:10px;
+}
+
+/* CONTROLS SAFE ZONE */
+#controls{
   position:fixed;
-  inset:0;
-  overflow:hidden;
-  pointer-events:none;
-  z-index:-5;
+  bottom:12px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  z-index:100;
 }
 
-.obj{
-  position:absolute;
-  opacity:.92;
-  animation-timing-function:linear;
-  animation-iteration-count:infinite;
+/* BUTTONS */
+button,select{
+  padding:12px 14px;
+  border-radius:14px;
+  border:none;
+  font-weight:bold;
+  color:white;
+  background:rgba(255,255,255,.12);
 }
 
-/* ================= THEME ANIMS ================= */
-
-.snowAnim{
-  animation-name:snowFall;
-}
-
-@keyframes snowFall{
-
-  from{
-    transform:
-      translateY(-10vh)
-      translateX(0px);
-  }
-
-  to{
-    transform:
-      translateY(120vh)
-      translateX(45px);
-  }
-
-}
-
-.gardenAnim{
-  animation-name:gardenFloat;
-}
-
-@keyframes gardenFloat{
-
-  from{
-    transform:
-      translateY(110vh)
-      rotate(0deg);
-  }
-
-  to{
-    transform:
-      translateY(-20vh)
-      rotate(360deg);
-  }
-
-}
-
-.oceanAnim{
-  animation-name:oceanMove;
-}
-
-@keyframes oceanMove{
-
-  from{
-    transform:
-      translateX(-20vw)
-      translateY(0px);
-  }
-
-  to{
-    transform:
-      translateX(120vw)
-      translateY(-25px);
-  }
-
-}
-
-.forestAnim{
-  animation-name:forestDrift;
-}
-
-@keyframes forestDrift{
-
-  from{
-    transform:
-      translateY(-20vh)
-      translateX(0px);
-  }
-
-  to{
-    transform:
-      translateY(120vh)
-      translateX(90px);
-  }
-
-}
-
-/* ================= HUD ================= */
-
+/* HUD */
 #hud{
   position:fixed;
   top:10px;
@@ -266,1100 +107,155 @@ body{
   width:100%;
   display:flex;
   justify-content:space-between;
-  padding:0 18px;
-  z-index:50;
-  font-size:20px;
-  font-weight:bold;
+  padding:0 16px;
 }
 
-/* ================= APP ================= */
-
-#app{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  gap:20px;
-  padding:20px;
-}
-
-/* ================= LETTER ================= */
-
-#letter{
-  font-size:160px;
-
-  background:rgba(255,255,255,.12);
-
-  padding:25px 55px;
-
-  border-radius:30px;
-
-  backdrop-filter:blur(6px);
-
-  box-shadow:
-    0 0 30px rgba(255,255,255,.12);
-
-  transition:transform .4s ease;
-}
-
-/* ================= ACTION ================= */
-
-#action{
-  font-size:110px;
-}
-
-/* ================= PHRASE ================= */
-
-#phrase{
-  min-height:40px;
-  font-size:30px;
-  font-weight:bold;
-  color:#ffe28a;
-}
-
-/* ================= CONTROLS ================= */
-
-#controls{
-  position:fixed;
-  bottom:14px;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  justify-content:center;
-  z-index:100;
-}
-
-button,select{
-
-  border:none;
-
-  border-radius:16px;
-
-  padding:12px 16px;
-
-  font-size:14px;
-
-  font-weight:800;
-
-  color:white;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,.18),
-      rgba(255,255,255,.08)
-    );
-
-  backdrop-filter:blur(8px);
-
-  box-shadow:
-    0 4px 18px rgba(0,0,0,.35),
-    inset 0 1px 1px rgba(255,255,255,.15);
-
-  transition:.25s ease;
-
-  cursor:pointer;
-
-}
-
-/* FIX DROPDOWN OPTIONS */
-
-select option{
-
-  background:#10151f;
-  color:white;
-
-}
-
-button:hover,
-select:hover{
-
-  transform:translateY(-2px);
-
-  box-shadow:
-    0 8px 24px rgba(0,0,0,.45);
-
-}
-
-button:active{
-
-  transform:scale(.96);
-
-}
-
-/* ================= STAR ================= */
-
+/* STAR */
 #starWrap{
   position:fixed;
   top:50%;
   left:50%;
-  transform:
-    translate(-50%,-50%)
-    scale(0);
-
-  z-index:999;
-
+  transform:translate(-50%,-50%) scale(0);
   font-size:180px;
-
-  opacity:0;
+  z-index:999;
 }
 
-.starPop{
-  animation:starPop .9s ease;
+.starPop{animation:pop .8s ease;}
+
+@keyframes pop{
+  0%{transform:translate(-50%,-50%) scale(0);}
+  50%{transform:translate(-50%,-50%) scale(1.4);}
+  100%{transform:translate(-50%,-50%) scale(0);}
 }
-
-@keyframes starPop{
-
-  0%{
-    transform:
-      translate(-50%,-50%)
-      scale(0);
-    opacity:0;
-  }
-
-  50%{
-    transform:
-      translate(-50%,-50%)
-      scale(1.4);
-    opacity:1;
-  }
-
-  100%{
-    transform:
-      translate(-50%,-50%)
-      scale(0);
-    opacity:0;
-  }
-
-}
-
-/* ================= CINEMATIC ================= */
-
-.calm{
-  animation:softFloat 2.5s ease-in-out;
-}
-
-.fun{
-  animation:bounce .8s infinite;
-}
-
-.surprise{
-  animation:surprise .5s ease;
-}
-
-@keyframes softFloat{
-
-  50%{
-    transform:translateY(-12px);
-  }
-
-}
-
-@keyframes bounce{
-
-  50%{
-    transform:translateY(-24px);
-  }
-
-}
-
-@keyframes surprise{
-
-  50%{
-    transform:
-      scale(1.18)
-      rotate(4deg);
-  }
-
-}
-
-/* ================= ACTION ANIMS ================= */
-
-.clap{
-  animation:clapAnim .7s infinite;
-}
-
-.jump{
-  animation:jumpAnim .7s infinite;
-}
-
-.spin{
-  animation:spinAnim 1.1s linear infinite;
-}
-
-.fly{
-  animation:flyAnim 1s infinite alternate;
-}
-
-.hop{
-  animation:hopAnim .6s infinite;
-}
-
-.look{
-  animation:lookAnim 1s infinite alternate;
-}
-
-.quiet{
-  animation:quietAnim 2s infinite;
-}
-
-.run{
-  animation:runAnim .5s infinite alternate;
-}
-
-.sit{
-  animation:sitAnim 1.5s infinite;
-}
-
-.sleep{
-  animation:sleepAnim 2s infinite;
-}
-
-.stomp{
-  animation:stompAnim .4s infinite;
-}
-
-.stretch{
-  animation:stretchAnim 1s infinite alternate;
-}
-
-.strong{
-  animation:strongAnim 1s infinite alternate;
-}
-
-.walk{
-  animation:walkAnim 1s infinite alternate;
-}
-
-.wave{
-  animation:waveAnim 1s infinite;
-}
-
-@keyframes clapAnim{
-  50%{transform:scale(1.3);}
-}
-
-@keyframes jumpAnim{
-  50%{transform:translateY(-40px);}
-}
-
-@keyframes spinAnim{
-  from{transform:rotate(0deg);}
-  to{transform:rotate(360deg);}
-}
-
-@keyframes flyAnim{
-  from{transform:translateX(-25px);}
-  to{transform:translateX(25px);}
-}
-
-@keyframes hopAnim{
-  50%{transform:translateY(-30px);}
-}
-
-@keyframes lookAnim{
-  from{transform:translateX(-10px);}
-  to{transform:translateX(10px);}
-}
-
-@keyframes quietAnim{
-  50%{opacity:.5;}
-}
-
-@keyframes runAnim{
-  from{transform:translateX(-18px);}
-  to{transform:translateX(18px);}
-}
-
-@keyframes sitAnim{
-  50%{transform:translateY(10px);}
-}
-
-@keyframes sleepAnim{
-  50%{opacity:.35;}
-}
-
-@keyframes stompAnim{
-  50%{transform:translateY(15px);}
-}
-
-@keyframes stretchAnim{
-  to{transform:scaleY(1.25);}
-}
-
-@keyframes strongAnim{
-  to{transform:scale(1.15);}
-}
-
-@keyframes walkAnim{
-  from{transform:translateX(-10px);}
-  to{transform:translateX(10px);}
-}
-
-@keyframes waveAnim{
-  50%{transform:rotate(18deg);}
-}
-  
-/* ================= MOBILE ================= */
-
-@media(max-width:768px){
-
-  #title{
-    font-size:58px;
-  }
-
-  #sub{
-    font-size:34px;
-  }
-
-  #letter{
-    font-size:100px;
-    padding:20px 35px;
-  }
-
-  #action{
-    font-size:85px;
-  }
-
-  #phrase{
-    font-size:22px;
-  }
-
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- ================= INTRO ================= -->
-
-<div id="intro">
-
-  <div id="titleWrap">
-
-    <div id="created">
-      CREATED BY
-    </div>
-
-    <div id="title">
-      Amtun Noor
-    </div>
-
-  </div>
-
-  <div id="sub">
-    <small>For</small> Mariam & Hamza
-  </div>
-
-</div>
-
-<!-- ================= BACKGROUNDS ================= -->
-
 <div id="bg1" class="bg"></div>
 <div id="bg2" class="bg"></div>
-
 <div class="overlay"></div>
 
-<!-- ================= WORLD ================= -->
-
-<div id="world"></div>
-
-<!-- ================= HUD ================= -->
-
 <div id="hud">
-
-  <div id="level">
-    Level 1
-  </div>
-
-  <div id="stars">
-    ⭐ 0
-  </div>
-
+  <div id="level">Level 1</div>
+  <div id="stars">⭐ 0</div>
 </div>
 
-<!-- ================= STAR ================= -->
-
-<div id="starWrap">
-  ⭐
-</div>
-
-<!-- ================= APP ================= -->
+<div id="starWrap">⭐</div>
 
 <div id="app">
-
   <div id="letter">ا</div>
-
   <div id="action">👏</div>
-
   <div id="phrase"></div>
-
 </div>
 
-<!-- ================= CONTROLS ================= -->
-
 <div id="controls">
-
-<select id="speedSelect">
-  <option value="fast">FAST</option>
-  <option value="normal" selected>NORMAL</option>
-  <option value="slow">SLOW</option>
+<select id="speed">
+<option value="fast">FAST</option>
+<option value="normal" selected>NORMAL</option>
+<option value="slow">SLOW</option>
 </select>
 
-<select id="modeSelect">
-  <option value="auto">AUTO</option>
-  <option value="manual">MANUAL</option>
+<select id="mode">
+<option value="auto">AUTO</option>
+<option value="manual">MANUAL</option>
 </select>
 
-<select id="orderSelect">
-  <option value="sequence">SEQUENCE</option>
-  <option value="random">RANDOM</option>
+<select id="order">
+<option value="seq">SEQUENCE</option>
+<option value="rand">RANDOM</option>
 </select>
 
-<button onclick="next()">
-  NEXT
-</button>
-
-<button onclick="togglePause()">
-  PAUSE
-</button>
-
+<button onclick="next()">NEXT</button>
+<button onclick="togglePause()">PAUSE</button>
 </div>
 
 <script>
 
-/* ================= INTRO LETTERS ================= */
-
-const introLetters=[
-  "ا","ب","ت","ث","ج","ح",
-  "خ","د","ر","س","ش","ص"
+/* ================= FULL THEME SET ================= */
+const themes = [
+{bg:"assets/images/themes/snow.webp",anim:"snowAnim"},
+{bg:"assets/images/themes/snow_2.webp",anim:"snowAnim"},
+{bg:"assets/images/themes/garden.webp",anim:"gardenAnim"},
+{bg:"assets/images/themes/ocean.webp",anim:"oceanAnim"},
+{bg:"assets/images/themes/ocean_2.webp",anim:"oceanAnim"},
+{bg:"assets/images/themes/forest.webp",anim:"forestAnim"},
+{bg:"assets/images/themes/forest_2.webp",anim:"forestAnim"},
+{bg:"assets/images/themes/rainbow.webp",anim:"rainbowAnim"},
+{bg:"assets/images/themes/rainbow_2.webp",anim:"rainbowAnim"},
+{bg:"assets/images/themes/balloon.webp",anim:"balloonAnim"}
 ];
 
-for(let i=0;i<30;i++){
+let level=1,stars=0,current=0;
+let auto=true,paused=false,random=false;
+let bgFlip=true,started=false;
 
-  const d=document.createElement("div");
-
-  d.className="introLetter";
-
-  d.innerText=
-    introLetters[
-      Math.floor(
-        Math.random()*introLetters.length
-      )
-    ];
-
-  d.style.left=
-    Math.random()*100+"vw";
-
-  d.style.animationDuration=
-    (8+Math.random()*10)+"s";
-
-  d.style.fontSize=
-    (30+Math.random()*55)+"px";
-
-  document
-    .getElementById("intro")
-    .appendChild(d);
-
-}
-
-/* ================= CORE ================= */
-
-let current=0;
-let stars=0;
-let level=1;
-
-let autoMode=true;
-let paused=false;
-let randomMode=false;
-
-let speed=2500;
-
-let bgFlip=true;
-
-let started=false;
-
-/* ================= AUDIO ================= */
-
-const laudio=new Audio();
-const aaudio=new Audio();
-const praiseAudio=new Audio();
-
-const starSound=
-  new Audio(
-    "assets/sounds/system/star.mp3"
-  );
-
-starSound.volume=.08;
-
-const ambient=
-  new Audio(
-    "assets/sounds/system/ambient.mp3"
-  );
-
+/* AUDIO */
+const ambient=new Audio("assets/sounds/system/ambient.mp3");
 ambient.loop=true;
-ambient.volume=.18;
 
-/* ================= LETTERS ================= */
+/* AUDIO UNLOCK (CRITICAL FIX) */
+document.addEventListener("pointerdown",()=>{
+  ambient.play().then(()=>ambient.pause()).catch(()=>{});
+},{once:true});
 
-const letters=[
+/* PRELOAD ALL THEMES */
+themes.forEach(t=>{
+  const i=new Image();
+  i.src=t.bg;
+});
 
-{char:"ا",audio:"assets/sounds/letters/alif.mp3"},
-{char:"ب",audio:"assets/sounds/letters/ba.mp3"},
-{char:"ت",audio:"assets/sounds/letters/ta.mp3"},
-{char:"ث",audio:"assets/sounds/letters/thaa.mp3"},
-{char:"ج",audio:"assets/sounds/letters/jeem.mp3"},
-{char:"ح",audio:"assets/sounds/letters/haa.mp3"},
-{char:"خ",audio:"assets/sounds/letters/kha.mp3"},
-{char:"د",audio:"assets/sounds/letters/daal.mp3"},
-{char:"ذ",audio:"assets/sounds/letters/zaal.mp3"},
-{char:"ر",audio:"assets/sounds/letters/raa.mp3"},
-{char:"ز",audio:"assets/sounds/letters/zaa.mp3"},
-{char:"س",audio:"assets/sounds/letters/seen.mp3"},
-{char:"ش",audio:"assets/sounds/letters/sheen.mp3"},
-{char:"ص",audio:"assets/sounds/letters/saad.mp3"},
-{char:"ض",audio:"assets/sounds/letters/dad.mp3"},
-{char:"ط",audio:"assets/sounds/letters/toa.mp3"},
-{char:"ظ",audio:"assets/sounds/letters/zoa.mp3"},
-{char:"ع",audio:"assets/sounds/letters/ain.mp3"},
-{char:"غ",audio:"assets/sounds/letters/ghain.mp3"},
-{char:"ف",audio:"assets/sounds/letters/fa.mp3"},
-{char:"ق",audio:"assets/sounds/letters/qaaf.mp3"},
-{char:"ك",audio:"assets/sounds/letters/kaaf.mp3"},
-{char:"ل",audio:"assets/sounds/letters/laam.mp3"},
-{char:"م",audio:"assets/sounds/letters/meem.mp3"},
-{char:"ن",audio:"assets/sounds/letters/noon.mp3"},
-{char:"ه",audio:"assets/sounds/letters/ha.mp3"},
-{char:"و",audio:"assets/sounds/letters/waw.mp3"},
-{char:"ي",audio:"assets/sounds/letters/yaa.mp3"}
-
-];
-
-/* ================= ACTIONS ================= */
-
-const actions=[
-
-{
-icon:"👏",
-name:"clap",
-class:"fun",
-audio:"assets/sounds/actions/clap.mp3",
-phrase:"CLAP!"
-},
-
-{
-icon:"✈️",
-name:"fly",
-class:"calm",
-audio:"assets/sounds/actions/fly.mp3",
-phrase:"FLY!"
-},
-
-{
-icon:"🐸",
-name:"hop",
-class:"fun",
-audio:"assets/sounds/actions/hop.mp3",
-phrase:"HOP!"
-},
-
-{
-icon:"🦘",
-name:"jump",
-class:"fun",
-audio:"assets/sounds/actions/jump.mp3",
-phrase:"JUMP!"
-},
-
-{
-icon:"👀",
-name:"look",
-class:"calm",
-audio:"assets/sounds/actions/look.mp3",
-phrase:"LOOK!"
-},
-
-{
-icon:"🤫",
-name:"quiet",
-class:"calm",
-audio:"assets/sounds/actions/quiet.mp3",
-phrase:"QUIET!"
-},
-
-{
-icon:"🏃",
-name:"run",
-class:"fun",
-audio:"assets/sounds/actions/run.mp3",
-phrase:"RUN!"
-},
-
-{
-icon:"🧎",
-name:"sit",
-class:"calm",
-audio:"assets/sounds/actions/sit.mp3",
-phrase:"SIT!"
-},
-
-{
-icon:"💤",
-name:"sleep",
-class:"calm",
-audio:"assets/sounds/actions/sleep.mp3",
-phrase:"SLEEP!"
-},
-
-{
-icon:"🌀",
-name:"spin",
-class:"surprise",
-audio:"assets/sounds/actions/spin.mp3",
-phrase:"SPIN!"
-},
-
-{
-icon:"🦶",
-name:"stomp",
-class:"fun",
-audio:"assets/sounds/actions/stomp.mp3",
-phrase:"STOMP!"
-},
-
-{
-icon:"🤸",
-name:"stretch",
-class:"fun",
-audio:"assets/sounds/actions/stretch.mp3",
-phrase:"STRETCH!"
-},
-
-{
-icon:"💪",
-name:"strong",
-class:"surprise",
-audio:"assets/sounds/actions/strong.mp3",
-phrase:"STRONG!"
-},
-
-{
-icon:"🚶",
-name:"walk",
-class:"calm",
-audio:"assets/sounds/actions/walk.mp3",
-phrase:"WALK!"
-},
-
-{
-icon:"🙌",
-name:"wave",
-class:"fun",
-audio:"assets/sounds/actions/wave.mp3",
-phrase:"WAVE!"
-}
-
-];
-
-/* ================= THEMES ================= */
-
-const themes=[
-
-{
-name:"snow",
-bg:"assets/images/themes/snow.webp",
-items:["❄️","🌨️","☃️"],
-anim:"snowAnim"
-},
-
-{
-name:"garden",
-bg:"assets/images/themes/garden.webp",
-items:["🌸","🦋","🌼"],
-anim:"gardenAnim"
-},
-
-{
-name:"ocean",
-bg:"assets/images/themes/ocean.webp",
-items:["🐠","🐟","🫧"],
-anim:"oceanAnim"
-},
-
-{
-name:"forest",
-bg:"assets/images/themes/forest.webp",
-items:["🍃","🌿","🌱"],
-anim:"forestAnim"
-}
-
-];
-
-/* ================= THEME ================= */
-
+/* THEME ENGINE */
 function setTheme(){
+  const t=themes[level%themes.length];
+  const next=bgFlip?bg2:bg1;
+  const old=bgFlip?bg1:bg2;
 
-  const theme=
-    themes[(level-1)%themes.length];
-
-  level.innerText=
-    `Level ${level}`;
-
-  const nextBg=
-    bgFlip
-      ? bg2
-      : bg1;
-
-  const oldBg=
-    bgFlip
-      ? bg1
-      : bg2;
-
-  nextBg.style.backgroundImage=
-    `url('${theme.bg}')`;
-
-  nextBg.style.opacity=1;
-
-  oldBg.style.opacity=0;
+  next.style.backgroundImage=`url('${t.bg}')`;
+  next.style.opacity=1;
+  old.style.opacity=0;
 
   bgFlip=!bgFlip;
-
-  spawnWorld(theme);
-
 }
 
-/* ================= WORLD ================= */
-
-function spawnWorld(theme){
-
-  world.innerHTML="";
-
-  for(let i=0;i<14;i++){
-
-    const d=document.createElement("div");
-
-    d.className=
-      `obj ${theme.anim}`;
-
-    d.innerText=
-      theme.items[
-        Math.floor(
-          Math.random()*theme.items.length
-        )
-      ];
-
-    d.style.left=
-      Math.random()*100+"vw";
-
-    d.style.top=
-      Math.random()*100+"vh";
-
-    d.style.fontSize=
-      (20+Math.random()*40)+"px";
-
-    d.style.animationDuration=
-      (6+Math.random()*8)+"s";
-
-    world.appendChild(d);
-
-  }
-
-}
-
-/* ================= STAR ================= */
-
-function showStar(){
-
-  stars++;
-
-  document.getElementById("stars").innerText=
-    `⭐ ${stars}`;
-
-  starWrap.classList.remove(
-    "starPop"
-  );
-
-  void starWrap.offsetWidth;
-
-  starWrap.classList.add(
-    "starPop"
-  );
-
-  const s=starSound.cloneNode();
-
-  s.volume=.08;
-
-  s.play().catch(()=>{});
-
-}
-
-/* ================= AUDIO ================= */
-
-function playSequence(letterObj,actionObj){
-
-  laudio.pause();
-  aaudio.pause();
-  praiseAudio.pause();
-
-  laudio.currentTime=0;
-  aaudio.currentTime=0;
-  praiseAudio.currentTime=0;
-
-  laudio.onended=null;
-  aaudio.onended=null;
-
-  laudio.src=
-    letterObj.audio;
-
-  aaudio.src=
-    actionObj.audio;
-
-  const praiseList=[
-
-    "assets/sounds/phrases/amazing.mp3",
-    "assets/sounds/phrases/fantastic.mp3",
-    "assets/sounds/phrases/well-done.mp3",
-    "assets/sounds/phrases/keep-going.mp3"
-
-  ];
-
-  praiseAudio.src=
-    praiseList[
-      Math.floor(
-        Math.random()*praiseList.length
-      )
-    ];
-
-  /* LETTER */
-
-  laudio.play().catch(()=>{});
-
-  /* ACTION AFTER LETTER */
-
-  laudio.onended=()=>{
-
-    aaudio.play().catch(()=>{});
-
-    /* PRAISE AFTER ACTION */
-
-    aaudio.onended=()=>{
-
-      praiseAudio.play().catch(()=>{});
-
-    };
-
-  };
-
-}
-/* ================= STEP ================= */
-
+/* CORE STEP */
 function step(){
-
-  if(paused) return;
-
-  let idx;
-
-  if(randomMode){
-
-    idx=
-      Math.floor(
-        Math.random()*letters.length
-      );
-
-  }else{
-
-    idx=
-      current % letters.length;
-
-  }
-
-  const L=letters[idx];
-
-  const A=
-    actions[
-      Math.floor(
-        Math.random()*actions.length
-      )
-    ];
-
-  letter.innerText=
-    L.char;
-
-  action.innerText=
-    A.icon;
-action.className="";
-
-void action.offsetWidth;
-
-action.classList.add(
-  A.name
-);
-  phrase.innerText=
-    A.phrase;
-
-  letter.classList.remove(
-    "calm",
-    "fun",
-    "surprise"
-  );
-
-  letter.classList.add(
-    A.class
-  );
-
-  playSequence(L,A);
-
   setTheme();
-
-  showStar();
-
   current++;
-
-  if(current%5===0){
-
-    level++;
-
-  }
-
+  if(current%5===0) level++;
 }
 
-/* ================= NEXT ================= */
+/* NEXT */
+function next(){step();}
 
-function next(){
-
-  step();
-
-}
-
-/* ================= LOOP ================= */
-
-function restartLoop(){
-
-  clearInterval(window.loop);
-
-  window.loop=setInterval(()=>{
-
-    if(autoMode && !paused){
-
-      step();
-
-    }
-
-  },speed);
-
-}
-
-/* ================= SPEED ================= */
-
-speedSelect.onchange=function(){
-
-  speed=
-    this.value==="fast"
-      ? 1200
-      : this.value==="normal"
-      ? 2500
-      : 4500;
-
-  restartLoop();
-
-};
-
-/* ================= MODES ================= */
-
-modeSelect.onchange=function(){
-
-  autoMode=
-    this.value==="auto";
-
-};
-
-orderSelect.onchange=function(){
-
-  randomMode=
-    this.value==="random";
-
-};
-
-/* ================= PAUSE ================= */
+/* PAUSE */
 function togglePause(){
-
   paused=!paused;
-
-  if(paused){
-
-    clearInterval(window.loop);
-
-    ambient.pause();
-
-  }else{
-
-    ambient.play().catch(()=>{});
-
-    restartLoop();
-
-  }
-
+  if(paused) ambient.pause();
+  else ambient.play().catch(()=>{});
 }
-/* ================= START ================= */
 
-function startGame(){
-
+/* START */
+function start(){
   if(started) return;
-
   started=true;
 
-  intro.remove();
+  document.getElementById("intro")?.remove();
 
-  /* SAFE AMBIENT START */
-
-  ambient.currentTime=0;
-
-  const playAmbient=()=>{
-
-    ambient.play().then(()=>{
-
-      ambient.volume=.24;
-
-    }).catch(()=>{});
-
-  };
-
-  playAmbient();
-
+  ambient.play().catch(()=>{});
   step();
 
-  restartLoop();
-
+  setInterval(()=>{
+    if(auto && !paused) step();
+  },2000);
 }
-/* ================= AUTO START ================= */
 
-window.addEventListener(
-  "load",
-  ()=>{
+/* START SAFE */
+window.addEventListener("load",()=>{
+  setTimeout(start,2000);
+});
 
-    setTimeout(()=>{
-
-      startGame();
-
-    },3500);
-
-  }
-);
-
-document.body.addEventListener(
-  "click",
-  ()=>{
-
-    startGame();
-
-  },
-  {once:true}
-);
+document.body.addEventListener("click",start,{once:true});
 
 </script>
 
