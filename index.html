@@ -3,242 +3,410 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>Arabic Alpha Learning World V7 - Locked Engine</title>
-
+<title>Arabic Alpha Learning World V8 - Ultimate Engine</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
-
 <style>
-*{box-sizing:border-box}
+  *{box-sizing:border-box}
+  body{margin:0; overflow:hidden; background:#111; font-family:Fredoka,sans-serif; color:#fff; user-select:none;}
+  
+  /* MAIN CANVAS LAYOUT */
+  #app{
+    height:100vh; display:flex; flex-direction:column; justify-content:center; 
+    align-items:center; gap:24px; text-align:center; position:relative; z-index:5;
+    padding-bottom: 120px;
+  }
+  
+  /* DISPLAY CARDS (Beautiful Faded Tile Layout) */
+  .display-tile {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 32px;
+    padding: 30px 60px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0; transform: scale(0.6);
+  }
 
-body{
-  margin:0;
-  overflow:hidden;
-  background:#000;
-  font-family:Fredoka,sans-serif;
-  color:#fff;
-}
+  #letter { font-size:180px; font-weight:700; color: #fff; text-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+  #action { font-size:140px; margin-top: 10px; transition: all 0.4s ease; }
+  #phrase { font-size:42px; color:#ffd86b; font-weight:700; margin-top: 10px; text-shadow: 0 3px 8px rgba(0,0,0,0.5); }
 
-#app{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  gap:18px;
-  padding-bottom:180px;
-  text-align:center;
-}
+  /* UI STATES & ANIMATIONS */
+  .visible { opacity:1 !important; transform:scale(1) !important; }
+  
+  /* Action-Specific Dynamic Loops */
+  .anim-bounce { animation: actBounce 0.6s infinite alternate; }
+  .anim-shake { animation: actShake 0.5s infinite; }
+  .anim-spin { animation: actSpin 2s infinite linear; }
+  .anim-pulse { animation: actPulse 1s infinite alternate; }
 
-/* TV MODE */
-@media(min-width:1200px){
-  #letter{font-size:240px}
-  #action{font-size:140px}
-  #phrase{font-size:40px}
-}
+  @keyframes actBounce { 0%{transform:translateY(0);} 100%{transform:translateY(-30px);} }
+  @keyframes actShake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-10px) rotate(-5deg);} 75%{transform:translateX(10px) rotate(5deg);} }
+  @keyframes actSpin { 100%{transform:rotate(360deg);} }
+  @keyframes actPulse { 0%{transform:scale(1);} 100%{transform:scale(1.25);} }
 
-/* BACKGROUNDS */
-.bg{
-  position:fixed;
-  inset:0;
-  background-size:cover;
-  background-position:center;
-  transition:opacity 1s ease;
-  z-index:-10;
-}
-#bg2{opacity:0}
+  /* OVERLAYS & ENVIRONMENTAL FIELDS */
+  .bg { position:fixed; inset:0; background-size:cover; background-position:center; transition:opacity 1.5s ease; z-index:-10; }
+  .overlay { position:fixed; inset:0; background:radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%); z-index:-9; }
+  #particle-container { position:fixed; inset:0; pointer-events:none; z-index:-5; }
 
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.25);
-  z-index:-9;
-}
+  /* SYSTEM LEVEL REWARDS (HUD & STAR POP) */
+  #hud { position: fixed; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; font-size: 24px; font-weight: 700; z-index: 50; text-shadow: 0 2px 4px #000; }
+  #level-indicator { background: rgba(0,0,0,0.4); padding: 8px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); }
+  
+  #star-pop {
+    position: fixed; inset: 0; display: flex; justify-content: center; align-items: center;
+    z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.5);
+  }
+  #star-pop.boom { opacity: 1; transform: scale(1); }
+  .star-graphic { position: relative; font-size: 280px; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5)); }
+  .star-count { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: 80px; color: #fff; font-weight: 700; top: 20px; text-shadow: 0 4px 8px rgba(0,0,0,0.6); }
 
-/* MAIN UI */
-#letter{
-  font-size:150px;
-  padding:20px 40px;
-  background:rgba(255,255,255,.1);
-  border-radius:24px;
-}
+  /* MASCOT GUIDE BANNER */
+  #mascot-banner {
+    position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, #ff7675, #6c5ce7); padding: 15px 40px;
+    border-radius: 0 0 25px 25px; font-size: 24px; font-weight: 700; transition: top 0.5s ease;
+    z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 15px;
+  }
+  #mascot-banner.show { top: 0; }
 
-#action{
-  font-size:110px;
-}
+  /* ENGINE CONTROL MATRIX HUD */
+  #controls { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:100; display:flex; gap:12px; flex-wrap:wrap; background:rgba(0,0,0,0.6); padding:12px 24px; border-radius:30px; backdrop-filter:blur(10px); }
+  button { padding:12px 24px; border:none; border-radius:20px; font-weight:bold; font-size:16px; cursor:pointer; background:#fff; color:#333; transition: all 0.2s; }
+  button:active { transform: scale(0.95); }
+  button:disabled { opacity:0.4; cursor:not-allowed; }
+  .active-setting { background: #6c5ce7 !important; color: #fff !important; box-shadow: 0 0 15px rgba(108,92,231,0.6); }
 
-#phrase{
-  min-height:50px;
-  font-size:28px;
-  color:#ffd86b;
-}
-
-/* CONTROLS */
-#controls{
-  position:fixed;
-  bottom:12px;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-button{
-  padding:10px 14px;
-  border:none;
-  border-radius:12px;
-  font-weight:bold;
-}
+  /* PARTICLE VECTOR MOTIONS */
+  @keyframes fall { 0%{transform:translateY(-10vh) rotate(0deg);} 100%{transform:translateY(110vh) rotate(360deg);} }
+  @keyframes rise { 0%{transform:translateY(110vh) rotate(0deg); opacity:0;} 20%{opacity:1;} 80%{opacity:1;} 100%{transform:translateY(-10vh) rotate(360deg); opacity:0;} }
+  @keyframes confetti-fly { 0%{transform:translate(0,0) rotate(0deg); opacity:1;} 100%{transform:translate(var(--x), var(--y)) rotate(720deg); opacity:0;} }
 </style>
 </head>
-
 <body>
 
 <div id="bg1" class="bg"></div>
 <div id="bg2" class="bg"></div>
 <div class="overlay"></div>
+<div id="particle-container"></div>
+
+<div id="hud">
+  <div id="level-indicator">LEVEL: <span id="lbl-level">1</span></div>
+</div>
+
+<div id="mascot-banner">
+  <span id="mascot-avatar">✨</span> <span id="mascot-text">LET'S LEARN!</span>
+</div>
+
+<div id="star-pop">
+  <div class="star-graphic">
+    ⭐
+    <div class="star-count" id="lbl-star-count">0</div>
+  </div>
+</div>
 
 <div id="app">
-  <div id="letter">ا</div>
-  <div id="action">👋</div>
-  <div id="phrase"></div>
+  <div id="tile-wrapper" class="display-tile">
+    <div id="letter">ا</div>
+    <div id="action">👋</div>
+    <div id="phrase">RUN FAST!</div>
+  </div>
 </div>
 
 <div id="controls">
-  <button onclick="next()">NEXT</button>
+  <button id="btn-manual" class="active-setting" onclick="setMode('manual')">MANUAL</button>
+  <button id="btn-auto" onclick="setMode('auto')">AUTO</button>
+  <span style="border-left: 1px solid rgba(255,255,255,0.2); margin: 0 6px;"></span>
+  <button id="spd-slow" onclick="setSpeed('slow')">SLOW</button>
+  <button id="spd-normal" class="active-setting" onclick="setSpeed('normal')">NORMAL</button>
+  <button id="spd-fast" onclick="setSpeed('fast')">FAST</button>
+  <span style="border-left: 1px solid rgba(255,255,255,0.2); margin: 0 6px;"></span>
+  <button id="btn-next" onclick="triggerNextManual()" style="background:#ffd86b; color:#333;">NEXT ➡️</button>
 </div>
 
 <script>
+/* ===================== DATA ARCHITECTURE ===================== */
+const letters = ["ا","ب","ت","ث","ج","ح","خ","د","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"];
 
-/* ===================== LETTERS ===================== */
-const letters = [
-"ا","ب","ت","ث","ج","ح","خ","د","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"
-];
-
-/* ===================== ALL ACTIONS FROM YOUR REPO ===================== */
 const actions = [
-{ name:"clap", icon:"👏", sound:"clap.mp3", anim:"clap" },
-{ name:"fly", icon:"🪶", sound:"fly.mp3", anim:"fly" },
-{ name:"hop", icon:"🐸", sound:"hop.mp3", anim:"hop" },
-{ name:"jump", icon:"🦘", sound:"jump.mp3", anim:"jump" },
-{ name:"look", icon:"👀", sound:"look.mp3", anim:"look" },
-{ name:"quiet", icon:"🤫", sound:"quiet.mp3", anim:"quiet" },
-{ name:"run", icon:"🏃", sound:"run.mp3", anim:"run" },
-{ name:"sit", icon:"🪑", sound:"sit.mp3", anim:"sit" },
-{ name:"sleep", icon:"😴", sound:"sleep.mp3", anim:"sleep" },
-{ name:"spin", icon:"🌀", sound:"spin.mp3", anim:"spin" },
-{ name:"stomp", icon:"👣", sound:"stomp.mp3", anim:"stomp" },
-{ name:"stretch", icon:"🤸", sound:"stretch.mp3", anim:"stretch" },
-{ name:"strong", icon:"💪", sound:"strong.mp3", anim:"strong" },
-{ name:"walk", icon:"🚶", sound:"walk.mp3", anim:"walk" },
-{ name:"wave", icon:"👋", sound:"wave.mp3", anim:"wave" }
+  { name:"clap", icon:"👏", sound:"clap.mp3", anim:"anim-shake" },
+  { name:"fly", icon:"🪶", sound:"fly.mp3", anim:"anim-bounce" },
+  { name:"hop", icon:"🐸", sound:"hop.mp3", anim:"anim-bounce" },
+  { name:"jump", icon:"🦘", sound:"jump.mp3", anim:"anim-bounce" },
+  { name:"look", icon:"👀", sound:"look.mp3", anim:"anim-pulse" },
+  { name:"quiet", icon:"🤫", sound:"quiet.mp3", anim:"anim-pulse" },
+  { name:"run", icon:"🏃", sound:"run.mp3", anim:"anim-shake" },
+  { name:"sit", icon:"🪑", sound:"sit.mp3", anim:"anim-pulse" },
+  { name:"sleep", icon:"😴", sound:"sleep.mp3", anim:"anim-pulse" },
+  { name:"spin", icon:"🌀", sound:"spin.mp3", anim:"anim-spin" },
+  { name:"stomp", icon:"👣", sound:"stomp.mp3", anim:"anim-shake" },
+  { name:"stretch", icon:"🤸", sound:"stretch.mp3", anim:"anim-bounce" },
+  { name:"strong", icon:"💪", sound:"strong.mp3", anim:"anim-pulse" },
+  { name:"walk", icon:"🚶", sound:"walk.mp3", anim:"anim-bounce" },
+  { name:"wave", icon:"👋", sound:"wave.mp3", anim:"anim-shake" }
 ];
 
-/* ===================== THEMES ===================== */
+const phrases = [
+  "RUN FAST", "JUMP HIGH", "STOMP LOUD", "BE QUIET", "CLAP HANDS",
+  "FLY AWAY", "SPIN ROUND", "STRETCH HIGH", "STAY STRONG", "WAVE HELLO"
+];
+
 const themes = [
-"snow","snow_2",
-"garden",
-"ocean","ocean_2",
-"forest","forest_2",
-"rainbow","rainbow_2",
-"balloon"
-].map(t=>`assets/images/themes/${t}.webp`);
+  { name:"snow", src:"assets/images/themes/snow.webp", p:["❄️","🌨️","⚪"] },
+  { name:"garden", src:"assets/images/themes/garden.webp", p:["🌸","🦋","🍃","🌼"] },
+  { name:"ocean", src:"assets/images/themes/ocean.webp", p:["🫧","🐟","🐠"] },
+  { name:"forest", src:"assets/images/themes/forest.webp", p:["🍂","🍁","🍃"] },
+  { name:"party", src:"assets/images/themes/balloon.webp", p:["🎈","✨","🎉"] }
+];
 
-/* preload */
-themes.forEach(src=>{
-  const i=new Image();
-  i.src=src;
-});
+/* Preload Assets Engine */
+themes.forEach(t => { const img = new Image(); img.src = t.src; });
 
-/* ===================== STATE ===================== */
-let i=0;
-let bgFlip=true;
+/* ===================== GLOBAL CONFIG MATRIX ===================== */
+let currentIdx = 0;
+let starsCollected = 0;
+let currentLevel = 1;
+let currentMode = "manual"; // manual | auto
+let currentSpeed = "normal"; // slow | normal | fast
+let isEngineRunning = false;
+let bgFlip = true;
+let autoTimeout = null;
 
-/* ===================== DOM ===================== */
-const el = {
-  letter:document.getElementById("letter"),
-  action:document.getElementById("action"),
-  phrase:document.getElementById("phrase"),
-  bg1:document.getElementById("bg1"),
-  bg2:document.getElementById("bg2")
+const delays = {
+  slow: { step: 2000, postPhrase: 2500 },
+  normal: { step: 1200, postPhrase: 1500 },
+  fast: { step: 600, postPhrase: 800 }
 };
 
-/* ===================== AUDIO ===================== */
-const ambient=new Audio("assets/sounds/system/ambient.mp3");
-ambient.loop=true;
-ambient.volume=0.15;
+const el = {
+  letter: document.getElementById("letter"),
+  action: document.getElementById("action"),
+  phrase: document.getElementById("phrase"),
+  tile: document.getElementById("tile-wrapper"),
+  pCon: document.getElementById("particle-container"),
+  lblStar: document.getElementById("lbl-star-count"),
+  starPop: document.getElementById("star-pop"),
+  lblLevel: document.getElementById("lbl-level"),
+  btnNext: document.getElementById("btn-next"),
+  mascot: document.getElementById("mascot-banner"),
+  mascotTxt: document.getElementById("mascot-text")
+};
 
-/* unlock audio */
-document.addEventListener("pointerdown",()=>{
-  ambient.play().then(()=>ambient.pause()).catch(()=>{});
-},{once:true});
+const ambient = new Audio("assets/sounds/system/ambient.mp3");
+ambient.loop = true; ambient.volume = 0.12;
 
-/* ===================== ROTATION ENGINE (KEY FIX) ===================== */
-/* Each LETTER gets its OWN action history pointer */
-const letterActionMap = {};
+document.addEventListener("pointerdown", () => { if(ambient.paused) ambient.play().catch(()=>{}); }, { once: true });
 
-/* init map */
-letters.forEach(l=>{
-  letterActionMap[l]=0;
-});
-
-function getActionForLetter(letter){
-  const idx = letterActionMap[letter];
-  const action = actions[idx % actions.length];
-  letterActionMap[letter] = idx + 1; // rotate per letter usage
-  return action;
+/* ===================== PARTICLE SYSTEMS ===================== */
+function runThemeParticles(theme) {
+  el.pCon.innerHTML = "";
+  const count = 15;
+  for (let i = 0; i < count; i++) {
+    createParticle(theme);
+  }
 }
 
-/* ===================== STEP ===================== */
-function step(){
+function createParticle(theme) {
+  const p = document.createElement("div");
+  p.textContent = theme.p[Math.floor(Math.random() * theme.p.length)];
+  p.style.cssText = `position:absolute; left:${Math.random() * 100}vw; font-size:${24 + Math.random() * 24}px; pointer-events:none; z-index:-1;`;
+  
+  if (theme.name === "ocean" || theme.name === "party") {
+    p.style.animation = `rise ${6 + Math.random() * 6}s linear infinite`;
+  } else {
+    p.style.animation = `fall ${6 + Math.random() * 6}s linear infinite`;
+  }
+  el.pCon.appendChild(p);
+}
 
-  const letter = letters[i % letters.length];
+function triggerConfetti() {
+  const colors = ["🎉", "✨", "🌟", "🟥", "🟨", "🟦", "🟩"];
+  for (let i = 0; i < 40; i++) {
+    const conf = document.createElement("div");
+    conf.textContent = colors[Math.floor(Math.random() * colors.length)];
+    conf.style.position = "absolute";
+    conf.style.left = "50vw";
+    conf.style.top = "50vh";
+    conf.style.fontSize = "24px";
+    conf.style.pointerEvents = "none";
+    
+    const angle = Math.random() * Math.PI * 2;
+    const velocity = 100 + Math.random() * 250;
+    const x = Math.cos(angle) * velocity + "px";
+    const y = Math.sin(angle) * velocity + "px";
+    
+    conf.style.setProperty('--x', x);
+    conf.style.setProperty('--y', y);
+    conf.style.animation = `confetti-fly 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards`;
+    
+    el.pCon.appendChild(conf);
+    setTimeout(() => conf.remove(), 1200);
+  }
+}
 
-  /* ACTION ROTATION PER LETTER (FIXED) */
-  const action = getActionForLetter(letter);
+function triggerLevelBalloons() {
+  el.pCon.innerHTML = "";
+  for(let i=0; i<25; i++) {
+    setTimeout(() => {
+      const b = document.createElement("div");
+      b.textContent = ["🎈", "🎉", "✨"][Math.floor(Math.random() * 3)];
+      b.style.cssText = `position:absolute; left:${10 + Math.random() * 80}vw; font-size:${40 + Math.random()*30}px; pointer-events:none;`;
+      b.style.animation = `rise ${4 + Math.random()*4}s linear forwards`;
+      el.pCon.appendChild(b);
+      setTimeout(() => b.remove(), 8000);
+    }, i * 150);
+  }
+}
 
-  /* UI */
-  el.letter.textContent = letter;
-  el.action.textContent = action.icon;
-  el.phrase.textContent = action.name.toUpperCase();
-
-  /* SOUND */
-  const audio = new Audio(`assets/sounds/actions/${action.sound}`);
-  audio.volume = 0.8;
-  audio.play().catch(()=>{});
-
-  /* AMBIENT MIX */
-  ambient.volume = 0.12;
-  ambient.play().catch(()=>{});
-
-  /* THEME ROTATION */
-  const bg = themes[i % themes.length];
-
-  const next = bgFlip ? el.bg2 : el.bg1;
-  const old = bgFlip ? el.bg1 : el.bg2;
-
-  next.style.backgroundImage=`url('${bg}')`;
-  next.style.opacity=1;
-  old.style.opacity=0;
-
+/* ===================== ENVIRONMENT ENGINES ===================== */
+function updateEnvironment(themeIndex) {
+  const theme = themes[themeIndex % themes.length];
+  const nextBg = bgFlip ? document.getElementById("bg2") : document.getElementById("bg1");
+  const oldBg = bgFlip ? document.getElementById("bg1") : document.getElementById("bg2");
+  
+  nextBg.style.backgroundImage = `url('${theme.src}')`;
+  nextBg.style.opacity = 1;
+  oldBg.style.opacity = 0;
   bgFlip = !bgFlip;
 
-  i++;
+  runThemeParticles(theme);
 }
 
-/* ===================== NEXT ===================== */
-function next(){
-  step();
+function showMascot(text, duration = 2500) {
+  el.mascotTxt.textContent = text;
+  el.mascot.classList.add("show");
+  setTimeout(() => el.mascot.classList.remove("show"), duration);
 }
 
-/* ===================== START ===================== */
-window.addEventListener("load",()=>{
-  setTimeout(step,1200);
+async function playAudio(path) {
+  return new Promise(res => {
+    const audio = new Audio(path);
+    audio.volume = 0.95;
+    audio.onended = res;
+    audio.onerror = res;
+    audio.play().catch(res);
+  });
+}
+
+/* ===================== CORE TIMELINE PIPELINE ===================== */
+async function runSequence() {
+  if (isEngineRunning) return;
+  isEngineRunning = true;
+  el.btnNext.disabled = true;
+
+  // Clear running configurations
+  el.tile.classList.remove("visible");
+  el.action.className = ""; 
+  
+  // 1. Resolve State
+  const letter = letters[currentIdx % letters.length];
+  const action = actions[Math.floor(Math.random() * actions.length)];
+  const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+  const themeIdx = Math.floor((currentIdx) / 5) % themes.length;
+
+  // Track Level Structural Transformations
+  const expectedLevel = Math.floor(currentIdx / 5) + 1;
+  if (expectedLevel > currentLevel) {
+    currentLevel = expectedLevel;
+    el.lblLevel.textContent = currentLevel;
+    showMascot(`🎉 LEVEL ${currentLevel} COMPLETED!`);
+    triggerLevelBalloons();
+    await playAudio("assets/sounds/system/level-up.mp3"); // Ensure fallback handle exists
+    await new Promise(r => setTimeout(r, 2500));
+  }
+
+  // Update Environment Theme
+  updateEnvironment(themeIdx);
+
+  // Set Values Into Dom Elements
+  el.letter.style.display = "block";
+  el.action.style.display = "none";
+  el.phrase.style.display = "none";
+  
+  el.letter.textContent = letter;
+  el.action.textContent = action.icon;
+  el.phrase.textContent = phrase.toUpperCase();
+
+  const activeDelay = delays[currentSpeed];
+
+  // PHASE 1: Say Letter
+  el.tile.classList.add("visible");
+  await playAudio(`assets/sounds/letters/${letter}.mp3`);
+  await new Promise(r => setTimeout(r, activeDelay.step));
+
+  // PHASE 2: Display and Say Action
+  el.action.style.display = "block";
+  el.action.classList.add(action.anim);
+  await playAudio(`assets/sounds/actions/${action.sound}`);
+  
+  // Fire Action Complete Confetti / Reward Sound
+  triggerConfetti();
+  await playAudio("assets/sounds/system/success.mp3");
+  await new Promise(r => setTimeout(r, activeDelay.step));
+
+  // PHASE 3: Phrase Complete Delivery
+  el.phrase.style.display = "block";
+  // If phrase specific callouts are mapped, update route here
+  await playAudio(`assets/sounds/phrases/phrase.mp3`); 
+  await new Promise(r => setTimeout(r, activeDelay.postPhrase));
+
+  // PHASE 4: Score Aggregation Reward Modal
+  starsCollected++;
+  el.lblStar.textContent = starsCollected;
+  el.starPop.classList.add("boom");
+  await playAudio("assets/sounds/system/star.mp3");
+  await new Promise(r => setTimeout(r, 1200));
+  el.starPop.classList.remove("boom");
+
+  // Cycle Loop End Processing
+  currentIdx++;
+  isEngineRunning = false;
+  el.btnNext.disabled = false;
+
+  if (currentMode === "auto") {
+    autoTimeout = setTimeout(runSequence, 1000);
+  }
+}
+
+/* ===================== INTERACTIVE CONTROLS MATRIX ===================== */
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById("btn-manual").classList.remove("active-setting");
+  document.getElementById("btn-auto").classList.remove("active-setting");
+  document.getElementById(`btn-${mode}`).classList.add("active-setting");
+  
+  if (mode === "auto") {
+    el.btnNext.style.display = "none";
+    if (!isEngineRunning) runSequence();
+  } else {
+    el.btnNext.style.display = "inline-block";
+    clearTimeout(autoTimeout);
+  }
+}
+
+function setSpeed(speed) {
+  currentSpeed = speed;
+  document.getElementById("spd-slow").classList.remove("active-setting");
+  document.getElementById("spd-normal").classList.remove("active-setting");
+  document.getElementById("spd-fast").classList.remove("active-setting");
+  document.getElementById(`spd-${speed}`).classList.add("active-setting");
+}
+
+function triggerNextManual() {
+  if (currentMode === "manual" && !isEngineRunning) {
+    runSequence();
+  }
+}
+
+/* ===================== INIT RUNNERS ===================== */
+window.addEventListener("load", () => {
+  updateEnvironment(0);
+  showMascot("WELCOME TO ARABIC ALPHA WORLD! CLICK NEXT TO START!");
 });
-
-document.body.addEventListener("click",step,{once:true});
-
 </script>
-
 </body>
 </html>
