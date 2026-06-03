@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>Arabic World </title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<title>Arabic Alpha Learning World - Premium Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght=500;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box}
   body{
@@ -13,98 +13,157 @@
     height: 100vh; width: 100vw;
   }
   
-  /* SPLASH SCREEN */
+  /* CINEMATIC INTRO OVERLAY SPLASH */
   #intro-splash {
     position: fixed; inset: 0; background: radial-gradient(circle, #1e1b4b 0%, #090514 100%);
     z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
-    transition: opacity 0.6s ease;
+    text-align: center; transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1);
   }
+  .intro-title { font-size: 24px; letter-spacing: 4px; color: #a5b4fc; text-transform: uppercase; margin-bottom: 5px; }
+  .intro-name { font-size: 54px; font-weight: 700; color: #ffd86b; text-shadow: 0 0 30px rgba(255,216,107,0.4); margin-bottom: 40px; }
+  .intro-sub { font-size: 20px; letter-spacing: 2px; color: #cbd5e1; margin-bottom: 5px; }
+  .intro-kids { font-size: 44px; font-weight: 700; background: linear-gradient(45deg, #ff7675, #6c5ce7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 12px rgba(108,92,231,0.3)); margin-bottom: 30px; }
+  
   .loading-btn { 
-    margin-top: 30px; padding: 15px 40px; background: #ffd86b; color: #000; 
-    border: none; border-radius: 40px; font-weight: 700; font-size: 20px; cursor: pointer;
-    box-shadow: 0 10px 20px rgba(255,216,107,0.3);
+    padding: 16px 45px; background: #ffd86b; color: #000; 
+    border: none; border-radius: 40px; font-weight: 700; font-size: 22px; cursor: pointer;
+    box-shadow: 0 10px 25px rgba(255,216,107,0.3); transition: transform 0.15s ease;
   }
+  .loading-btn:active { transform: scale(0.95); }
 
-  /* VIEWPORT ENGINE */
+  /* RESPONSIVE VIEWPORT ENGINE CANVAS */
   #app {
     height: 100vh; width: 100vw; display: flex; flex-direction: column;
     justify-content: center; align-items: center; padding: 20px;
     position: relative; z-index: 5;
   }
   
+  /* FIXED: COMPLETELY SHRINK-TO-FIT CONTENT DRIVEN TILE Layout */
   .display-tile {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50px;
-    width: min(85vw, 700px); 
-    max-height: 65vh;
-    padding: 60px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 40px;
+    
+    /* Dynamically adapts to sizes without holding viewport real estate */
+    width: auto;
+    height: auto;
+    min-width: min(85vw, 420px);
+    max-width: 90vw;
+    
+    /* Tight padding keeping the tile snug against the assets */
+    padding: 30px 40px;
+    
     display: flex; flex-direction: column; justify-content: center; align-items: center;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.5);
-    transition: all 0.4s ease;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.6);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
+  /* ALPHABET CORE GRAPHIC ELEMS */
   #letter { 
-    font-size: clamp(120px, 22vh, 260px); 
-    font-weight: 700; line-height: 1; 
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-size: clamp(110px, 18vh, 220px);
+    font-weight: 700; line-height: 1; margin: 0; padding: 0;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: drop-shadow(0 8px 25px rgba(0,0,0,0.5));
   }
   
   #action-container { 
     display: flex; flex-direction: column; align-items: center; 
-    margin-top: 20px; transition: all 0.4s ease;
+    margin-top: 15px; transition: all 0.3s ease;
+    height: auto;
   }
   
-  #action-icon { font-size: clamp(80px, 12vh, 140px); line-height: 1; }
+  #action-icon { font-size: clamp(75px, 10vh, 120px); line-height: 1; transition: all 0.25s ease; }
   
   #action-text { 
-    font-size: clamp(24px, 4vw, 48px); 
+    font-size: clamp(22px, 3.5vw, 36px); 
     color: #ffd86b; font-weight: 700; 
-    text-transform: uppercase; margin-top: 10px;
-    letter-spacing: 3px; text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    text-transform: uppercase; margin-top: 8px;
+    letter-spacing: 3px; text-shadow: 0 4px 10px rgba(0,0,0,0.6);
   }
 
-  /* FULL SCREEN PARTICLES */
-  #particle-container { position:fixed; inset:0; pointer-events:none; z-index:10; }
+  /* SYSTEM LAYER ENGINES */
+  .anim-bounce { animation: actBounce 0.4s infinite alternate ease-in-out; }
+  .anim-shake { animation: actShake 0.35s infinite linear; }
+  .anim-spin { animation: actSpin 1.4s infinite linear; }
+  .anim-pulse { animation: actPulse 0.7s infinite alternate ease-in-out; }
+
+  @keyframes actBounce { 0%{transform:translateY(0);} 100%{transform:translateY(-20px);} }
+  @keyframes actShake { 0%,100%{transform:translateX(0) rotate(0);} 25%{transform:translateX(-5px) rotate(-2deg);} 75%{transform:translateX(5px) rotate(2deg);} }
+  @keyframes actSpin { 100%{transform:rotate(360deg);} }
+  @keyframes actPulse { 0%{transform:scale(1);} 100%{transform:scale(1.1);} }
+
+  .bg { position:fixed; inset:0; background-size:cover; background-position:center; transition:opacity 1s ease; z-index:-10; opacity:0; }
+  
+  #particle-container { position:fixed; inset:0; pointer-events:none; z-index:10; overflow:hidden; }
   .particle { position: absolute; pointer-events: none; }
 
-  /* NAVIGATION & MODES */
+  #hud { position: fixed; top: 30px; left: 40px; right: 40px; display: flex; justify-content: space-between; font-size: clamp(18px, 2.5vw, 24px); font-weight: 700; z-index: 50; text-shadow: 0 3px 6px #000; }
+  #level-indicator { background: rgba(0,0,0,0.4); padding: 6px 24px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; }
+  
+  #star-pop {
+    position: fixed; inset: 0; display: flex; justify-content: center; align-items: center;
+    z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0.2);
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.4);
+  }
+  #star-pop.boom { opacity: 1; transform: scale(1); }
+  .star-graphic { position: relative; font-size: clamp(170px, 28vh, 280px); filter: drop-shadow(0 15px 35px rgba(0,0,0,0.6)); }
+  .star-count { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: clamp(45px, 7vh, 80px); color: #fff; font-weight: 700; top: min(2vh, 18px); text-shadow: 0 4px 10px rgba(0,0,0,0.7); }
+
   #controls { 
     position:fixed; bottom:30px; left:50%; transform:translateX(-50%); z-index:100; 
-    display:flex; align-items: center; gap:12px; background:rgba(15,15,30,0.9); 
-    padding:10px 20px; border-radius:50px; border: 1px solid rgba(255,255,255,0.1);
+    display:flex; align-items: center; gap:12px; background:rgba(10,8,20,0.9); 
+    padding:8px 20px; border-radius:50px; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 15px 40px rgba(0,0,0,0.6);
   }
   
   select, button {
-    background: #252545; color: #fff; border: none; padding: 10px 18px;
+    background: #1e1e2f; color: #cbd5e1; border: none; padding: 10px 18px;
     border-radius: 25px; font-family: inherit; font-size: 14px; cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.15s ease; font-weight: 500;
   }
+  select:hover, button:hover { background: #2b2b40; color: #fff; }
+  select:focus { outline: none; }
   
-  #btn-play-pause { background: #6c5ce7; font-weight: bold; min-width: 90px; }
-  #btn-next { background: #ffd86b; color: #000; font-weight: bold; }
+  #btn-play-pause { background: #6c5ce7; color: #fff; font-weight: 700; min-width: 95px; }
+  #btn-play-pause:hover { background: #5b4cc4; }
+  #btn-next { background: #ffd86b; color: #111; font-weight: 700; }
+  #btn-next:hover { background: #ffe285; }
+  #btn-next:disabled { opacity:0.25; cursor:not-allowed; }
 
-  /* ANIMATIONS */
-  @keyframes float-full { 
-    0% { transform: translate(0,0) rotate(0); opacity:0; } 
-    10% { opacity:0.8; } 90% { opacity:0.8; } 
-    100% { transform: translate(var(--tx), var(--ty)) rotate(360deg); opacity:0; } 
+  @keyframes float-full-screen { 
+    0% { transform: translate(0,0) rotate(0deg) scale(0.6); opacity:0; } 
+    15% { opacity: 0.8; }
+    85% { opacity: 0.8; }
+    100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1.1); opacity:0; } 
   }
-  
-  .bg { position:fixed; inset:0; background-size:cover; background-position:center; transition:opacity 1s ease; z-index:-10; opacity:0; }
+  @keyframes flash { 0% { box-shadow: 0 0 0 0px rgba(255,255,255,0.6); } 100% { box-shadow: 0 0 0 40px rgba(255,255,255,0); } }
+  .flash-ring { animation: flash 0.45s ease-out; }
 </style>
 </head>
 <body>
 
 <div id="intro-splash">
-  <div style="font-size: 50px; font-weight: 700; color: #ffd86b; text-align: center;">ARABIC WORLD</div>
-  <button class="loading-btn" onclick="init()">START WORLD</button>
-  <div style="margin-top: 15px; color: #a5b4fc; font-size: 12px;">Click to Enable Sound & Visuals</div>
+  <div class="intro-title">Created By</div>
+  <div class="intro-name">Amtun Noor</div>
+  <div class="intro-sub">for</div>
+  <div class="intro-kids">Mariam & Hamza</div>
+  <button class="loading-btn" onclick="bootEngineWorld()">START WORLD 🌟</button>
 </div>
 
 <div id="bg1" class="bg"></div>
 <div id="bg2" class="bg"></div>
 <div id="particle-container"></div>
+
+<div id="hud">
+  <div id="level-indicator">LEVEL: <span id="lbl-level">1</span></div>
+</div>
+
+<div id="star-pop">
+  <div class="star-graphic">
+    ⭐
+    <div class="star-count" id="lbl-star-count">0</div>
+  </div>
+</div>
 
 <div id="app">
   <div id="tile-wrapper" class="display-tile">
@@ -118,18 +177,18 @@
 
 <div id="controls">
   <select id="sel-mode" onchange="setMode(this.value)">
-    <option value="manual">Manual</option>
+    <option value="manual">Manual Mode</option>
     <option value="auto">Auto Play</option>
   </select>
   
   <select id="sel-speed" onchange="setSpeed(this.value)">
-    <option value="slow">Slow</option>
-    <option value="normal" selected>Normal</option>
-    <option value="fast">Express</option>
+    <option value="slow">Slow Mode</option>
+    <option value="normal" selected>Normal Mode</option>
+    <option value="fast">Express Mode</option>
   </select>
 
   <button id="btn-play-pause" onclick="togglePlay()">PAUSE</button>
-  <button id="btn-next" onclick="triggerNext()">NEXT ➡️</button>
+  <button id="btn-next" onclick="triggerNextManual()">NEXT ➡️</button>
 </div>
 
 <script>
@@ -151,139 +210,296 @@ const letters = [
 ];
 
 const actions = [
-  { name:"clap", icon:"👏", sound:"clap.mp3" },
-  { name:"fly", icon:"🪶", sound:"fly.mp3" },
-  { name:"hop", icon:"🐸", sound:"hop.mp3" },
-  { name:"jump", icon:"🦘", sound:"jump.mp3" },
-  { name:"look", icon:"👀", sound:"look.mp3" },
-  { name:"run", icon:"🏃", sound:"run.mp3" },
-  { name:"sleep", icon:"😴", sound:"sleep.mp3" },
-  { name:"spin", icon:"🌀", sound:"spin.mp3" },
-  { name:"walk", icon:"🚶", sound:"walk.mp3" },
-  { name:"wave", icon:"👋", sound:"wave.mp3" }
+  { name:"clap", icon:"👏", sound:"clap.mp3", anim:"anim-shake" },
+  { name:"fly", icon:"🪶", sound:"fly.mp3", anim:"anim-bounce" },
+  { name:"hop", icon:"🐸", sound:"hop.mp3", anim:"anim-bounce" },
+  { name:"jump", icon:"🦘", sound:"jump.mp3", anim:"anim-bounce" },
+  { name:"look", icon:"👀", sound:"look.mp3", anim:"anim-pulse" },
+  { name:"quiet", icon:"🤫", sound:"quiet.mp3", anim:"anim-pulse" },
+  { name:"run", icon:"🏃", sound:"run.mp3", anim:"anim-shake" },
+  { name:"sit", icon:"🪑", sound:"sit.mp3", anim:"anim-pulse" },
+  { name:"sleep", icon:"😴", sound:"sleep.mp3", anim:"anim-pulse" },
+  { name:"spin", icon:"🌀", sound:"spin.mp3", anim:"anim-spin" },
+  { name:"stomp", icon:"👣", sound:"stomp.mp3", anim:"anim-shake" },
+  { name:"stretch", icon:"🤸", sound:"stretch.mp3", anim:"anim-bounce" },
+  { name:"strong", icon:"💪", sound:"strong.mp3", anim:"anim-pulse" },
+  { name:"walk", icon:"🚶", sound:"walk.mp3", anim:"anim-bounce" },
+  { name:"wave", icon:"👋", sound:"wave.mp3", anim:"anim-shake" }
+];
+
+const phrases = [
+  { text: "Amazing!", file: "amazing.mp3" },
+  { text: "Fantastic!", file: "fantastic.mp3" },
+  { text: "Keep Going!", file: "keep_going.mp3" },
+  { text: "Well Done!", file: "well_done.mp3" }
 ];
 
 const themes = [
-  { name:"snow1", src:"assets/images/themes/snow.webp", p:["❄️","🌨️","✨","☁️","💎"] },
-  { name:"snow2", src:"assets/images/themes/snow_2.webp", p:["❅","❆","✨","🧊","⚪"] },
-  { name:"garden", src:"assets/images/themes/garden.webp", p:["🌸","🦋","🌼","🐝","🍃"] },
-  { name:"ocean", src:"assets/images/themes/ocean.webp", p:["🫧","🐟","🐚","🌊","🐙"] },
-  { name:"forest", src:"assets/images/themes/forest.webp", p:["🍂","🍁","🦊","🍄","🌰"] },
-  { name:"rainbow", src:"assets/images/themes/rainbow.webp", p:["✨","⭐","🌈","🍭","🎨"] }
+  { name:"snow1", src:"assets/images/themes/snow.webp", p:["❄️","🌨️","☁️"], dist:"vertical-down" },
+  { name:"snow2", src:"assets/images/themes/snow_2.webp", p:["❅","❆","💎"], dist:"angled-down" },
+  { name:"garden", src:"assets/images/themes/garden.webp", p:["🌸","🦋","🌼"], dist:"scatter-wide" },
+  { name:"ocean1", src:"assets/images/themes/ocean.webp", p:["🫧","🐟","🐚"], dist:"float-up" },
+  { name:"ocean2", src:"assets/images/themes/ocean_2.webp", p:["🫧","🪼","🐙"], dist:"surge-right" },
+  { name:"forest1", src:"assets/images/themes/forest.webp", p:["🍂","🍁","🦊"], dist:"swirl-cross" },
+  { name:"forest2", src:"assets/images/themes/forest_2.webp", p:["🍃","🌱","🍄"], dist:"random-pop" },
+  { name:"rainbow1", src:"assets/images/themes/rainbow.webp", p:["✨","⭐","🌈"], dist:"diag-up" },
+  { name:"rainbow2", src:"assets/images/themes/rainbow_2.webp", p:["✨","🍭","🎨"], dist:"radial-out" },
+  { name:"balloon", src:"assets/images/themes/balloon.webp", p:["🎈","🎉"], dist:"fast-rise" }
 ];
 
 const speedMatrix = {
-  slow:   { letter: 1100, action: 1300, autoNext: 2000 },
-  normal: { letter: 600,  action: 750,  autoNext: 1200 },
-  fast:   { letter: 150,  action: 200,  autoNext: 400 }
+  slow:   { letterWait: 1100, actionWait: 1300, postStar: 1500, autoNext: 1800 },
+  normal: { letterWait: 500,  actionWait: 650,  postStar: 750,  autoNext: 900 },
+  fast:   { letterWait: 100,  actionWait: 150,  postStar: 200,  autoNext: 350 }
 };
 
 let currentIdx = 0;
+let starsCollected = 0;
+let currentLevel = 1;
 let currentMode = "manual"; 
 let currentSpeed = "normal"; 
+let isEngineRunning = false;
 let isPaused = false;
-let isRunning = false;
 let bgFlip = true;
-const ambient = new Audio("assets/sounds/ambient.mp3");
-ambient.loop = true; ambient.volume = 0.2;
+let autoTimeout = null;
 
-async function init() {
-  // Start background music on user click
-  ambient.play().catch(() => console.log("Ambient pending user interaction"));
-  
-  document.getElementById("intro-splash").style.opacity = "0";
-  setTimeout(() => {
-    document.getElementById("intro-splash").remove();
-    runSequence();
-  }, 600);
-}
+const audioCache = {};
+const ambient = new Audio("assets/sounds/system/ambient.mp3");
 
-function spawnParticles(theme) {
-  const container = document.getElementById("particle-container");
-  container.innerHTML = "";
-  for(let i=0; i<30; i++) {
-    const p = document.createElement("div");
-    p.className = "particle";
-    p.textContent = theme.p[i % theme.p.length];
-    p.style.left = Math.random() * 100 + "vw";
-    p.style.top = Math.random() * 100 + "vh";
-    p.style.fontSize = (20 + Math.random() * 35) + "px";
-    
-    // Spread across entire screen width/height
-    const tx = (Math.random() - 0.5) * 1200 + "px";
-    const ty = (Math.random() - 0.5) * 1200 + "px";
-    p.style.setProperty('--tx', tx);
-    p.style.setProperty('--ty', ty);
-    
-    p.style.animation = `float-full ${5 + Math.random()*7}s linear infinite`;
-    container.appendChild(p);
+const el = {
+  letter: document.getElementById("letter"),
+  actionIcon: document.getElementById("action-icon"),
+  actionText: document.getElementById("action-text"),
+  actionCon: document.getElementById("action-container"),
+  tile: document.getElementById("tile-wrapper"),
+  pCon: document.getElementById("particle-container"),
+  lblStar: document.getElementById("lbl-star-count"),
+  starPop: document.getElementById("star-pop"),
+  lblLevel: document.getElementById("lbl-level"),
+  btnNext: document.getElementById("btn-next"),
+  btnPlayPause: document.getElementById("btn-play-pause"),
+  intro: document.getElementById("intro-splash")
+};
+
+function getSoundPath(filename) {
+  if (['amazing.mp3', 'fantastic.mp3', 'keep_going.mp3', 'well_done.mp3'].includes(filename)) {
+    return `assets/sounds/phrases/${filename}`;
+  } else if (['level_up.mp3', 'ambient.mp3'].includes(filename)) {
+    return `assets/sounds/system/${filename}`;
+  } else if (actions.some(a => a.sound === filename)) {
+    return `assets/sounds/actions/${filename}`;
+  } else {
+    return `assets/sounds/letters/${filename}`;
   }
 }
 
-async function runSequence() {
-  if (isRunning || isPaused) return;
-  isRunning = true;
+function preCacheAllAudio() {
+  const targets = [
+    ...letters.map(l => l.file),
+    ...actions.map(a => a.sound),
+    ...phrases.map(p => p.file),
+    "level_up.mp3"
+  ];
+  targets.forEach(file => {
+    const audio = new Audio(getSoundPath(file));
+    audio.preload = "auto";
+    audioCache[file] = audio;
+  });
+}
+preCacheAllAudio();
 
-  const letter = letters[currentIdx % letters.length];
-  const action = actions[currentIdx % actions.length];
-  const theme = themes[Math.floor(currentIdx / 3) % themes.length];
-  const spd = speedMatrix[currentSpeed];
+function runThemeParticles(theme) {
+  el.pCon.innerHTML = "";
+  const count = 35; 
+  
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.textContent = theme.p[Math.floor(Math.random() * theme.p.length)];
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.top = Math.random() * 100 + "vh";
+    p.style.fontSize = (22 + Math.random() * 26) + "px";
+    
+    let tx = 0, ty = 0, rot = 360;
+    
+    switch(theme.dist) {
+      case "vertical-down":   tx = (Math.random() - 0.5) * 150; ty = 600 + Math.random() * 400; break;
+      case "angled-down":     tx = -200 - Math.random() * 400; ty = 500 + Math.random() * 400; break;
+      case "scatter-wide":    tx = (Math.random() - 0.5) * 1400; ty = (Math.random() - 0.5) * 1000; break;
+      case "float-up":        tx = (Math.random() - 0.5) * 200; ty = -600 - Math.random() * 400; break;
+      case "surge-right":     tx = 800 + Math.random() * 600; ty = (Math.random() - 0.5) * 400; break;
+      case "swirl-cross":     tx = (Math.random() - 0.5) * 1000; ty = (Math.random() - 0.5) * 1000; rot = 720; break;
+      case "random-pop":      tx = (Math.random() - 0.5) * 300; ty = (Math.random() - 0.5) * 300; rot = 180; break;
+      case "diag-up":         tx = 600 + Math.random() * 500; ty = -600 - Math.random() * 500; break;
+      case "radial-out":      const a = Math.random() * Math.PI * 2; const f = 500 + Math.random() * 500; tx = Math.cos(a)*f; ty = Math.sin(a)*f; break;
+      case "fast-rise":       tx = (Math.random() - 0.5) * 100; ty = -900 - Math.random() * 300; break;
+    }
+    
+    p.style.setProperty('--tx', `${tx}px`);
+    p.style.setProperty('--ty', `${ty}px`);
+    p.style.setProperty('--rot', `${rot}deg`);
+    
+    p.style.animation = `float-full-screen ${4 + Math.random() * 5}s cubic-bezier(0.1, 0.25, 0.25, 1) infinite`;
+    el.pCon.appendChild(p);
+  }
+}
 
-  // Update Background & Particles
-  const nextBg = bgFlip ? "bg2" : "bg1";
-  const prevBg = bgFlip ? "bg1" : "bg2";
-  document.getElementById(nextBg).style.backgroundImage = `url('${theme.src}')`;
-  document.getElementById(nextBg).style.opacity = "1";
-  document.getElementById(prevBg).style.opacity = "0";
+function changeThemeEnvironment(themeIdx) {
+  const theme = themes[themeIdx % themes.length];
+  const nextActiveBg = bgFlip ? document.getElementById("bg2") : document.getElementById("bg1");
+  const oldActiveBg = bgFlip ? document.getElementById("bg1") : document.getElementById("bg2");
+  
+  nextActiveBg.style.backgroundImage = `url('${theme.src}')`;
+  nextActiveBg.style.opacity = "1";
+  oldActiveBg.style.opacity = "0";
   bgFlip = !bgFlip;
-  spawnParticles(theme);
 
-  // Step 1: Display Letter
-  document.getElementById("letter").textContent = letter.char;
-  document.getElementById("letter").style.color = letter.color;
-  document.getElementById("letter").style.opacity = "1";
-  document.getElementById("action-container").style.opacity = "0";
+  runThemeParticles(theme);
+}
+
+async function playSoundFile(filename) {
+  return new Promise(resolve => {
+    let s = audioCache[filename];
+    if (!s) s = new Audio(getSoundPath(filename));
+    s.currentTime = 0;
+    s.volume = 1.0;
+    s.onended = () => resolve(true);
+    s.onerror = () => resolve(false);
+    s.play().catch(() => resolve(false));
+  });
+}
+
+function hexToRgb(hex) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "255,255,255";
+}
+
+async function runSequence() {
+  if (isEngineRunning || isPaused) return;
+  isEngineRunning = true;
+  el.btnNext.disabled = true;
+  el.tile.classList.remove("flash-ring");
   
-  play(`assets/sounds/${letter.file}`);
-  await sleep(spd.letter);
+  const currentLetter = letters[currentIdx % letters.length];
+  const currentAction = actions[currentIdx % actions.length]; 
+  const chosenPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+  const themeIdx = Math.floor(currentIdx / 3) % themes.length;
 
-  // Step 2: Transition to Action (Icon + Text)
-  document.getElementById("letter").style.opacity = "0.3"; // Dim letter slightly
-  document.getElementById("action-icon").textContent = action.icon;
-  document.getElementById("action-text").textContent = action.name;
-  document.getElementById("action-container").style.opacity = "1";
+  const calcLevel = Math.floor(currentIdx / 5) + 1;
+  if (calcLevel > currentLevel) {
+    currentLevel = calcLevel;
+    el.lblLevel.textContent = currentLevel;
+    await playSoundFile("level_up.mp3");
+    await new Promise(r => setTimeout(r, 800));
+  }
+
+  changeThemeEnvironment(themeIdx);
+
+  // Hidden layout blocks when unpopulated to keep the box tiny
+  el.letter.style.display = "block";
+  el.letter.style.opacity = "1";
+  el.letter.style.transform = "scale(1)";
+  el.actionCon.style.display = "none";
+  el.actionCon.style.opacity = "0";
   
-  play(`assets/sounds/${action.sound}`);
-  await sleep(spd.action);
+  el.letter.textContent = currentLetter.char;
+  el.letter.style.color = currentLetter.color;
+  el.letter.style.textShadow = `0 10px 30px rgba(${hexToRgb(currentLetter.color)}, 0.5)`;
+  
+  el.actionIcon.textContent = currentAction.icon;
+  el.actionIcon.className = ""; 
+  el.actionText.textContent = currentAction.name;
 
-  // Step 3: Phrase Audio Only (No text change)
-  play(`assets/sounds/well_done.mp3`);
-  await sleep(spd.action);
+  const timing = speedMatrix[currentSpeed];
+
+  // STEP 1: Alphabet Audio Engine
+  await playSoundFile(currentLetter.file);
+  await new Promise(res => setTimeout(res, timing.letterWait));
+  if (isPaused) { isEngineRunning = false; return; }
+
+  // STEP 2: Transition Box Elements Smoothly
+  el.letter.style.display = "none";
+  el.actionCon.style.display = "flex";
+  setTimeout(() => { el.actionCon.style.opacity = "1"; }, 10);
+  el.actionIcon.classList.add(currentAction.anim);
+  
+  await playSoundFile(currentAction.sound);
+  await new Promise(res => setTimeout(res, timing.actionWait));
+  if (isPaused) { isEngineRunning = false; return; }
+
+  // STEP 3: Completion Sound 
+  el.tile.classList.add("flash-ring");
+  await playSoundFile(chosenPhrase.file);
+
+  // STEP 4: Reward Matrix Pop
+  starsCollected++;
+  el.lblStar.textContent = starsCollected;
+  el.starPop.classList.add("boom");
+  
+  await new Promise(res => setTimeout(res, timing.postStar));
+  el.starPop.classList.remove("boom");
 
   currentIdx++;
-  isRunning = false;
+  isEngineRunning = false;
+  
+  if (currentMode === "manual") {
+    el.btnNext.disabled = false;
+  }
 
   if (currentMode === "auto" && !isPaused) {
-    setTimeout(runSequence, spd.autoNext);
+    autoTimeout = setTimeout(runSequence, timing.autoNext);
   }
 }
 
 function togglePlay() {
   isPaused = !isPaused;
-  document.getElementById("btn-play-pause").textContent = isPaused ? "PLAY" : "PAUSE";
-  if (!isPaused && currentMode === "auto") runSequence();
+  if (isPaused) {
+    clearTimeout(autoTimeout);
+    el.btnPlayPause.textContent = "PLAY";
+    el.btnPlayPause.style.background = "#2ecc71";
+    el.btnNext.disabled = (currentMode === "auto");
+  } else {
+    el.btnPlayPause.textContent = "PAUSE";
+    el.btnPlayPause.style.background = "#6c5ce7";
+    if (currentMode === "auto") {
+      runSequence();
+    } else {
+      el.btnNext.disabled = isEngineRunning;
+    }
+  }
 }
 
-function triggerNext() { if (!isRunning) runSequence(); }
-function setMode(m) { currentMode = m; if(m === 'auto') runSequence(); }
-function setSpeed(s) { currentSpeed = s; }
-
-function play(path) {
-  const s = new Audio(path);
-  s.play().catch(()=>{});
+function setMode(mode) {
+  currentMode = mode;
+  clearTimeout(autoTimeout);
+  if (mode === "auto") {
+    el.btnNext.disabled = true;
+    if (!isEngineRunning && !isPaused) runSequence();
+  } else {
+    if (!isEngineRunning && !isPaused) el.btnNext.disabled = false;
+  }
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function setSpeed(speed) { currentSpeed = speed; }
+
+function triggerNextManual() {
+  if (currentMode === "manual" && !isEngineRunning && !isPaused) {
+    runSequence();
+  }
+}
+
+function bootEngineWorld() {
+  ambient.loop = true; 
+  ambient.volume = 0.15;
+  ambient.play().catch(() => {});
+  
+  el.intro.style.opacity = "0";
+  setTimeout(() => {
+    el.intro.remove();
+    changeThemeEnvironment(0);
+    runSequence();
+  }, 800);
+}
 </script>
 </body>
 </html>
