@@ -158,4 +158,331 @@
   <button id="spd-slow" onclick="setSpeed('slow')">SLOW</button>
   <button id="spd-normal" class="active-setting" onclick="setSpeed('normal')">NORMAL</button>
   <button id="spd-fast" onclick="setSpeed('fast')">FAST</button>
-  <span style="border-left: 1px solid rgba(255,255,255,0.12);
+  <span style="border-left: 1px solid rgba(255,255,255,0.12); height: 18px; margin: 0 2px;"></span>
+  <button id="btn-next" onclick="triggerNextManual()">NEXT ➡️</button>
+</div>
+
+<script>
+/* ===================== DIRECTORY MAP VERIFICATION DATA ===================== */
+const letters = [
+  { char:"ا", file:"alif.mp3", color:"#ff7675" }, { char:"ب", file:"ba.mp3", color:"#fdcb6e" }, 
+  { char:"ت", file:"ta.mp3", color:"#00cec9" }, { char:"ث", file:"thaa.mp3", color:"#6c5ce7" }, 
+  { char:"ج", file:"jeem.mp3", color:"#ff7675" }, { char:"ح", file:"haa.mp3", color:"#fdcb6e" }, 
+  { char:"خ", file:"kha.mp3", color:"#00cec9" }, { char:"د", file:"daal.mp3", color:"#6c5ce7" }, 
+  { char:"ر", file:"raa.mp3", color:"#ff7675" }, { char:"ز", file:"zaa.mp3", color:"#fdcb6e" }, 
+  { char:"س", file:"seen.mp3", color:"#00cec9" }, { char:"ش", file:"sheen.mp3", color:"#6c5ce7" }, 
+  { char:"ص", file:"saad.mp3", color:"#ff7675" }, { char:"ض", file:"dad.mp3", color:"#fdcb6e" }, 
+  { char:"ط", file:"toa.mp3", color:"#00cec9" }, { char:"ظ", file:"zoa.mp3", color:"#6c5ce7" }, 
+  { char:"ع", file:"ain.mp3", color:"#ff7675" }, { char:"غ", file:"ghain.mp3", color:"#fdcb6e" }, 
+  { char:"ف", file:"fa.mp3", color:"#00cec9" }, { char:"ق", file:"qaaf.mp3", color:"#6c5ce7" }, 
+  { char:"ك", file:"kaf.mp3", color:"#ff7675" }, { char:"ل", file:"laam.mp3", color:"#fdcb6e" }, 
+  { char:"م", file:"meem.mp3", color:"#00cec9" }, { char:"ن", file:"noon.mp3", color:"#6c5ce7" }, 
+  { char:"ه", file:"ha.mp3", color:"#ff7675" }, { char:"و", file:"waw.mp3", color:"#fdcb6e" }, 
+  { char:"ي", file:"yaa.mp3", color:"#00cec9" }
+];
+
+const actions = [
+  { name:"clap", icon:"👏", sound:"clap.mp3", anim:"anim-shake" },
+  { name:"fly", icon:"🪶", sound:"fly.mp3", anim:"anim-bounce" },
+  { name:"hop", icon:"🐸", sound:"hop.mp3", anim:"anim-bounce" },
+  { name:"jump", icon:"🦘", sound:"jump.mp3", anim:"anim-bounce" },
+  { name:"look", icon:"👀", sound:"look.mp3", anim:"anim-pulse" },
+  { name:"quiet", icon:"🤫", sound:"quiet.mp3", anim:"anim-pulse" },
+  { name:"run", icon:"🏃", sound:"run.mp3", anim:"anim-shake" },
+  { name:"sit", icon:"🪑", sound:"sit.mp3", anim:"anim-pulse" },
+  { name:"sleep", icon:"😴", sound:"sleep.mp3", anim:"anim-pulse" },
+  { name:"spin", icon:"🌀", sound:"spin.mp3", anim:"anim-spin" },
+  { name:"stomp", icon:"👣", sound:"stomp.mp3", anim:"anim-shake" },
+  { name:"stretch", icon:"🤸", sound:"stretch.mp3", anim:"anim-bounce" },
+  { name:"strong", icon:"💪", sound:"strong.mp3", anim:"anim-pulse" },
+  { name:"walk", icon:"🚶", sound:"walk.mp3", anim:"anim-bounce" },
+  { name:"wave", icon:"👋", sound:"wave.mp3", anim:"anim-shake" }
+];
+
+const phrases = [
+  { text: "Amazing!", file: "amazing.mp3" },
+  { text: "Fantastic!", file: "fantastic.mp3" },
+  { text: "Keep Going!", file: "keep_going.mp3" },
+  { text: "Well Done!", file: "well_done.mp3" }
+];
+
+/* All 10 Repository WebP Images with Multi-Directional Vector Particle Encodings */
+const themes = [
+  { name:"snow", src:"assets/images/themes/snow.webp", p:["❄️","🌨️"], motion:"fall" },
+  { name:"snow", src:"assets/images/themes/snow_2.webp", p:["❄️","✨"], motion:"fall" },
+  { name:"garden", src:"assets/images/themes/garden.webp", p:["🌸","🦋","🌼"], motion:"garden-drift" },
+  { name:"ocean", src:"assets/images/themes/ocean.webp", p:["🫧","🐟"], motion:"rise" },
+  { name:"ocean", src:"assets/images/themes/ocean_2.webp", p:["🫧","🪼"], motion:"rise" },
+  { name:"forest", src:"assets/images/themes/forest.webp", p:["🍂","🍁"], motion:"forest-swirl" },
+  { name:"forest", src:"assets/images/themes/forest_2.webp", p:["🍃","🌱"], motion:"forest-swirl" },
+  { name:"rainbow", src:"assets/images/themes/rainbow.webp", p:["✨","⭐"], motion:"diagRise" },
+  { name:"rainbow", src:"assets/images/themes/rainbow_2.webp", p:["✨","🌈"], motion:"diagRise" },
+  { name:"balloon", src:"assets/images/themes/balloon.webp", p:["🎈","🎉"], motion:"rise" }
+];
+
+// Preload graphics matrix instantly
+themes.forEach(t => { const img = new Image(); img.src = t.src; });
+
+/* ===================== TRUE SPEED INTERVAL CONTROL ===================== */
+const speedMatrix = {
+  slow:   { letterWait: 1400, actionWait: 1600, phraseWait: 1800, postStar: 600 },
+  normal: { letterWait: 800,  actionWait: 1000, phraseWait: 1100, postStar: 350 },
+  fast:   { letterWait: 300,  actionWait: 400,  phraseWait: 450,  postStar: 150 }
+};
+
+/* ===================== ENGINE CONFIG TRACKERS ===================== */
+let currentIdx = 0;
+let starsCollected = 0;
+let currentLevel = 1;
+let currentMode = "manual"; 
+let currentSpeed = "normal"; 
+let isEngineRunning = false;
+let bgFlip = true;
+let autoTimeout = null;
+
+const el = {
+  letter: document.getElementById("letter"),
+  action: document.getElementById("action"),
+  phrase: document.getElementById("phrase"),
+  tile: document.getElementById("tile-wrapper"),
+  pCon: document.getElementById("particle-container"),
+  lblStar: document.getElementById("lbl-star-count"),
+  starPop: document.getElementById("star-pop"),
+  lblLevel: document.getElementById("lbl-level"),
+  btnNext: document.getElementById("btn-next"),
+  intro: document.getElementById("intro-splash")
+};
+
+const ambient = new Audio("assets/sounds/system/ambient.mp3");
+ambient.loop = true; ambient.volume = 0.12;
+
+/* ===================== HIGH QUALITY PARTICLE PHYSICS ENGINE ===================== */
+function runThemeParticles(theme) {
+  el.pCon.innerHTML = "";
+  const count = 16; 
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement("div");
+    p.textContent = theme.p[Math.floor(Math.random() * theme.p.length)];
+    p.style.position = "absolute";
+    p.style.pointerEvents = "none";
+    p.style.zIndex = "-1";
+    
+    // Distribute custom physics vectors over standard CSS rules
+    if (theme.motion === "fall") {
+      p.style.left = Math.random() * 100 + "vw";
+      p.style.fontSize = (20 + Math.random() * 20) + "px";
+      p.style.animation = `fall ${5 + Math.random() * 5}s linear infinite`;
+    } else if (theme.motion === "rise") {
+      p.style.left = Math.random() * 100 + "vw";
+      p.style.fontSize = (24 + Math.random() * 24) + "px";
+      p.style.animation = `rise ${6 + Math.random() * 5}s linear infinite`;
+    } else if (theme.motion === "garden-drift") {
+      p.style.fontSize = (22 + Math.random() * 20) + "px";
+      p.style.animation = `gardenDrift ${7 + Math.random() * 6}s linear infinite`;
+    } else if (theme.motion === "forest-swirl") {
+      p.style.left = Math.random() * 100 + "vw";
+      p.style.fontSize = (20 + Math.random() * 22) + "px";
+      p.style.animation = `forestSwirl ${6 + Math.random() * 5}s linear infinite`;
+    } else if (theme.motion === "diagRise") {
+      p.style.fontSize = (25 + Math.random() * 25) + "px";
+      p.style.animation = `diagRise ${5 + Math.random() * 4}s linear infinite`;
+    }
+    el.pCon.appendChild(p);
+  }
+}
+
+function triggerHighInterestBurst() {
+  const elements = ["✨", "⚡", "🌟", "💫", "💥", "🎨"];
+  for (let i = 0; i < 30; i++) {
+    const c = document.createElement("div");
+    c.textContent = elements[Math.floor(Math.random() * elements.length)];
+    c.style.position = "absolute"; c.style.left = "50vw"; c.style.top = "50vh";
+    c.style.fontSize = (18 + Math.random() * 22) + "px"; c.style.pointerEvents = "none";
+    
+    const angle = Math.random() * Math.PI * 2;
+    const force = 140 + Math.random() * 280;
+    c.style.setProperty('--x', Math.cos(angle) * force + "px");
+    c.style.setProperty('--y', Math.sin(angle) * force + "px");
+    c.style.animation = `confetti-fly 0.65s cubic-bezier(0.1, 0.8, 0.3, 1) forwards`;
+    
+    el.pCon.appendChild(c);
+    setTimeout(() => c.remove(), 650);
+  }
+}
+
+function triggerLevelBalloons() {
+  el.pCon.innerHTML = "";
+  for(let i=0; i<25; i++) {
+    setTimeout(() => {
+      const b = document.createElement("div");
+      b.textContent = ["🎈", "🎉", "✨"][Math.floor(Math.random() * 3)];
+      b.style.cssText = `position:absolute; left:${5 + Math.random() * 90}vw; font-size:${50 + Math.random()*30}px; pointer-events:none;`;
+      b.style.animation = `rise ${4 + Math.random()*3}s linear forwards`;
+      el.pCon.appendChild(b);
+      setTimeout(() => b.remove(), 6000);
+    }, i * 120);
+  }
+}
+
+/* ===================== STATE CONTROL MATRICES ===================== */
+function changeThemeEnvironment(themeIdx) {
+  const theme = themes[themeIdx % themes.length];
+  const nextActiveBg = bgFlip ? document.getElementById("bg2") : document.getElementById("bg1");
+  const oldActiveBg = bgFlip ? document.getElementById("bg1") : document.getElementById("bg2");
+  
+  nextActiveBg.style.backgroundImage = `url('${theme.src}')`;
+  nextActiveBg.style.opacity = 1;
+  oldActiveBg.style.opacity = 0;
+  bgFlip = !bgFlip;
+
+  runThemeParticles(theme);
+}
+
+async function playSoundFile(path) {
+  return new Promise(resolve => {
+    const s = new Audio(path);
+    s.volume = 1.0;
+    s.onended = () => resolve(true);
+    s.onerror = () => resolve(false); 
+    s.play().catch(() => resolve(false));
+  });
+}
+
+/* ===================== CORE TIMELINE PIPELINE LOOP ===================== */
+async function runSequence() {
+  if (isEngineRunning) return;
+  isEngineRunning = true;
+  el.btnNext.disabled = true;
+
+  // Clear visual classes
+  el.tile.classList.remove("flash-ring");
+  
+  // 1. Resolve State Profiles
+  const currentLetter = letters[currentIdx % letters.length];
+  const currentAction = actions[currentIdx % actions.length]; // Match 1:1 loop pattern natively
+  const chosenPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+  
+  // Rotate Theme EXACTLY every 5 letters
+  const themeIdx = Math.floor(currentIdx / 5) % themes.length;
+
+  // Level Incrementation Logic
+  const calcLevel = Math.floor(currentIdx / 5) + 1;
+  if (calcLevel > currentLevel) {
+    currentLevel = calcLevel;
+    el.lblLevel.textContent = currentLevel;
+    triggerLevelBalloons();
+    await playSoundFile("assets/sounds/system/level_up.mp3");
+    await new Promise(r => setTimeout(r, 1500));
+  }
+
+  // Update background canvas
+  changeThemeEnvironment(themeIdx);
+
+  // Setup DOM Visibility Nodes
+  el.letter.style.opacity = "1";
+  el.action.style.opacity = "0";
+  el.phrase.style.opacity = "0";
+  
+  // Style First-Focus Target Alphabet
+  el.letter.textContent = currentLetter.char;
+  el.letter.style.color = currentLetter.color;
+  el.letter.style.textShadow = `0 10px 30px rgba(${hexToRgb(currentLetter.color)}, 0.5)`;
+  
+  el.action.textContent = currentAction.icon;
+  el.action.className = ""; 
+  el.phrase.textContent = currentAction.name.toUpperCase() + " " + chosenPhrase.text.toUpperCase();
+
+  const timing = speedMatrix[currentSpeed];
+
+  // STEP 1: Main Focus Alphabet Voice-Over Plays First
+  await playSoundFile(`assets/sounds/letters/${currentLetter.file}`);
+  await new Promise(res => setTimeout(res, timing.letterWait));
+
+  // STEP 2: Show Action + Trigger High-Interest Effects
+  el.action.style.opacity = "1";
+  el.action.classList.add(currentAction.anim);
+  
+  triggerHighInterestBurst();
+  el.tile.classList.add("flash-ring");
+  playSoundFile("assets/sounds/system/start.mp3"); // Dopamine overlay tone
+  
+  await playSoundFile(`assets/sounds/actions/${currentAction.sound}`);
+  await new Promise(res => setTimeout(res, timing.actionWait));
+
+  // STEP 3: Reveal and Execute Phrase Track Sequential Link
+  el.phrase.style.opacity = "1";
+  await playSoundFile(`assets/sounds/phrases/${chosenPhrase.file}`);
+  await new Promise(res => setTimeout(res, timing.phraseWait));
+
+  // STEP 4: Express Dopamine Boost Reward Pop (Non-Blocking)
+  starsCollected++;
+  el.lblStar.textContent = starsCollected;
+  el.starPop.classList.add("boom");
+  playSoundFile("assets/sounds/system/star.mp3");
+  
+  await new Promise(res => setTimeout(res, timing.postStar));
+  el.starPop.classList.remove("boom");
+
+  // Cycle Completions
+  currentIdx++;
+  isEngineRunning = false;
+  el.btnNext.disabled = false;
+
+  if (currentMode === "auto") {
+    autoTimeout = setTimeout(runSequence, 500);
+  }
+}
+
+/* ===================== COMPACT HUD INTERACTIONS ===================== */
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById("btn-manual").classList.remove("active-setting");
+  document.getElementById("btn-auto").classList.remove("active-setting");
+  document.getElementById(`btn-${mode}`).classList.add("active-setting");
+  
+  if (mode === "auto") {
+    el.btnNext.style.display = "none";
+    if (!isEngineRunning) runSequence();
+  } else {
+    el.btnNext.style.display = "inline-block";
+    clearTimeout(autoTimeout);
+  }
+}
+
+function setSpeed(speed) {
+  currentSpeed = speed;
+  document.getElementById("spd-slow").classList.remove("active-setting");
+  document.getElementById("spd-normal").classList.remove("active-setting");
+  document.getElementById("spd-fast").classList.remove("active-setting");
+  document.getElementById(`spd-${speed}`).classList.add("active-setting");
+}
+
+function triggerNextManual() {
+  if (currentMode === "manual" && !isEngineRunning) {
+    runSequence();
+  }
+}
+
+function hexToRgb(hex) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "255,255,255";
+}
+
+/* ===================== PIPELINE INITIALIZATION ENTRY ===================== */
+window.addEventListener("load", () => {
+  changeThemeEnvironment(0);
+  
+  // Programmatic Cinematic Splash Out Sequence
+  setTimeout(() => {
+    el.intro.style.opacity = "0";
+    el.intro.style.transform = "scale(1.05)";
+    ambient.play().catch(()=>{});
+    setTimeout(() => {
+      el.intro.remove(); 
+      runSequence(); 
+    }, 800);
+  }, 3500);
+});
+</script>
+</body>
+</html>
