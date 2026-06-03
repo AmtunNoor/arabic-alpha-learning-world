@@ -3,17 +3,22 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>Arabic Learning World: TV Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<title>Arabic Alpha Learning World - Premium TV & Mobile Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght=500;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box}
   body{
-    margin:0; overflow:hidden; background:#0f172a; 
-    font-family:Fredoka,sans-serif; color:#fff; user-select:none;
-    height: 100vh; width: 100vw;
+    margin:0; 
+    overflow:hidden; 
+    background:#080810; 
+    font-family:Fredoka,sans-serif; 
+    color:#fff; 
+    user-select:none;
+    height: 100vh;
+    width: 100vw;
   }
-  /* CINEMATIC INTRO OVERLAY SPLASH */ /* 15-28 lines addition*/
- 
+  
+  /* CINEMATIC INTRO OVERLAY SPLASH */
   #intro-splash {
     position: fixed; inset: 0; background: radial-gradient(circle, #1e1b4b 0%, #090514 100%);
     z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -27,451 +32,478 @@
   @keyframes introFade { to { opacity:1; transform:translateY(0); } }
   @keyframes introPop { to { opacity:1; transform:scale(1); } }
 
-  /* PATH SELECTOR */
-  #path-selector {
-    position: fixed; inset: 0; background: radial-gradient(circle, #1e1b4b, #020617);
-    z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center;
-    gap: 30px; transition: transform 0.6s cubic-bezier(0.7, 0, 0.3, 1);
+  /* RESPONSIVE VIEWPORT ENGINE CANVAS */
+  #app {
+    height: 100vh; width: 100vw; display: flex; flex-direction: column;
+    justify-content: space-between; align-items: center;
+    padding: min(5vh, 40px) 20px min(12vh, 110px) 20px;
+    text-align: center; position: relative; z-index: 5;
   }
-  .path-card {
-    width: 320px; padding: 25px; border-radius: 30px; text-align: center;
-    cursor: pointer; transition: 0.2s; border: 4px solid transparent;
-  }
-  #card-toddler { background: #0ea5e9; box-shadow: 0 10px 0 #0369a1; }
-  #card-chef { background: #f59e0b; box-shadow: 0 10px 0 #b45309; }
   
-  .tv-focused {
-    border-color: #ffffff !important;
-    transform: scale(1.06);
-    box-shadow: 0 0 30px #ffffff !important;
+  /* TILE ELEMENT: COMPLETELY TRANSPARENT, SCREEN-FLUID & DYNAMIC SIZE */
+  .display-tile {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+    border: 2px solid rgba(255, 255, 255, 0.08); border-radius: min(6vw, 45px);
+    width: 90vw; max-width: 1300px; 
+    height: auto; min-height: 55vh;
+    padding: min(4vh, 40px) 0;
+    display: flex; flex-direction: column; justify-content: space-around; align-items: center;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25); transition: all 0.3s ease;
   }
 
-  #game-stage { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-  
-  /* TODDLER STAGE */
-  #vowel-stage { display: none; text-align: center; }
-  .bubble-letter {
-    font-size: 160px; width: 240px; height: 240px; background: rgba(255,255,255,0.1);
-    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-    border: 8px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px);
-    margin-bottom: 40px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
+  /* ALPHABET FIRST FOCUS: MEGA BOLD & SEVERELY GRAPHIC */
+  #letter { 
+    font-size: clamp(140px, 22vh, 280px);
+    font-weight: 700; line-height: 1; margin: 0; padding: 0;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: drop-shadow(0 8px 25px rgba(0,0,0,0.5));
   }
-  .harakah-mark { position: absolute; top: -20px; font-size: 80px; color: #ffd86b; width: 100%; text-align: center; }
-  .vowel-btns { display: flex; gap: 25px; justify-content: center; }
-  .v-btn { 
-    width: 110px; height: 110px; border-radius: 50%; font-size: 55px; 
-    border: 4px solid transparent; cursor: pointer; transition: 0.2s; 
-    display: flex; align-items: center; justify-content: center; color: white;
+  #action { font-size: clamp(90px, 14vh, 180px); line-height: 1; transition: all 0.25s ease; margin: min(2vh, 20px) 0; }
+  #phrase { 
+    font-size: clamp(24px, 4.5vw, 55px); color: #ffd86b; font-weight: 700; 
+    text-shadow: 0 4px 10px rgba(0,0,0,0.7); text-transform: uppercase; letter-spacing: 2px;
   }
 
-  /* KITCHEN CHEF STAGE */
-  #chef-stage { display: none; width: 100vw; height: 100vh; position: relative; background: #fef08a; background-image: linear-gradient(#fde047 2px, transparent 2px), linear-gradient(90deg, #fde047 2px, transparent 2px); background-size: 40px 40px; }
-  .shelf-back { position: absolute; top: 120px; left: 10%; right: 10%; height: 20px; background: #854d0e; border-radius: 10px; box-shadow: 0 8px 0 rgba(0,0,0,0.15); display: flex; justify-content: space-around; padding: 0 40px; }
-  .oil-bottle { position: absolute; bottom: 20px; width: 60px; height: 90px; background: #eab308; border-radius: 15px 15px 5px 5px; border: 4px solid transparent; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 0 rgba(0,0,0,0.2); }
-  .oil-bottle::before { content:''; position: absolute; top: -20px; left: 18px; width: 16px; height: 20px; background: #a16207; border-radius: 5px; }
-  .oil-label { position: absolute; inset: 25px 5px 10px 5px; background: #fef08a; border-radius: 5px; color: #854d0e; font-size: 11px; text-align: center; font-weight: bold; padding-top: 10px;}
-  .egg-station { position: absolute; top: 220px; left: 50%; transform: translateX(-50%); display: flex; gap: 40px; height: 150px; justify-content: center; width: 100%; z-index: 100; }
-  .egg-container { position: relative; width: 110px; height: 140px; display: flex; flex-direction: column; align-items: center; }
-  .cartoon-egg { width: 100px; height: 130px; background: #fff7ed; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; display: flex; align-items: center; justify-content: center; font-size: 50px; color: #334155; cursor: pointer; border: 4px solid transparent; box-shadow: 0 8px 0 #fed7aa, inset -10px -10px 0 #ffedd5; transition: 0.2s; }
-  .countertop { position: absolute; bottom: 0; left: 0; right: 0; height: 260px; background: #e2e8f0; border-top: 12px solid #cbd5e1; display: flex; justify-content: center; align-items: flex-start; }
-  .stove-burner { width: 340px; height: 35px; background: #475569; border-radius: 50%; margin-top: 20px; position: relative; border: 4px solid #334155; }
-  .cooking-pan { position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); width: 280px; height: 75px; background: #1e293b; border-radius: 0 0 50px 50px; border: 6px solid #475569; }
-  .pan-handle { position: absolute; right: -120px; top: 15px; width: 120px; height: 18px; background: #0f172a; border-radius: 0 10px 10px 0; }
-  .oil-stream { position: absolute; top: 130px; left: 50%; width: 12px; height: 0; background: rgba(234, 179, 8, 0.7); border-radius: 6px; z-index: 50; transition: height 0.4s ease; }
-  .oil-puddle { position: absolute; bottom: 5px; left: 40px; right: 40px; height: 0; background: rgba(234, 179, 8, 0.5); border-radius: 50%; transition: height 0.6s ease; }
+  /* ADVANCED THEME MOTION PHYSICS ENGINES */
+  .anim-bounce { animation: actBounce 0.4s infinite alternate ease-in-out; }
+  .anim-shake { animation: actShake 0.35s infinite linear; }
+  .anim-spin { animation: actSpin 1.4s infinite linear; }
+  .anim-pulse { animation: actPulse 0.7s infinite alternate ease-in-out; }
+
+  @keyframes actBounce { 0%{transform:translateY(0);} 100%{transform:translateY(-35px);} }
+  @keyframes actShake { 0%,100%{transform:translateX(0) rotate(0);} 25%{transform:translateX(-8px) rotate(-3deg);} 75%{transform:translateX(8px) rotate(3deg);} }
+  @keyframes actSpin { 100%{transform:rotate(360deg);} }
+  @keyframes actPulse { 0%{transform:scale(1);} 100%{transform:scale(1.15);} }
+
+  /* LAYER ENVIRONMENTAL CONTEXTS */
+  .bg { position:fixed; inset:0; background-size:cover; background-position:center; transition:opacity 0.8s ease; z-index:-10; opacity:0; }
+  .overlay { position:fixed; inset:0; background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.4) 100%); z-index:-9; }
   
-  #chef-msg-box { position: absolute; top: 25px; left: 50%; transform: translateX(-50%); background: rgba(15,23,42,0.85); padding: 15px 40px; border-radius: 50px; text-align: center; border: 3px solid #f59e0b; }
-  #target-display { font-size: 45px; color: #ffd86b; margin-bottom: 5px; letter-spacing: 4px; }
-  #back-btn { position: fixed; top: 20px; left: 20px; padding: 10px 20px; background: rgba(0,0,0,0.5); border-radius: 20px; cursor: pointer; z-index: 10000; border: 2px solid transparent; }
+  /* PARTICLE CONTAINER SITS COMPLETELY ON TOP OF EVERYTHING */
+  #particle-container { position:fixed; inset:0; pointer-events:none; z-index:10; overflow:hidden; }
+
+  /* OVERLAY HUDS & SYSTEM INDICATORS */
+  #hud { position: fixed; top: min(4vh, 30px); left: 40px; right: 40px; display: flex; justify-content: space-between; font-size: clamp(18px, 2.5vw, 28px); font-weight: 700; z-index: 50; text-shadow: 0 3px 6px #000; }
+  #level-indicator { background: rgba(0,0,0,0.35); padding: 6px 24px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; }
   
-  /* ANIMATIONS */
-  .jump { animation: jumpAnim 0.5s ease; }
-  @keyframes jumpAnim { 0%, 100%{transform:translateY(0);} 50%{transform:translateY(-80px) scaleX(0.85);} }
-  .shiver { animation: shiverAnim 0.15s infinite; }
-  @keyframes shiverAnim { 0%{transform:translateX(-4px) translateY(-2px);} 100%{transform:translateX(4px) translateY(2px);} }
-  .roll { animation: rollAnim 0.5s linear; }
-  @keyframes rollAnim { 100%{transform: rotate(360deg);} }
-  
-  .pour-oil { animation: pourOilAnim 1.2s forwards; }
-  @keyframes pourOilAnim {
-    0% { transform: translate(160px, -150px) rotate(-70deg); }
-    30%, 70% { transform: translate(160px, -150px) rotate(-110deg); }
-    100% { transform: translate(0, 0) rotate(0deg); }
+  /* NON-BLOCKING EXPRESS REWARD MODE (DOPAMINE POP) */
+  #star-pop {
+    position: fixed; inset: 0; display: flex; justify-content: center; align-items: center;
+    z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0.2);
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.4);
   }
-  .egg-splat { animation: eggSplatAnim 0.6s forwards; }
-  @keyframes eggSplatAnim {
-    0% { transform: translateY(0) scale(1); }
-    60% { transform: translateY(280px) scale(1); opacity: 1; }
-    100% { transform: translateY(310px) scale(1.6, 0.4); opacity: 0; }
+  #star-pop.boom { opacity: 1; transform: scale(1); }
+  .star-graphic { position: relative; font-size: clamp(180px, 30vh, 340px); filter: drop-shadow(0 15px 35px rgba(0,0,0,0.6)); }
+  .star-count { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: clamp(50px, 8vh, 95px); color: #fff; font-weight: 700; top: min(3vh, 25px); text-shadow: 0 4px 10px rgba(0,0,0,0.7); }
+
+  /* COMPACT ULTRA-LOW-PROFILE BOTTOM CONTROL BAR */
+  #controls { 
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:100; 
+    display:flex; align-items: center; gap:8px; background:rgba(10,8,20,0.85); 
+    padding:6px 14px; border-radius:40px; backdrop-filter:blur(20px);
+    border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.6);
   }
-  .egg-crack { animation: eggCrackAnim 0.5s forwards; }
-  @keyframes eggCrackAnim {
-    50% { transform: translateY(60px) scale(1.1); opacity: 0.8; }
-    100% { transform: translateY(100px) scale(0); opacity: 0; }
-  }
+  button { padding:10px 18px; border:none; border-radius:30px; font-weight:bold; font-size:13px; cursor:pointer; background:#1e1e2f; color:#9fa6b2; transition: all 0.15s ease; }
+  button:hover { background: #2b2b40; color: #fff; }
+  button:active { transform: scale(0.92); }
+  button:disabled { opacity:0.25; cursor:not-allowed; }
+  .active-setting { background: #6c5ce7 !important; color: #fff !important; box-shadow: 0 0 12px rgba(108,92,231,0.4); }
+  #btn-next { background:#ffd86b; color:#111; font-size: 15px; padding: 10px 24px; }
+
+  /* THEME VECTOR PHYSICS MATH ANIMATIONS */
+  @keyframes fall { 0%{transform:translateY(-10vh) rotate(0deg);} 100%{transform:translateY(110vh) rotate(360deg);} }
+  @keyframes rise { 0%{transform:translateY(110vh) rotate(0deg); opacity:0;} 15%{opacity:1;} 85%{opacity:1;} 100%{transform:translateY(-10vh) rotate(360deg); opacity:0;} }
+  @keyframes gardenDrift { 0%{transform:translate(-10vw, 20vh) rotate(0deg); opacity:0;} 15%{opacity:0.8;} 85%{opacity:0.8;} 100%{transform:translate(110vw, 80vh) rotate(180deg); opacity:0;} }
+  @keyframes forestSwirl { 0%{transform:translateY(-10vh) translateX(0) rotate(0deg);} 50%{transform:translateY(50vh) translateX(40px) rotate(180deg);} 100%{transform:translateY(110vh) translateX(-20px) rotate(360deg);} }
+  @keyframes diagRise { 0%{transform:translate(-10vw, 110vh) scale(0.6); opacity:0;} 20%{opacity:1;} 80%{opacity:1;} 100%{transform:translate(110vw, -10vh) scale(1.1); opacity:0;} }
+  @keyframes confetti-fly { 0%{transform:translate(0,0) scale(1) rotate(0deg); opacity:1;} 100%{transform:translate(var(--x), var(--y)) scale(0.3) rotate(720deg); opacity:0;} }
+  @keyframes flash { 0% { box-shadow: 0 0 0 0px rgba(255,255,255,0.6); } 100% { box-shadow: 0 0 0 45px rgba(255,255,255,0); } }
+  .flash-ring { animation: flash 0.45s ease-out; }
 </style>
 </head>
 <body>
 
-<div id="path-selector">
-  <h1 style="font-size: 46px; margin-bottom: 0;">Select Learning Path</h1>
-  <p style="color: #94a3b8;">Use Left/Right Arrows & Space/Enter to select</p>
-  
-  <div style="display: flex; gap: 40px;">
-    <div class="path-card tv-focused" id="card-toddler" onclick="startPath('toddler')">
-      <div style="font-size: 60px;">🎈</div>
-      <h2>Vowel Pop</h2>
-      <p>Dynamic Fatha, Kasra, Damma </p>
-    </div>
+<div id="intro-splash">
+  <div class="intro-title">Created By</div>
+  <div class="intro-name">Amtun Noor</div>
+  <div class="intro-sub">for</div>
+  <div class="intro-kids">Mariam & Hamza</div>
+</div>
 
-    <div class="path-card" id="card-chef" onclick="startPath('chef')">
-      <div style="font-size: 60px;">🍳</div>
-      <h2>Kitchen Chef</h2>
-      <p>Lets fry eggs!</p>
-    </div>
+<div id="bg1" class="bg"></div>
+<div id="bg2" class="bg"></div>
+<div class="overlay"></div>
+<div id="particle-container"></div>
+
+<div id="hud">
+  <div id="level-indicator">LEVEL: <span id="lbl-level">1</span></div>
+</div>
+
+<div id="star-pop">
+  <div class="star-graphic">
+    ⭐
+    <div class="star-count" id="lbl-star-count">0</div>
   </div>
 </div>
 
-<div id="back-btn" onclick="goHome()">🏠 Menu</div>
-
-<div id="game-stage">
-  
-  <!-- TODDLER MODE -->
-  <div id="vowel-stage">
-    <div>
-      <div id="toddler-bubble" class="bubble-letter">
-        <span id="harakah-visual" class="harakah-mark"></span>
-        <span id="base-letter">ج</span>
-      </div>
-    </div>
-    <div class="vowel-btns">
-      <button class="v-btn tv-focused" id="vbtn-0" style="background:#ef4444; box-shadow: 0 8px 0 #991b1b;" onclick="vowelAction('fatha')">َ</button>
-      <button class="v-btn" id="vbtn-1" style="background:#3b82f6; box-shadow: 0 8px 0 #1e40af;" onclick="vowelAction('kasra')">ِ</button>
-      <button class="v-btn" id="vbtn-2" style="background:#22c55e; box-shadow: 0 8px 0 #166534;" onclick="vowelAction('damma')">ُ</button>
-    </div>
-    <h2 id="vowel-name" style="margin-top: 40px; font-size: 36px; color: #ffd86b;">CHOOSE A VOWEL HARAKAH</h2>
+<div id="app">
+  <div id="tile-wrapper" class="display-tile">
+    <div id="letter"></div>
+    <div id="action"></div>
+    <div id="phrase"></div>
   </div>
+</div>
 
-  <!-- KITCHEN CHEF MODE -->
-  <div id="chef-stage">
-    <div id="chef-msg-box">
-      <div id="target-display">دَرَسَ</div>
-      <div id="chef-prompt" style="font-size: 18px; color: #cbd5e1;">Pour the cooking oil first!</div>
-    </div>
-    
-    <div class="shelf-back">
-      <div id="oil-item" class="oil-bottle tv-focused" onclick="triggerOilPour()">
-        <div class="oil-label">OIL</div>
-      </div>
-    </div>
-    
-    <div class="egg-station" id="egg-shelf" style="display: none;"></div>
-    
-    <div class="oil-stream" id="oil-pour-line"></div>
-    <div class="cooking-pan">
-      <div class="oil-puddle" id="pan-oil-level"></div>
-      <div class="pan-handle"></div>
-    </div>
-    <div class="countertop">
-      <div class="stove-burner"></div>
-    </div>
-  </div>
-
+<div id="controls">
+  <button id="btn-manual" class="active-setting" onclick="setMode('manual')">MANUAL</button>
+  <button id="btn-auto" onclick="setMode('auto')">AUTO</button>
+  <span style="border-left: 1px solid rgba(255,255,255,0.12); height: 18px; margin: 0 2px;"></span>
+  <button id="spd-slow" onclick="setSpeed('slow')">SLOW</button>
+  <button id="spd-normal" class="active-setting" onclick="setSpeed('normal')">NORMAL</button>
+  <button id="spd-fast" onclick="setSpeed('fast')">FAST</button>
+  <span style="border-left: 1px solid rgba(255,255,255,0.12); height: 18px; margin: 0 2px;"></span>
+  <button id="btn-next" onclick="triggerNextManual()">NEXT ➡️</button>
 </div>
 
 <script>
-// RAW GITHUB MEDIA PATH RESOLUTION INFRASTRUCTURE
-const REPO_SOUNDS_URL = "https://raw.githubusercontent.com/AmtunNoor/arabic-alpha-learning-world/main/assets/sounds/letters/";
-
-const lettersData = [
-  { char: "ج", file: "jeem.mp3", color: "#ff7675" },
-  { char: "ب", file: "ba.mp3", color: "#fdcb6e" },
-  { char: "ت", file: "ta.mp3", color: "#00cec9" },
-  { char: "د", file: "daal.mp3", color: "#6c5ce7" },
-  { char: "ر", file: "raa.mp3", color: "#ff7675" },
-  { char: "س", file: "seen.mp3", color: "#00cec9" }
+/* ===================== DIRECTORY MAP VERIFICATION DATA ===================== */
+const letters = [
+  { char:"ا", file:"alif.mp3", color:"#ff7675" }, { char:"ب", file:"ba.mp3", color:"#fdcb6e" }, 
+  { char:"ت", file:"ta.mp3", color:"#00cec9" }, { char:"ث", file:"thaa.mp3", color:"#6c5ce7" }, 
+  { char:"ج", file:"jeem.mp3", color:"#ff7675" }, { char:"ح", file:"haa.mp3", color:"#fdcb6e" }, 
+  { char:"خ", file:"kha.mp3", color:"#00cec9" }, { char:"د", file:"daal.mp3", color:"#6c5ce7" }, 
+  { char:"ر", file:"raa.mp3", color:"#ff7675" }, { char:"ز", file:"zaa.mp3", color:"#fdcb6e" }, 
+  { char:"س", file:"seen.mp3", color:"#00cec9" }, { char:"ش", file:"sheen.mp3", color:"#6c5ce7" }, 
+  { char:"ص", file:"saad.mp3", color:"#ff7675" }, { char:"ض", file:"dad.mp3", color:"#fdcb6e" }, 
+  { char:"ط", file:"toa.mp3", color:"#00cec9" }, { char:"ظ", file:"zoa.mp3", color:"#6c5ce7" }, 
+  { char:"ع", file:"ain.mp3", color:"#ff7675" }, { char:"غ", file:"ghain.mp3", color:"#fdcb6e" }, 
+  { char:"ف", file:"fa.mp3", color:"#00cec9" }, { char:"ق", file:"qaaf.mp3", color:"#6c5ce7" }, 
+  { char:"ك", file:"kaf.mp3", color:"#ff7675" }, { char:"ل", file:"laam.mp3", color:"#fdcb6e" }, 
+  { char:"م", file:"meem.mp3", color:"#00cec9" }, { char:"ن", file:"noon.mp3", color:"#6c5ce7" }, 
+  { char:"ه", file:"ha.mp3", color:"#ff7675" }, { char:"و", file:"waw.mp3", color:"#fdcb6e" }, 
+  { char:"ي", file:"yaa.mp3", color:"#00cec9" }
 ];
 
-const wordsBank = [
-  { combined: "دَرَسَ", sequence: [3, 4, 5] },
-  { combined: "بَرَدَ", sequence: [1, 4, 3] }
+const actions = [
+  { name:"clap", icon:"👏", sound:"clap.mp3", anim:"anim-shake" },
+  { name:"fly", icon:"🪶", sound:"fly.mp3", anim:"anim-bounce" },
+  { name:"hop", icon:"🐸", sound:"hop.mp3", anim:"anim-bounce" },
+  { name:"jump", icon:"🦘", sound:"jump.mp3", anim:"anim-bounce" },
+  { name:"look", icon:"👀", sound:"look.mp3", anim:"anim-pulse" },
+  { name:"quiet", icon:"🤫", sound:"quiet.mp3", anim:"anim-pulse" },
+  { name:"run", icon:"🏃", sound:"run.mp3", anim:"anim-shake" },
+  { name:"sit", icon:"🪑", sound:"sit.mp3", anim:"anim-pulse" },
+  { name:"sleep", icon:"😴", sound:"sleep.mp3", anim:"anim-pulse" },
+  { name:"spin", icon:"🌀", sound:"spin.mp3", anim:"anim-spin" },
+  { name:"stomp", icon:"👣", sound:"stomp.mp3", anim:"anim-shake" },
+  { name:"stretch", icon:"🤸", sound:"stretch.mp3", anim:"anim-bounce" },
+  { name:"strong", icon:"💪", sound:"strong.mp3", anim:"anim-pulse" },
+  { name:"walk", icon:"🚶", sound:"walk.mp3", anim:"anim-bounce" },
+  { name:"wave", icon:"👋", sound:"wave.mp3", anim:"anim-shake" }
 ];
 
-let activeScreen = "menu";
-let toddlerIdx = 0;
-let chefWordIdx = 0;
-let chefPhase = "oil"; 
-let chefStep = 0;
-let focusedElementIdx = 0;
-let currentEggSequence = [];
+const phrases = [
+  { text: "Amazing!", file: "amazing.mp3" },
+  { text: "Fantastic!", file: "fantastic.mp3" },
+  { text: "Keep Going!", file: "keep_going.mp3" },
+  { text: "Well Done!", file: "well_done.mp3" }
+];
 
-// CENTRALIZED PITCH SHIFT SOUND PLAYER ENGINE
-async function playShiftedSound(filename, rate = 1.0) {
+const themes = [
+  { name:"snow", src:"assets/images/themes/snow.webp", p:["❄️","🌨️"], motion:"fall" },
+  { name:"snow", src:"assets/images/themes/snow_2.webp", p:["❄️","✨"], motion:"fall" },
+  { name:"garden", src:"assets/images/themes/garden.webp", p:["🌸","🦋","🌼"], motion:"garden-drift" },
+  { name:"ocean", src:"assets/images/themes/ocean.webp", p:["🫧","🐟"], motion:"rise" },
+  { name:"ocean", src:"assets/images/themes/ocean_2.webp", p:["🫧","🪼"], motion:"rise" },
+  { name:"forest", src:"assets/images/themes/forest.webp", p:["🍂","🍁"], motion:"forest-swirl" },
+  { name:"forest", src:"assets/images/themes/forest_2.webp", p:["🍃","🌱"], motion:"forest-swirl" },
+  { name:"rainbow", src:"assets/images/themes/rainbow.webp", p:["✨","⭐"], motion:"diagRise" },
+  { name:"rainbow", src:"assets/images/themes/rainbow_2.webp", p:["✨","🌈"], motion:"diagRise" },
+  { name:"balloon", src:"assets/images/themes/balloon.webp", p:["🎈","🎉"], motion:"rise" }
+];
+
+/* ===================== TRUE SPEED INTERVAL CONTROL ===================== */
+const speedMatrix = {
+  slow:   { letterWait: 1400, actionWait: 1600, phraseWait: 1800, postStar: 600 },
+  normal: { letterWait: 800,  actionWait: 1000, phraseWait: 1100, postStar: 350 },
+  fast:   { letterWait: 300,  actionWait: 400,  phraseWait: 450,  postStar: 150 }
+};
+
+/* ===================== ENGINE CONFIG TRACKERS ===================== */
+let currentIdx = 0;
+let starsCollected = 0;
+let currentLevel = 1;
+let currentMode = "manual"; 
+let currentSpeed = "normal"; 
+let isEngineRunning = false;
+let bgFlip = true;
+let autoTimeout = null;
+
+const el = {
+  letter: document.getElementById("letter"),
+  action: document.getElementById("action"),
+  phrase: document.getElementById("phrase"),
+  tile: document.getElementById("tile-wrapper"),
+  pCon: document.getElementById("particle-container"),
+  lblStar: document.getElementById("lbl-star-count"),
+  starPop: document.getElementById("star-pop"),
+  lblLevel: document.getElementById("lbl-level"),
+  btnNext: document.getElementById("btn-next"),
+  intro: document.getElementById("intro-splash")
+};
+
+// AUDIO CACHE OBJECT STORAGE FOR ZERO LATENCY 
+const audioCache = {};
+
+function getSoundPath(filename) {
+  if (filename.includes('amazing') || filename.includes('fantastic') || filename.includes('keep_going') || filename.includes('well_done')) {
+    return `assets/sounds/phrases/${filename}`;
+  } else if (filename.includes('level_up') || filename.includes('ambient')) {
+    return `assets/sounds/system/${filename}`;
+  } else if (actions.some(a => a.sound === filename)) {
+    return `assets/sounds/actions/${filename}`;
+  } else {
+    return `assets/sounds/letters/${filename}`;
+  }
+}
+
+function preCacheAllAudio() {
+  const targets = [];
+  letters.forEach(l => targets.push(l.file));
+  actions.forEach(a => targets.push(a.sound));
+  phrases.forEach(p => targets.push(p.file));
+  targets.push("level_up.mp3");
+
+  targets.forEach(file => {
+    const path = getSoundPath(file);
+    const audio = new Audio(path);
+    audio.preload = "auto";
+    audioCache[file] = audio;
+  });
+}
+
+preCacheAllAudio();
+
+const ambient = new Audio("assets/sounds/system/ambient.mp3");
+ambient.loop = true; ambient.volume = 0.12;
+
+/* ===================== HIGH QUALITY PARTICLE PHYSICS ENGINE ===================== */
+function runThemeParticles(theme) {
+  el.pCon.innerHTML = "";
+  const count = 16; 
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement("div");
+    p.textContent = theme.p[Math.floor(Math.random() * theme.p.length)];
+    p.style.position = "absolute";
+    p.style.pointerEvents = "none";
+    
+    if (theme.motion === "fall") {
+      p.style.left = Math.random() * 100 + "vw";
+      p.style.fontSize = (20 + Math.random() * 20) + "px";
+      p.style.animation = `fall ${5 + Math.random() * 5}s linear infinite`;
+    } else if (theme.motion === "rise") {
+      p.style.left = Math.random() * 100 + "vw";
+      p.style.fontSize = (24 + Math.random() * 24) + "px";
+      p.style.animation = `rise ${6 + Math.random() * 5}s linear infinite`;
+    } else if (theme.motion === "garden-drift") {
+      p.style.fontSize = (22 + Math.random() * 20) + "px";
+      p.style.animation = `gardenDrift ${7 + Math.random() * 6}s linear infinite`;
+    } else if (theme.motion === "forest-swirl") {
+      p.style.left = Math.random() * 100 + "vw";
+      p.style.fontSize = (20 + Math.random() * 22) + "px";
+      p.style.animation = `forestSwirl ${6 + Math.random() * 5}s linear infinite`;
+    } else if (theme.motion === "diagRise") {
+      p.style.fontSize = (25 + Math.random() * 25) + "px";
+      p.style.animation = `diagRise ${5 + Math.random() * 4}s linear infinite`;
+    }
+    el.pCon.appendChild(p);
+  }
+}
+
+function triggerHighInterestBurst() {
+  const elements = ["✨", "⚡", "🌟", "💫", "💥", "🎨"];
+  for (let i = 0; i < 30; i++) {
+    const c = document.createElement("div");
+    c.textContent = elements[Math.floor(Math.random() * elements.length)];
+    c.style.position = "absolute"; c.style.left = "50vw"; c.style.top = "50vh";
+    c.style.fontSize = (18 + Math.random() * 22) + "px"; c.style.pointerEvents = "none";
+    
+    const angle = Math.random() * Math.PI * 2;
+    const force = 140 + Math.random() * 280;
+    c.style.setProperty('--x', Math.cos(angle) * force + "px");
+    c.style.setProperty('--y', Math.sin(angle) * force + "px");
+    c.style.animation = `confetti-fly 0.65s cubic-bezier(0.1, 0.8, 0.3, 1) forwards`;
+    
+    el.pCon.appendChild(c);
+    setTimeout(() => c.remove(), 650);
+  }
+}
+
+function triggerLevelBalloons() {
+  el.pCon.innerHTML = "";
+  for(let i=0; i<25; i++) {
+    setTimeout(() => {
+      const b = document.createElement("div");
+      b.textContent = ["🎈", "🎉", "✨"][Math.floor(Math.random() * 3)];
+      b.style.cssText = `position:absolute; left:${5 + Math.random() * 90}vw; font-size:${50 + Math.random()*30}px; pointer-events:none;`;
+      b.style.animation = `rise ${4 + Math.random()*3}s linear forwards`;
+      el.pCon.appendChild(b);
+      setTimeout(() => b.remove(), 6000);
+    }, i * 120);
+  }
+}
+
+/* ===================== STATE CONTROL MATRICES ===================== */
+function changeThemeEnvironment(themeIdx) {
+  const theme = themes[themeIdx % themes.length];
+  const nextActiveBg = bgFlip ? document.getElementById("bg2") : document.getElementById("bg1");
+  const oldActiveBg = bgFlip ? document.getElementById("bg1") : document.getElementById("bg2");
+  
+  nextActiveBg.style.backgroundImage = `url('${theme.src}')`;
+  nextActiveBg.style.opacity = "1";
+  oldActiveBg.style.opacity = "0";
+  bgFlip = !bgFlip;
+
+  runThemeParticles(theme);
+}
+
+async function playSoundFile(filename) {
   return new Promise(resolve => {
-    try {
-      const audio = new Audio(`${REPO_SOUNDS_URL}${filename}`);
-      audio.defaultPlaybackRate = rate;
-      audio.playbackRate = rate;
-      audio.onended = () => resolve();
-      audio.onerror = () => resolve();
-      audio.play().catch(() => resolve());
-    } catch(err) {
-      resolve();
+    let s = audioCache[filename];
+    if (!s) {
+      s = new Audio(getSoundPath(filename));
     }
+    s.currentTime = 0;
+    s.volume = 1.0;
+    s.onended = () => resolve(true);
+    s.onerror = () => resolve(false); 
+    s.play().catch(() => resolve(false));
   });
 }
 
-function startPath(path) {
-  document.getElementById("path-selector").style.transform = "translateY(-100%)";
-  focusedElementIdx = 0;
+function hexToRgb(hex) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "255,255,255";
+}
+
+/* ===================== CORE TIMELINE PIPELINE LOOP ===================== */
+async function runSequence() {
+  if (isEngineRunning) return;
+  isEngineRunning = true;
+  el.btnNext.disabled = true;
+
+  el.tile.classList.remove("flash-ring");
   
-  if(path === 'toddler') {
-    activeScreen = "toddler";
-    document.getElementById("vowel-stage").style.display = "block";
-    loadToddlerLetter();
-    updateVowelFocus();
+  const currentLetter = letters[currentIdx % letters.length];
+  const currentAction = actions[currentIdx % actions.length]; 
+  const chosenPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+  
+  const themeIdx = Math.floor(currentIdx / 5) % themes.length;
+
+  const calcLevel = Math.floor(currentIdx / 5) + 1;
+  if (calcLevel > currentLevel) {
+    currentLevel = calcLevel;
+    el.lblLevel.textContent = currentLevel;
+    triggerLevelBalloons();
+    await playSoundFile("level_up.mp3");
+    await new Promise(r => setTimeout(r, 1500));
+  }
+
+  changeThemeEnvironment(themeIdx);
+
+  el.letter.style.opacity = "1";
+  el.action.style.opacity = "0";
+  el.phrase.style.opacity = "0";
+  
+  el.letter.textContent = currentLetter.char;
+  el.letter.style.color = currentLetter.color;
+  el.letter.style.textShadow = `0 10px 30px rgba(${hexToRgb(currentLetter.color)}, 0.5)`;
+  
+  el.action.textContent = currentAction.icon;
+  el.action.className = ""; 
+  el.phrase.textContent = currentAction.name.toUpperCase() + " " + chosenPhrase.text.toUpperCase();
+
+  const timing = speedMatrix[currentSpeed];
+
+  // STEP 1: Main Focus Alphabet Voice-Over
+  await playSoundFile(currentLetter.file);
+  await new Promise(res => setTimeout(res, timing.letterWait));
+
+  // STEP 2: Show Action + Particles Burst Above
+  el.action.style.opacity = "1";
+  el.action.classList.add(currentAction.anim);
+  triggerHighInterestBurst();
+  
+  await playSoundFile(currentAction.sound);
+  await new Promise(res => setTimeout(res, timing.actionWait));
+
+  // STEP 3: Complete Phonics Text Phrase
+  el.phrase.style.opacity = "1";
+  el.tile.classList.add("flash-ring");
+  
+  await playSoundFile(chosenPhrase.file);
+  await new Promise(res => setTimeout(res, timing.phraseWait));
+
+  // DOPAMINE REWARD LAYER POPUP
+  starsCollected++;
+  el.lblStar.textContent = starsCollected;
+  el.starPop.classList.add("boom");
+  
+  await new Promise(res => setTimeout(res, timing.postStar));
+  el.starPop.classList.remove("boom");
+
+  // PIPELINE LOOP ITERATION AND STEP RESOLUTION
+  currentIdx++;
+  isEngineRunning = false;
+  el.btnNext.disabled = false;
+
+  if (currentMode === "auto") {
+    autoTimeout = setTimeout(runSequence, 1200);
+  }
+}
+
+/* ===================== CONTROL PANELS INTERACTIVE ACTION HOOKS ===================== */
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById("btn-manual").classList.toggle("active-setting", mode === 'manual');
+  document.getElementById("btn-auto").classList.toggle("active-setting", mode === 'auto');
+  
+  if (mode === "auto") {
+    el.btnNext.disabled = true;
+    if (!isEngineRunning) runSequence();
   } else {
-    activeScreen = "chef";
-    document.getElementById("chef-stage").style.display = "block";
-    resetChefGame();
+    clearTimeout(autoTimeout);
+    if (!isEngineRunning) el.btnNext.disabled = false;
   }
 }
 
-function goHome() {
-  document.getElementById("path-selector").style.transform = "translateY(0)";
-  document.getElementById("vowel-stage").style.display = "none";
-  document.getElementById("chef-stage").style.display = "none";
-  activeScreen = "menu";
-  focusedElementIdx = 0;
-  updateMenuFocus();
+function setSpeed(speed) {
+  currentSpeed = speed;
+  document.getElementById("spd-slow").classList.toggle("active-setting", speed === 'slow');
+  document.getElementById("spd-normal").classList.toggle("active-setting", speed === 'normal');
+  document.getElementById("spd-fast").classList.toggle("active-setting", speed === 'fast');
 }
 
-function updateMenuFocus() {
-  document.getElementById("card-toddler").classList.toggle("tv-focused", focusedElementIdx === 0);
-  document.getElementById("card-chef").classList.toggle("tv-focused", focusedElementIdx === 1);
-}
-
-function updateVowelFocus() {
-  for (let i = 0; i < 3; i++) {
-    document.getElementById(`vbtn-${i}`).classList.toggle("tv-focused", focusedElementIdx === i);
+function triggerNextManual() {
+  if (currentMode === "manual" && !isEngineRunning) {
+    runSequence();
   }
 }
 
-/* --- TODDLER VOWEL POP ENGINE WITH AUTOMATED WEB AUDIO PITCH --- */
-function loadToddlerLetter() {
-  const l = lettersData[toddlerIdx % lettersData.length];
-  document.getElementById("base-letter").textContent = l.char;
-  document.getElementById("toddler-bubble").style.color = l.color;
-  document.getElementById("harakah-visual").textContent = ""; 
-  playShiftedSound(l.file, 1.0); // Standard playback for raw base letter sound induction
-}
-
-async function vowelAction(type) {
-  const b = document.getElementById("toddler-bubble");
-  const visualMark = document.getElementById("harakah-visual");
-  const nameLabel = document.getElementById("vowel-name");
-  const l = lettersData[toddlerIdx % lettersData.length];
-
-  b.className = "bubble-letter"; 
-  void b.offsetWidth; 
-
-  let targetPitch = 1.0;
-  if(type === 'fatha') {
-    b.classList.add("jump");
-    visualMark.textContent = "َ";
-    nameLabel.textContent = "FATHA!";
-    targetPitch = 1.15; // Higher, open sound signature
-  } else if(type === 'kasra') {
-    b.classList.add("shiver");
-    visualMark.textContent = "ِ";
-    nameLabel.textContent = "KASRA!";
-    targetPitch = 1.35; // Sharp, squeaky peak signature
-  } else {
-    b.classList.add("roll");
-    visualMark.textContent = "ُ";
-    nameLabel.textContent = "DAMMA!";
-    targetPitch = 0.85; // Deeper, rounder register signature
-  }
-
-  await playShiftedSound(l.file, targetPitch);
-  
+// BOOT ENGINE SETUP & INTRO TIMELINE ANIMATION 
+window.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
-    toddlerIdx++;
-    loadToddlerLetter();
-    nameLabel.textContent = "CHOOSE A VOWEL HARAKAH";
-    b.className = "bubble-letter";
-  }, 2200);
-}
-
-/* --- KITCHEN CHEF STEP ENGINE --- */
-function resetChefGame() {
-  chefPhase = "oil";
-  chefStep = 0;
-  focusedElementIdx = 0;
-  
-  document.getElementById("oil-item").style.display = "block";
-  document.getElementById("oil-item").className = "oil-bottle tv-focused";
-  document.getElementById("egg-shelf").style.display = "none";
-  document.getElementById("pan-oil-level").style.height = "0px";
-  document.getElementById("chef-prompt").textContent = "Pour the cooking oil first!";
-  
-  const word = wordsBank[chefWordIdx % wordsBank.length];
-  document.getElementById("target-display").textContent = word.combined;
-}
-
-function triggerOilPour() {
-  if (chefPhase !== "oil") return;
-  chefPhase = "busy"; 
-  
-  const oil = document.getElementById("oil-item");
-  oil.classList.remove("tv-focused");
-  oil.classList.add("pour-oil");
-  
-  setTimeout(() => {
-    document.getElementById("oil-pour-line").style.height = "160px";
-    playShiftedSound("oil_sizzle.mp3", 1.0); 
-  }, 300);
-
-  setTimeout(() => {
-    document.getElementById("oil-pour-line").style.height = "0px";
-    document.getElementById("pan-oil-level").style.height = "25px";
-  }, 900);
-
-  setTimeout(() => {
-    oil.style.display = "none";
-    setupEggPhase();
-  }, 1300);
-}
-
-function setupEggPhase() {
-  chefPhase = "eggs";
-  focusedElementIdx = 0;
-  document.getElementById("chef-prompt").textContent = "Find the first letter sound & break the egg!";
-  
-  const word = wordsBank[chefWordIdx % wordsBank.length];
-  currentEggSequence = [...word.sequence].sort(() => Math.random() - 0.5);
-  
-  renderEggTray();
-}
-
-function renderEggTray() {
-  const shelf = document.getElementById("egg-shelf");
-  shelf.innerHTML = "";
-  shelf.style.display = "flex";
-  
-  currentEggSequence.forEach((letterIdx, pos) => {
-    const container = document.createElement("div");
-    container.className = "egg-container";
-    
-    if (letterIdx !== null) {
-      const egg = document.createElement("div");
-      egg.className = "cartoon-egg";
-      egg.textContent = lettersData[letterIdx].char;
-      egg.onclick = () => processEggSelection(letterIdx, pos, egg);
-      container.appendChild(egg);
-    }
-    shelf.appendChild(container);
-  });
-  
-  updateChefFocus();
-}
-
-function updateChefFocus() {
-  const eggs = document.querySelectorAll(".cartoon-egg");
-  eggs.forEach((egg, idx) => {
-    egg.classList.toggle("tv-focused", focusedElementIdx === idx);
-  });
-}
-
-async function processEggSelection(letterIdx, pos, eggElement) {
-  const word = wordsBank[chefWordIdx % wordsBank.length];
-  const targetIdx = word.sequence[chefStep];
-  
-  if (letterIdx === targetIdx) {
-    eggElement.classList.add("egg-crack");
-    await playShiftedSound(lettersData[letterIdx].file, 1.0);
-    
-    chefStep++;
-    currentEggSequence[pos] = null; 
-    
+    ambient.play().catch(() => {});
+    el.intro.style.opacity = "0";
+    el.intro.style.transform = "scale(1.05)";
     setTimeout(() => {
-      renderEggTray();
-      focusedElementIdx = 0;
-      updateChefFocus();
-    }, 500);
-
-    if (chefStep === 3) {
-      document.getElementById("chef-prompt").textContent = "Perfect Cooking! Delicious word ready!";
-      setTimeout(() => {
-        chefWordIdx++;
-        resetChefGame();
-      }, 2500);
-    } else {
-      document.getElementById("chef-prompt").textContent = "Yum! Next letter sound?";
-    }
-  } else {
-    eggElement.classList.add("egg-splat");
-    playShiftedSound("egg_splat.mp3", 1.0); 
-    
-    setTimeout(() => {
-      eggElement.classList.remove("egg-splat");
-      document.getElementById("chef-prompt").textContent = "Oops! Wrong ingredient combination!";
-    }, 600);
-  }
-}
-
-/* --- TV KEY NAVIGATION HANDLING --- */
-window.addEventListener("keydown", (e) => {
-  if (activeScreen === "menu") {
-    if (e.key === "ArrowLeft") { focusedElementIdx = 0; updateMenuFocus(); }
-    if (e.key === "ArrowRight") { focusedElementIdx = 1; updateMenuFocus(); }
-    if (e.key === "Space" || e.key === "Enter" || e.code === "Space") {
-      e.preventDefault();
-      if (focusedElementIdx === 0) startPath('toddler');
-      else startPath('chef');
-    }
-  }
-  else if (activeScreen === "toddler") {
-    if (e.key === "ArrowLeft") {
-      focusedElementIdx = (focusedElementIdx - 1 + 3) % 3;
-      updateVowelFocus();
-    }
-    if (e.key === "ArrowRight") {
-      focusedElementIdx = (focusedElementIdx + 1) % 3;
-      updateVowelFocus();
-    }
-    if (e.key === "Space" || e.key === "Enter" || e.code === "Space") {
-      e.preventDefault();
-      document.getElementById(`vbtn-${focusedElementIdx}`).click();
-    }
-  }
-  else if (activeScreen === "chef") {
-    if (chefPhase === "oil") {
-      if (e.key === "Space" || e.key === "Enter" || e.code === "Space") {
-        e.preventDefault();
-        triggerOilPour();
-      }
-    } 
-    else if (chefPhase === "eggs") {
-      const liveEggs = document.querySelectorAll(".cartoon-egg");
-      if (liveEggs.length === 0) return;
-
-      if (e.key === "ArrowLeft") {
-        focusedElementIdx = (focusedElementIdx - 1 + liveEggs.length) % liveEggs.length;
-        updateChefFocus();
-      }
-      if (e.key === "ArrowRight") {
-        focusedElementIdx = (focusedElementIdx + 1) % liveEggs.length;
-        updateChefFocus();
-      }
-      if (e.key === "Space" || e.key === "Enter" || e.code === "Space") {
-        e.preventDefault();
-        liveEggs[focusedElementIdx]?.click();
-      }
-    }
-  }
+      el.intro.remove();
+      changeThemeEnvironment(0);
+      runSequence();
+    }, 800);
+  }, 2600);
 });
 </script>
 </body>
-</html>-=
+</html>
