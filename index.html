@@ -31,13 +31,11 @@
 
   @keyframes glowPulse { 0% { opacity: 0.5; transform: scale(0.97); } 100% { opacity: 1; transform: scale(1.03); } }
 
-  /* CENTERING DISPATCH RIG */
   #app {
     height: 100vh; width: 100vw; display: flex; flex-direction: column;
     justify-content: center; align-items: center; padding: 20px; position: relative; z-index: 5;
   }
   
-  /* MATTE TRANSPARENT MINI TILE */
   .display-tile {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -50,7 +48,6 @@
     transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
-  /* ALPHABET SPECIFIC ENGINE CORE - REMOVED HARD OUTLINES */
   #letter { 
     font-size: clamp(100px, 18vh, 180px); font-family: 'Jua', sans-serif;
     line-height: 1; margin: 0; padding: 0;
@@ -70,7 +67,6 @@
     text-shadow: 0 4px 10px rgba(0,0,0,0.4);
   }
 
-  /* ACTION PHYSICAL MOTION FRAMEWORKS */
   .anim-bounce { animation: actBounce 0.3s infinite alternate ease-in-out; }
   .anim-shake { animation: actShake 0.25s infinite linear; }
   .anim-spin { animation: actSpin 1s infinite linear; }
@@ -85,11 +81,9 @@
   #particle-container { position:fixed; inset:0; pointer-events:none; z-index:10; overflow:hidden; }
   .particle { position: absolute; pointer-events: none; }
 
-  /* COMPACT STATS HUD */
   #hud { position: fixed; top: min(5vh, 30px); left: 30px; right: 30px; display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; z-index: 50; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
   #level-indicator { background: rgba(0,0,0,0.35); padding: 6px 20px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; }
   
-  /* STAR POP REWARD MODULE */
   #star-pop {
     position: fixed; inset: 0; display: flex; justify-content: center; align-items: center;
     z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0.1);
@@ -100,14 +94,12 @@
   .star-count { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: clamp(38px, 6vh, 65px); color: #fff; font-weight: 700; top: 10px; text-shadow: 0 4px 8px rgba(0,0,0,0.5); }
   .burst-star { position: absolute; font-size: 24px; pointer-events: none; transition: transform 0.5s cubic-bezier(0.1, 0.8, 0.25, 1), opacity 0.5s; opacity: 1; }
 
-  /* CELEBRATION WAVE PATTERNS */
   .celebration-item { position: fixed; bottom: -80px; pointer-events: none; z-index: 2000; font-size: 45px; animation: floatUpward 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
   @keyframes floatUpward {
     0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
     100% { transform: translateY(-120vh) translateX(var(--skew)) rotate(var(--rot)); opacity: 0; }
   }
 
-  /* DECOUPLED AUTOMATIC HIDING CONTROLLER HUD */
   #controls { 
     position:fixed; bottom:min(6vh, 40px); left:50%; transform:translateX(-50%); z-index:100; 
     display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.85); 
@@ -363,10 +355,12 @@ function launchIntermissionWave() {
 
 async function playSoundFile(filename) {
   return new Promise(resolve => {
-    let s = audioCache[filename]; if (!s) s = new Audio(getSoundPath(filename));
+    let s = audioCache[filename]; 
+    if (!s) s = new Audio(getSoundPath(filename));
     s.currentTime = 0; s.volume = 1.0;
-    s.onended = () => resolve(true); s.onerror = () => resolve(false);
-    s.play().catch(() => resolve(false));
+    s.onended = () => resolve(true); 
+    s.onerror = () => resolve(false); // Safety fallback if file is missing/corrupted
+    s.play().catch(() => resolve(false)); // Safety fallback if browser blocks file
   });
 }
 
@@ -411,4 +405,68 @@ async function runSequence() {
 
   // STEP 4: Fire Reward Particle Sequence
   starsCollected++; el.lblStar.textContent = starsCollected;
-  el.starPop.classList.add("boom"); launc
+  el.starPop.classList.add("boom"); launchStarsBurst();
+  await new Promise(res => setTimeout(res, timing.postStar));
+  el.starPop.classList.remove("boom");
+
+  launchIntermissionWave();
+  await new Promise(res => setTimeout(res, 500));
+
+  currentIdx++; isEngineRunning = false;
+  if (currentMode === "manual") el.btnNext.disabled = false;
+  if (currentMode === "auto" && !isPaused) autoTimeout = setTimeout(runSequence, timing.autoNext);
+}
+
+function togglePlay() {
+  isPaused = !isPaused;
+  if (isPaused) {
+    clearTimeout(autoTimeout); ambient.pause();
+    el.btnPlayPause.textContent = "PLAY"; el.btnPlayPause.style.background = "#2ecc71";
+    el.btnNext.disabled = (currentMode === "auto");
+    el.controls.classList.remove("hidden-hud");
+  } else {
+    ambient.play().catch(()=>{});
+    el.btnPlayPause.textContent = "PAUSE"; el.btnPlayPause.style.background = "#5849c4";
+    if (currentMode === "auto") runSequence(); else el.btnNext.disabled = isEngineRunning;
+    resetHudTimer();
+  }
+}
+
+function setMode(mode) {
+  currentMode = mode; clearTimeout(autoTimeout);
+  if (mode === "auto") { el.btnNext.disabled = true; if (!isEngineRunning && !isPaused) runSequence(); } 
+  else { if (!isEngineRunning && !isPaused) el.btnNext.disabled = false; }
+  resetHudTimer();
+}
+
+function setSpeed(speed) { currentSpeed = speed; resetHudTimer(); }
+function triggerNextManual() { if (currentMode === "manual" && !isEngineRunning && !isPaused) { runSequence(); resetHudTimer(); } }
+
+function bootEngineWorld() {
+  if (isBooted) return; isBooted = true;
+  
+  // Safely attempt fullscreen (bypass rigid exceptions thrown by iOS Safari)
+  try {
+    const doc = document.documentElement;
+    if (doc.requestFullscreen) doc.requestFullscreen();
+    else if (doc.webkitRequestFullscreen) doc.webkitRequestFullscreen();
+  } catch(e) { console.log("Fullscreen blocked or unsupported"); }
+
+  // Unlocking Audio Context on mobile hardware via explicit interaction signature
+  for (let key in audioCache) {
+    audioCache[key].play().then(() => { audioCache[key].pause(); audioCache[key].currentTime = 0; }).catch(()=>{});
+  }
+
+  ambient.loop = true; ambient.volume = 0.12; ambient.play().catch(() => {});
+  
+  el.intro.style.opacity = "0";
+  setTimeout(() => { 
+    el.intro.remove(); 
+    changeThemeEnvironment(0); 
+    runSequence(); 
+    resetHudTimer();
+  }, 600);
+}
+</script>
+</body>
+</html>
