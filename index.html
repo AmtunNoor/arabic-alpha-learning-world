@@ -13,7 +13,6 @@
     height: 100vh; width: 100vw; width: 100dvw; height: 100dvh;
   }
   
-  
   #intro-splash {
     position: fixed; inset: 0; background: radial-gradient(circle at center, #1b1437 0%, #05030a 100%);
     z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -208,7 +207,7 @@ const letters = [
 
 const actions = [
   { name:"clap", icon:"👏", sound:"clap.mp3", anim:"anim-shake" },
-  { name:"fly", icon:"🪶", sound:"fly.mp3", anim:"anim-bounce" },
+  { name:"fly", icon:"🦅", sound:"fly.mp3", anim:"anim-bounce" },
   { name:"hop", icon:"🐸", sound:"hop.mp3", anim:"anim-bounce" },
   { name:"jump", icon:"🦘", sound:"jump.mp3", anim:"anim-bounce" },
   { name:"look", icon:"👀", sound:"look.mp3", anim:"anim-pulse" },
@@ -217,7 +216,7 @@ const actions = [
   { name:"sit", icon:"🪑", sound:"sit.mp3", anim:"anim-pulse" },
   { name:"sleep", icon:"😴", sound:"sleep.mp3", anim:"anim-pulse" },
   { name:"spin", icon:"🌀", sound:"spin.mp3", anim:"anim-spin" },
-  { name:"stomp", icon:"👣", sound:"stomp.mp3", anim:"anim-shake" },
+  { name:"stomp", icon:"🦶", sound:"stomp.mp3", anim:"anim-shake" },
   { name:"stretch", icon:"🤸", sound:"stretch.mp3", anim:"anim-bounce" },
   { name:"strong", icon:"💪", sound:"strong.mp3", anim:"anim-pulse" },
   { name:"walk", icon:"🚶", sound:"walk.mp3", anim:"anim-bounce" },
@@ -229,19 +228,19 @@ const phrases = [
   { file: "keep_going.mp3" }, { file: "well_done.mp3" }
 ];
 
+/* THEMES REALIGNED WITH SYSTEM ASSET UNDERSCORES */
 const themes = [
-  { name:"snow1", src:"assets/images/themes/snow.webp", p:["❄️","🌨️","✨"], dist:"v-down" },
-  { name:"snow2", src:"assets/images/themes/snow_2.webp", p:["❅","❆","💎"], dist:"a-down" },
-  { name:"garden", src:"assets/images/themes/garden.webp", p:["🌸","🦋","🌼"], dist:"spread" },
-  { name:"ocean1", src:"assets/images/themes/ocean.webp", p:["🫧","🐟","🐚"], dist:"f-up" },
-  { name:"ocean2", src:"assets/images/themes/ocean_2.webp", p:["🫧","🪼","🐙"], dist:"s-right" },
-  { name:"forest1", src:"assets/images/themes/forest.webp", p:["🍂","🍁","🦊"], dist:"swirl" },
-  { name:"forest2", src:"assets/images/themes/forest_2.webp", p:["🍃","🌱","🍄"], dist:"pop" },
-  { name:"rainbow1", src:"assets/images/themes/rainbow.webp", p:["✨","⭐","🌈"], dist:"diag" },
-  { name:"rainbow2", src:"assets/images/themes/rainbow_2.webp", p:["✨","🍭","🎨"], dist:"radial" }
+  { name:"snow1", src:"assets/images/themes/snow.webp", p:["❄️","🌨️","✨","🤍","🏔️"], dist:"v-down" },
+  { name:"snow2", src:"assets/images/themes/snow_2.webp", p:["❅","❆","💎","🧊","❄️"], dist:"a-down" },
+  { name:"garden", src:"assets/images/themes/garden.webp", p:["🌸","🦋","🌼","🌿","🌹"], dist:"spread" },
+  { name:"ocean1", src:"assets/images/themes/ocean.webp", p:["🫧","🐟","🐚","🐳","🐠"], dist:"f-up" },
+  { name:"ocean2", src:"assets/images/themes/ocean_2.webp", p:["🫧","🪼","🐙","🦈","🐬"], dist:"s-right" },
+  { name:"forest1", src:"assets/images/themes/forest.webp", p:["🍂","🍁","🕊️","🐒","🐢"], dist:"swirl" },
+  { name:"forest2", src:"assets/images/themes/forest_2.webp", p:["🦚","🌱","🍄","🍀","🌾"], dist:"pop" },
+  { name:"rainbow1", src:"assets/images/themes/rainbow.webp", p:["✨","⭐","🌈","💐","🍓"], dist:"diag" },
+  { name:"rainbow2", src:"assets/images/themes/rainbow_2.webp", p:["🍩","🍭","🎨","🎂","💖"], dist:"radial" }
 ];
 
-/* HIGHER SPEED CALIBRATIONS EXCLUSIVELY POPULATED HERE */
 const speedMatrix = {
   slow:   { letterWait: 900,  actionWait: 1100, postStar: 1200, autoNext: 1400 },
   normal: { letterWait: 400,  actionWait: 550,  postStar: 600,  autoNext: 800 },
@@ -293,7 +292,6 @@ function preCacheAllAudio() {
 }
 preCacheAllAudio();
 
-/* HUD AUTOMATIC DISAPPEARANCE ENGINE */
 function resetHudTimer() {
   if (!isBooted) return;
   el.controls.classList.remove("hidden-hud");
@@ -415,62 +413,4 @@ async function runSequence() {
   // STEP 4: Fire Reward Particle Sequence
   starsCollected++; el.lblStar.textContent = starsCollected;
   el.starPop.classList.add("boom"); launchStarsBurst();
-  await new Promise(res => setTimeout(res, timing.postStar));
-  el.starPop.classList.remove("boom");
-
-  // INTERMISSION SIGNAL TRIGGER
-  launchIntermissionWave();
-  await new Promise(res => setTimeout(res, 500));
-
-  currentIdx++; isEngineRunning = false;
-  if (currentMode === "manual") el.btnNext.disabled = false;
-  if (currentMode === "auto" && !isPaused) autoTimeout = setTimeout(runSequence, timing.autoNext);
-}
-
-function togglePlay() {
-  isPaused = !isPaused;
-  if (isPaused) {
-    clearTimeout(autoTimeout); ambient.pause();
-    el.btnPlayPause.textContent = "PLAY"; el.btnPlayPause.style.background = "#2ecc71";
-    el.btnNext.disabled = (currentMode === "auto");
-    el.controls.classList.remove("hidden-hud"); // Keep controls visible when paused
-  } else {
-    ambient.play().catch(()=>{});
-    el.btnPlayPause.textContent = "PAUSE"; el.btnPlayPause.style.background = "#5849c4";
-    if (currentMode === "auto") runSequence(); else el.btnNext.disabled = isEngineRunning;
-    resetHudTimer();
-  }
-}
-
-function setMode(mode) {
-  currentMode = mode; clearTimeout(autoTimeout);
-  if (mode === "auto") { el.btnNext.disabled = true; if (!isEngineRunning && !isPaused) runSequence(); } 
-  else { if (!isEngineRunning && !isPaused) el.btnNext.disabled = false; }
-  resetHudTimer();
-}
-
-function setSpeed(speed) { currentSpeed = speed; resetHudTimer(); }
-function triggerNextManual() { if (currentMode === "manual" && !isEngineRunning && !isPaused) { runSequence(); resetHudTimer(); } }
-
-function bootEngineWorld() {
-  if (isBooted) return; isBooted = true;
-  
-  // Programmatically trigger immersive true fullscreen layout modes
-  const doc = document.documentElement;
-  if (doc.requestFullscreen) doc.requestFullscreen();
-  else if (doc.webkitRequestFullscreen) doc.webkitRequestFullscreen();
-  else if (doc.msRequestFullscreen) doc.msRequestFullscreen();
-
-  ambient.loop = true; ambient.volume = 0.12; ambient.play().catch(() => {});
-  
-  el.intro.style.opacity = "0";
-  setTimeout(() => { 
-    el.intro.remove(); 
-    changeThemeEnvironment(0); 
-    runSequence(); 
-    resetHudTimer();
-  }, 600);
-}
-</script>
-</body>
-</html>
+  await new Promise(res =
