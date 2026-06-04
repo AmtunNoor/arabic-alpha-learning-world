@@ -7,10 +7,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  
+  /* ROOT LAYOUT RENDER ENGINE: Forcing background styles directly onto the foundational document structure */
   html, body {
-    margin:0; padding:0; overflow:hidden; background:#070412; 
+    margin:0; padding:0; overflow:hidden; 
+    background-color:#070412;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
     font-family:'Fredoka', 'Jua', sans-serif; color:#fff; user-select:none;
     height: 100vh; width: 100vw; width: 100dvw; height: 100dvh;
+    transition: background-image 0.8s ease-in-out;
   }
   
   /* SPLASH SCREEN */
@@ -32,14 +39,14 @@
 
   @keyframes glowPulse { 0% { opacity: 0.5; transform: scale(0.97); } 100% { opacity: 1; transform: scale(1.03); } }
 
-  /* GAME UI */
+  /* GAME UI CONTAINER */
   #app { height: 100vh; width: 100vw; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; position: relative; z-index: 5; }
   .display-tile {
-    background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-    border: 2px solid rgba(255, 255, 255, 0.15); border-radius: 35px;
+    background: rgba(12, 10, 24, 0.45); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+    border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 35px;
     width: auto; height: auto; min-width: min(85vw, 320px); max-width: 90vw;
     padding: 30px 40px; display: flex; flex-direction: column; align-items: center; gap: 15px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
   }
 
   #letter { font-size: clamp(100px, 18vh, 180px); font-family: 'Jua', sans-serif; line-height: 1; margin: 0; }
@@ -48,7 +55,7 @@
   #action-icon { font-size: clamp(70px, 10vh, 110px); line-height: 1; }
   #action-text { font-size: clamp(20px, 4vw, 32px); font-weight: 700; color: #a5b4fc; text-transform: uppercase; margin: 0; letter-spacing: 2px; }
 
-  /* VISUALLY CONTRASTED ANIMATION RHYTHMS */
+  /* ANIMATION MATRIX */
   .anim-hop { animation: actHop 0.25s infinite alternate ease-in-out; }
   .anim-jump { animation: actJump 0.6s infinite ease-in-out; }
   .anim-shake { animation: actShake 0.25s infinite linear; }
@@ -68,15 +75,6 @@
   @keyframes actPulse { 0%{transform:scale(1);} 100%{transform:scale(1.15);} }
   @keyframes actFly { 0% { transform: translateY(-8px); } 100% { transform: translateY(12px); } }
 
-  /* BACKGROUND ELEMENT RENDERING */
-  .bg-layer { 
-    position: fixed; inset: 0; 
-    width: 100vw; height: 100vh; 
-    width: 100dvw; height: 100dvh;
-    object-fit: cover; object-position: center;
-    transition: opacity 1s ease; z-index: -10; opacity: 0; 
-  }
-  
   #particle-container { position:fixed; inset:0; pointer-events:none; z-index:10; overflow:hidden; }
   .particle { position: absolute; pointer-events: none; }
   
@@ -86,19 +84,18 @@
     100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1.1); opacity:0; } 
   }
 
-  /* REWARD INTERFACE */
+  /* HUD CONTROLS */
   #hud { position: fixed; top: 30px; left: 30px; right: 30px; display: flex; justify-content: space-between; font-size: 18px; z-index: 50; }
-  #level-indicator, #star-score { background: rgba(0,0,0,0.35); padding: 6px 20px; border-radius: 20px; backdrop-filter: blur(5px); }
+  #level-indicator, #star-score { background: rgba(0,0,0,0.45); padding: 6px 20px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
 
   #star-pop { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0.1); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
   #star-pop.boom { opacity: 1; transform: scale(1); }
   .star-graphic { position: relative; font-size: 180px; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4)); }
   .star-count { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: 50px; color: #fff; font-weight: 700; top: 10px; }
 
-  /* OVERLAY HUD CONTROLS */
   #controls { 
     position:fixed; bottom:40px; left:50%; transform:translateX(-50%); z-index:100; 
-    display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.85); 
+    display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.9); 
     padding:8px 18px; border-radius:50px; border: 1px solid rgba(255,255,255,0.15);
     backdrop-filter: blur(15px); transition: opacity 0.4s ease;
   }
@@ -116,9 +113,6 @@
   <div class="intro-kids">Mariam & Hamza</div>
   <div class="game-subtitle">🌟 CLICK TO START 🌟</div>
 </div>
-
-<img id="bg1" class="bg-layer" alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
-<img id="bg2" class="bg-layer" alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
 
 <div id="particle-container"></div>
 
@@ -213,15 +207,21 @@ const themes = [
 ];
 
 const speedMatrix = {
-  slow:   { letterWait: 900,  actionWait: 1100, postStar: 1200, autoNext: 1400 },
-  normal: { letterWait: 400,  actionWait: 550,  postStar: 600,  autoNext: 800 },
-  fast:   { letterWait: 80,   actionWait: 120,  postStar: 150,  autoNext: 250 }
+  slow:   { letterWait: 1000, actionWait: 1200, postStar: 1200, autoNext: 1500 },
+  normal: { letterWait: 500,  actionWait: 700,  postStar: 700,  autoNext: 900 },
+  fast:   { letterWait: 100,  actionWait: 150,  postStar: 150,  autoNext: 300 }
 };
+
+// FINITE STATE MACHINE MANAGEMENT VARIABLES
+const STATE_LETTER = 1;
+const STATE_ACTION = 2;
+const STATE_REWARD = 3;
 
 let currentIdx = 0, starsCollected = 0, currentLevel = 1;
 let currentMode = "manual", currentSpeed = "normal";
-let isEngineRunning = false, isPaused = false, bgFlip = true, isBooted = false;
-let autoTimeout = null, hudHideTimeout = null;
+let isPaused = false, isBooted = false, isProcessingStep = false;
+let currentState = STATE_LETTER; 
+let sequenceTimeout = null, hudHideTimeout = null;
 
 const ambient = new Audio(AUDIO_BASE + "system/ambient.mp3");
 
@@ -255,15 +255,10 @@ function resetHudTimer() {
   hudHideTimeout = setTimeout(() => { if (!isPaused) el.controls.classList.add("hidden-hud"); }, 2500);
 }
 
+// BULLETPROOF LAYER SYSTEM: Applying image directly on the body node to force hardware display
 function changeThemeEnvironment(themeIdx) {
   const theme = themes[themeIdx % themes.length];
-  const nextBg = bgFlip ? document.getElementById("bg2") : document.getElementById("bg1");
-  const oldBg = bgFlip ? document.getElementById("bg1") : document.getElementById("bg2");
-  
-  nextBg.src = `${theme.src}?v=${Date.now()}`;
-  nextBg.style.opacity = "1"; 
-  oldBg.style.opacity = "0";
-  bgFlip = !bgFlip; 
+  document.body.style.backgroundImage = `url('${theme.src}?v=${Date.now()}')`;
   runThemeParticles(theme);
 }
 
@@ -302,78 +297,107 @@ async function playSound(file) {
   });
 }
 
-async function runSequence() {
-  if (isEngineRunning || isPaused) return;
-  isEngineRunning = true; el.btnNext.disabled = true;
+// STATE MACHINE LOOP ENGINE: Step-by-step conditional processing pipeline
+async function executeEngineStep() {
+  if (isPaused || isProcessingStep) return;
+  isProcessingStep = true;
+  el.btnNext.disabled = true;
 
   const letter = letters[currentIdx % letters.length];
   const action = actions[currentIdx % actions.length];
-  const chosenPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-  const themeIdx = Math.floor(currentIdx / 3);
   const timing = speedMatrix[currentSpeed];
 
-  const calcLevel = Math.floor(currentIdx / 5) + 1;
-  if (calcLevel > currentLevel) {
-    currentLevel = calcLevel; el.lblLevel.textContent = currentLevel;
-    await playSound("level_up.mp3");
-    await new Promise(r => setTimeout(r, 400));
+  // Global environment updates only apply when initiating a fresh loop state
+  if (currentState === STATE_LETTER) {
+    const calcLevel = Math.floor(currentIdx / 5) + 1;
+    if (calcLevel > currentLevel) {
+      currentLevel = calcLevel; el.lblLevel.textContent = currentLevel;
+      await playSound("level_up.mp3");
+    }
+    changeThemeEnvironment(Math.floor(currentIdx / 3));
+    
+    el.actionCon.style.display = "none";
+    el.letter.textContent = letter.char; el.letter.style.color = letter.color;
+    el.actionIcon.textContent = action.icon; el.actionIcon.className = "";
+    el.actionText.textContent = action.name;
+
+    await playSound(letter.file);
+    
+    if (!isPaused) {
+      currentState = STATE_ACTION;
+      sequenceTimeout = setTimeout(executeEngineStep, timing.letterWait);
+    }
+    isProcessingStep = false;
+    return;
   }
 
-  changeThemeEnvironment(themeIdx);
-  
-  el.actionCon.style.display = "none";
-  el.letter.textContent = letter.char; el.letter.style.color = letter.color;
-  el.actionIcon.textContent = action.icon; el.actionIcon.className = "";
-  el.actionText.textContent = action.name;
+  if (currentState === STATE_ACTION) {
+    el.actionCon.style.display = "flex"; 
+    el.actionIcon.classList.add(action.anim);
+    
+    await playSound(action.sound);
+    
+    if (!isPaused) {
+      currentState = STATE_REWARD;
+      sequenceTimeout = setTimeout(executeEngineStep, timing.actionWait);
+    }
+    isProcessingStep = false;
+    return;
+  }
 
-  await playSound(letter.file);
-  await new Promise(r => setTimeout(r, timing.letterWait));
-  if (isPaused) { isEngineRunning = false; return; }
-  
-  el.actionCon.style.display = "flex"; 
-  el.actionIcon.classList.add(action.anim);
-  await playSound(action.sound);
-  await new Promise(r => setTimeout(r, timing.actionWait));
-  if (isPaused) { isEngineRunning = false; return; }
+  if (currentState === STATE_REWARD) {
+    const chosenPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+    await playSound(chosenPhrase.file);
 
-  await playSound(chosenPhrase.file);
+    starsCollected++; 
+    el.lblStar.textContent = starsCollected; el.lblTotalStars.textContent = starsCollected;
+    el.starPop.classList.add("boom");
+    
+    await new Promise(r => setTimeout(r, timing.postStar));
+    el.starPop.classList.remove("boom");
 
-  starsCollected++; 
-  el.lblStar.textContent = starsCollected; el.lblTotalStars.textContent = starsCollected;
-  el.starPop.classList.add("boom");
-  await new Promise(r => setTimeout(r, timing.postStar));
-  el.starPop.classList.remove("boom");
+    // Clear tracking metrics and hop to next alphabet context index
+    currentIdx++;
+    currentState = STATE_LETTER;
+    isProcessingStep = false;
 
-  currentIdx++; isEngineRunning = false;
-  if (currentMode === "manual") el.btnNext.disabled = false;
-  else autoTimeout = setTimeout(runSequence, timing.autoNext);
+    if (currentMode === "auto" && !isPaused) {
+      sequenceTimeout = setTimeout(executeEngineStep, timing.autoNext);
+    } else if (currentMode === "manual") {
+      el.btnNext.disabled = false;
+    }
+  }
 }
 
 function bootEngineWorld() {
   if (isBooted) return; isBooted = true;
   ambient.loop = true; ambient.volume = 0.15; ambient.play().catch(()=>{});
   el.intro.style.opacity = "0";
-  setTimeout(() => { el.intro.remove(); runSequence(); resetHudTimer(); }, 600);
+  setTimeout(() => { el.intro.remove(); executeEngineStep(); resetHudTimer(); }, 600);
 }
 
-// FULL AUDIO SYNCHRONIZATION: Pausing the engine now links into the ambient loop node
 function togglePlay() {
   isPaused = !isPaused;
   if (isPaused) { 
-    clearTimeout(autoTimeout); 
-    ambient.pause(); // Synchronously freeze ambient soundtrack
+    clearTimeout(sequenceTimeout); 
+    ambient.pause(); 
     el.btnPlayPause.textContent = "PLAY"; 
   }
   else { 
     el.btnPlayPause.textContent = "PAUSE"; 
-    ambient.play().catch(()=>{}); // Safely restart the loop
-    runSequence(); 
+    ambient.play().catch(()=>{});
+    executeEngineStep(); // Safely triggers the engine to run whatever step it was frozen inside
   }
 }
 
-function setMode(m) { currentMode = m; if (m === "auto") runSequence(); }
+function setMode(m) { 
+  currentMode = m; 
+  if (m === "auto" && !isPaused && !isProcessingStep && currentState === STATE_LETTER) {
+    executeEngineStep(); 
+  } 
+}
 function setSpeed(s) { currentSpeed = s; }
-function triggerNextManual() { if (!isEngineRunning) runSequence(); }
+function triggerNextManual() { if (!isProcessingStep && !isPaused) executeEngineStep(); }
 </script>
 </body>
 </html>
