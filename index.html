@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <title>Fun with Arabic Alpha World</title>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -44,12 +44,11 @@
 
   #letter { font-size: clamp(100px, 18vh, 180px); font-family: 'Jua', sans-serif; line-height: 1; margin: 0; }
   
-  /* STRICTLY CONTROLS VISIBILITY DURING TIMED BLOCKS */
   #action-container { display: none; flex-direction: column; align-items: center; gap: 8px; }
   #action-icon { font-size: clamp(70px, 10vh, 110px); line-height: 1; }
   #action-text { font-size: clamp(20px, 4vw, 32px); font-weight: 700; color: #a5b4fc; text-transform: uppercase; margin: 0; letter-spacing: 2px; }
 
-  /* VISUALLY CONTRASTED ANIMATION RYHTHMS FOR TODDLERS */
+  /* VISUALLY CONTRASTED ANIMATION RHYTHMS */
   .anim-hop { animation: actHop 0.25s infinite alternate ease-in-out; }
   .anim-jump { animation: actJump 0.6s infinite ease-in-out; }
   .anim-shake { animation: actShake 0.25s infinite linear; }
@@ -69,8 +68,15 @@
   @keyframes actPulse { 0%{transform:scale(1);} 100%{transform:scale(1.15);} }
   @keyframes actFly { 0% { transform: translateY(-8px); } 100% { transform: translateY(12px); } }
 
-  /* DYNAMIC BACKGROUND COMPONENT */
-  .bg { position:fixed; inset:0; background-size:cover; background-position:center; transition:opacity 1s ease; z-index:-10; opacity:0; }
+  /* CASTING IMMERSION: Solid HTML Image elements forcing full screen hardware rendering */
+  .bg-layer { 
+    position: fixed; inset: 0; 
+    width: 100vw; height: 100vh; 
+    width: 100dvw; height: 100dvh;
+    object-fit: cover; object-position: center;
+    transition: opacity 1s ease; z-index: -10; opacity: 0; 
+  }
+  
   #particle-container { position:fixed; inset:0; pointer-events:none; z-index:10; overflow:hidden; }
   .particle { position: absolute; pointer-events: none; }
   
@@ -111,8 +117,9 @@
   <div class="game-subtitle">🌟 CLICK TO START 🌟</div>
 </div>
 
-<div id="bg1" class="bg"></div>
-<div id="bg2" class="bg"></div>
+<img id="bg1" class="bg-layer" alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+<img id="bg2" class="bg-layer" alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+
 <div id="particle-container"></div>
 
 <div id="hud">
@@ -149,8 +156,8 @@
 </div>
 
 <script>
-const AUDIO_BASE = "./assets/sounds/";
-const THEME_BASE = "./assets/images/themes/";
+const AUDIO_BASE = "assets/sounds/";
+const THEME_BASE = "assets/images/themes/";
 
 const letters = [
   { char:"ا", file:"alif.mp3", color:"#ff7675" }, { char:"ب", file:"ba.mp3", color:"#fdcb6e" }, 
@@ -192,7 +199,6 @@ const phrases = [
   { file: "keep_going.mp3" }, { file: "well_done.mp3" }
 ];
 
-// CRITICAL EXTENSION MATCH: Remapped completely to your lowercase .webp directory footprint
 const themes = [
   { name:"balloon", src: THEME_BASE + "balloon.webp", p:["🎈","🎈","✨","☁️","🌈"], dist:"f-up" },
   { name:"snow1", src: THEME_BASE + "snow.webp", p:["❄️","🌨️","✨","🤍","🏔️"], dist:"v-down" },
@@ -254,7 +260,8 @@ function changeThemeEnvironment(themeIdx) {
   const nextBg = bgFlip ? document.getElementById("bg2") : document.getElementById("bg1");
   const oldBg = bgFlip ? document.getElementById("bg1") : document.getElementById("bg2");
   
-  nextBg.style.backgroundImage = `url('${theme.src}')`; 
+  // Directly manipulating live img src attributes to eliminate layout container calculation bugs
+  nextBg.src = `${theme.src}?v=${Date.now()}`;
   nextBg.style.opacity = "1"; 
   oldBg.style.opacity = "0";
   bgFlip = !bgFlip; 
@@ -315,7 +322,6 @@ async function runSequence() {
 
   changeThemeEnvironment(themeIdx);
   
-  // SEQUENCING ENFORCEMENT: Completely turn layout down to empty slate before letter processing
   el.actionCon.style.display = "none";
   el.letter.textContent = letter.char; el.letter.style.color = letter.color;
   el.actionIcon.textContent = action.icon; el.actionIcon.className = "";
