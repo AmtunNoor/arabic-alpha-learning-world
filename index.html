@@ -13,6 +13,7 @@
     height: 100vh; width: 100vw; width: 100dvw; height: 100dvh;
   }
   
+  /* SPLASH SCREEN */
   #intro-splash {
     position: fixed; inset: 0; background: radial-gradient(circle at center, #1b1437 0%, #05030a 100%);
     z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -31,101 +32,73 @@
 
   @keyframes glowPulse { 0% { opacity: 0.5; transform: scale(0.97); } 100% { opacity: 1; transform: scale(1.03); } }
 
-  #app {
-    height: 100vh; width: 100vw; display: flex; flex-direction: column;
-    justify-content: center; align-items: center; padding: 20px; position: relative; z-index: 5;
-  }
-  
+  /* GAME UI */
+  #app { height: 100vh; width: 100vw; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; position: relative; z-index: 5; }
   .display-tile {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
     border: 2px solid rgba(255, 255, 255, 0.15); border-radius: 35px;
-    width: auto; height: auto;
-    min-width: min(85vw, 320px); max-width: 90vw;
-    padding: 30px 40px;
-    display: flex; flex-direction: column; align-items: center; gap: 15px;
+    width: auto; height: auto; min-width: min(85vw, 320px); max-width: 90vw;
+    padding: 30px 40px; display: flex; flex-direction: column; align-items: center; gap: 15px;
     box-shadow: 0 25px 60px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.1);
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
-  #letter { 
-    font-size: clamp(100px, 18vh, 180px); font-family: 'Jua', sans-serif;
-    line-height: 1; margin: 0; padding: 0;
-    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
-  }
-  
-  #action-container { 
-    display: flex; flex-direction: column; align-items: center; 
-    gap: 8px; opacity: 0; transition: opacity 0.25s ease;
-  }
-  #action-icon { font-size: clamp(70px, 10vh, 110px); line-height: 1; filter: drop-shadow(0 8px 15px rgba(0,0,0,0.2)); }
-  
-  #action-text { 
-    font-size: clamp(20px, 4vw, 32px); font-weight: 700;
-    color: #a5b4fc; text-transform: uppercase; margin: 0; letter-spacing: 2px;
-    text-shadow: 0 4px 10px rgba(0,0,0,0.4);
-  }
+  #letter { font-size: clamp(100px, 18vh, 180px); font-family: 'Jua', sans-serif; line-height: 1; margin: 0; transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  #action-container { display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.25s ease; }
+  #action-icon { font-size: clamp(70px, 10vh, 110px); line-height: 1; }
+  #action-text { font-size: clamp(20px, 4vw, 32px); font-weight: 700; color: #a5b4fc; text-transform: uppercase; margin: 0; letter-spacing: 2px; }
 
-  .anim-bounce { animation: actBounce 0.3s infinite alternate ease-in-out; }
+  /* ACTIONS DESIGNATED ANIMATION TRACKS */
+  .anim-hop { animation: actHop 0.25s infinite alternate ease-in-out; }
+  .anim-jump { animation: actJump 0.6s infinite ease-in-out; }
   .anim-shake { animation: actShake 0.25s infinite linear; }
-  .anim-spin { animation: actSpin 1s infinite linear; }
-  .anim-pulse { animation: actPulse 0.4s infinite alternate ease-in-out; }
+  .anim-spin { animation: actSpin 1.2s infinite linear; }
+  .anim-pulse { animation: actPulse 0.5s infinite alternate ease-in-out; }
+  .anim-fly { animation: actFly 0.7s infinite alternate ease-in-out; }
 
-  @keyframes actBounce { 0%{transform:translateY(0);} 100%{transform:translateY(-20px);} }
+  @keyframes actHop { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
+  @keyframes actJump { 
+    0%, 100% { transform: translateY(0) scaleY(1); } 
+    10% { transform: translateY(5px) scaleY(0.85); }
+    50% { transform: translateY(-45px) scaleY(1.1); }
+    85% { transform: translateY(0) scaleY(1.0); } 
+    90% { transform: translateY(2px) scaleY(0.9); }
+  }
   @keyframes actShake { 0%,100%{transform:translateX(0) rotate(0);} 25%{transform:translateX(-6px) rotate(-3deg);} 75%{transform:translateX(6px) rotate(3deg);} }
   @keyframes actSpin { 100%{transform:rotate(360deg);} }
-  @keyframes actPulse { 0%{transform:scale(1);} 100%{transform:scale(1.12);} }
+  @keyframes actPulse { 0%{transform:scale(1);} 100%{transform:scale(1.15);} }
+  @keyframes actFly { 0% { transform: translateY(-8px) scale(0.95); } 100% { transform: translateY(12px) scale(1.05); } }
 
-  .bg { position:fixed; inset:0; background-size:cover; background-position:center; transition:opacity 0.8s ease; z-index:-10; opacity:0; }
+  /* BACKGROUND & RUNTIME MOVEMENT ARCHITECTURES */
+  .bg { position:fixed; inset:0; background-size:cover; background-position:center; transition:opacity 1s ease; z-index:-10; opacity:0; }
   #particle-container { position:fixed; inset:0; pointer-events:none; z-index:10; overflow:hidden; }
   .particle { position: absolute; pointer-events: none; }
-
-  #hud { position: fixed; top: min(5vh, 30px); left: 30px; right: 30px; display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; z-index: 50; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-  #level-indicator { background: rgba(0,0,0,0.35); padding: 6px 20px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; }
   
-  #star-pop {
-    position: fixed; inset: 0; display: flex; justify-content: center; align-items: center;
-    z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0.1);
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  #star-pop.boom { opacity: 1; transform: scale(1); }
-  .star-graphic { position: relative; font-size: clamp(140px, 22vh, 220px); filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4)); }
-  .star-count { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: clamp(38px, 6vh, 65px); color: #fff; font-weight: 700; top: 10px; text-shadow: 0 4px 8px rgba(0,0,0,0.5); }
-  .burst-star { position: absolute; font-size: 24px; pointer-events: none; transition: transform 0.5s cubic-bezier(0.1, 0.8, 0.25, 1), opacity 0.5s; opacity: 1; }
-
-  .celebration-item { position: fixed; bottom: -80px; pointer-events: none; z-index: 2000; font-size: 45px; animation: floatUpward 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-  @keyframes floatUpward {
-    0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(-120vh) translateX(var(--skew)) rotate(var(--rot)); opacity: 0; }
-  }
-
-  #controls { 
-    position:fixed; bottom:min(6vh, 40px); left:50%; transform:translateX(-50%); z-index:100; 
-    display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.85); 
-    padding:8px 18px; border-radius:50px; border: 1px solid rgba(255,255,255,0.15);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.5); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    transition: opacity 0.4s ease, transform 0.4s ease; opacity: 1;
-  }
-  #controls.hidden-hud { opacity: 0; pointer-events: none; transform: translate(-50%, 15px); }
-  
-  select, button {
-    background: #1f1b3a; color: #cbd5e1; border: none; padding: 10px 16px;
-    border-radius: 25px; font-family: inherit; font-size: 14px; font-weight:700; cursor: pointer;
-    transition: all 0.15s ease;
-  }
-  select:hover, button:hover { background: #352f5d; color: #fff; }
-  select:focus { outline: none; }
-  
-  #btn-play-pause { background: #5849c4; color: #fff; min-width: 90px; }
-  #btn-next { background: #ff7675; color: #fff; }
-  #btn-next:disabled { opacity:0.25; cursor:not-allowed; }
-
   @keyframes cross-screen { 
     0% { transform: translate(0,0) rotate(0deg) scale(0.5); opacity:0; } 
     15% { opacity: 0.7; } 85% { opacity: 0.7; }
     100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1.1); opacity:0; } 
   }
+
+  /* HUD & REWARDS */
+  #hud { position: fixed; top: 30px; left: 30px; right: 30px; display: flex; justify-content: space-between; font-size: 18px; z-index: 50; }
+  #level-indicator { background: rgba(0,0,0,0.35); padding: 6px 20px; border-radius: 20px; backdrop-filter: blur(5px); }
+  #star-score { background: rgba(0,0,0,0.35); padding: 6px 20px; border-radius: 20px; backdrop-filter: blur(5px); }
+
+  #star-pop { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0.1); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  #star-pop.boom { opacity: 1; transform: scale(1); }
+  .star-graphic { position: relative; font-size: 180px; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4)); }
+  .star-count { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: 50px; color: #fff; font-weight: 700; top: 10px; }
+
+  /* CONTROLS */
+  #controls { 
+    position:fixed; bottom:40px; left:50%; transform:translateX(-50%); z-index:100; 
+    display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.85); 
+    padding:8px 18px; border-radius:50px; border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(15px); transition: opacity 0.4s ease;
+  }
+  #controls.hidden-hud { opacity: 0; pointer-events: none; }
+  select, button { background: #1f1b3a; color: #cbd5e1; border: none; padding: 10px 16px; border-radius: 25px; font-family: inherit; font-weight:700; cursor: pointer; }
+  #btn-play-pause { background: #5849c4; color: #fff; min-width: 90px; }
 </style>
 </head>
 <body onmousemove="resetHudTimer()" ontouchstart="resetHudTimer()">
@@ -135,7 +108,7 @@
   <h1 class="intro-star-name">Amtun Noor</h1>
   <div class="intro-sub-details">for</div>
   <div class="intro-kids">Mariam & Hamza</div>
-  <div class="game-subtitle">🌟 ARABIC ALPHA WORLD 🌟</div>
+  <div class="game-subtitle">🌟 CLICK TO START 🌟</div>
 </div>
 
 <div id="bg1" class="bg"></div>
@@ -144,13 +117,11 @@
 
 <div id="hud">
   <div id="level-indicator">LEVEL: <span id="lbl-level">1</span></div>
+  <div id="star-score">⭐ <span id="lbl-star-total">0</span></div>
 </div>
 
 <div id="star-pop">
-  <div class="star-graphic" id="star-anchor">
-    ⭐
-    <div class="star-count" id="lbl-star-count">0</div>
-  </div>
+  <div class="star-graphic" id="star-anchor">⭐<div class="star-count" id="lbl-star-count">0</div></div>
 </div>
 
 <div id="app">
@@ -165,21 +136,21 @@
 
 <div id="controls">
   <select id="sel-mode" onchange="setMode(this.value)">
-    <option value="manual">Manual Play</option>
+    <option value="manual">Manual</option>
     <option value="auto">Auto Play</option>
   </select>
-  
   <select id="sel-speed" onchange="setSpeed(this.value)">
     <option value="slow">Slow</option>
     <option value="normal" selected>Normal</option>
     <option value="fast">Fast</option>
   </select>
-
   <button id="btn-play-pause" onclick="togglePlay()">PAUSE</button>
   <button id="btn-next" onclick="triggerNextManual()">NEXT ➡️</button>
 </div>
 
 <script>
+const BASE_PATH = "./assets/";
+
 const letters = [
   { char:"ا", file:"alif.mp3", color:"#ff7675" }, { char:"ب", file:"ba.mp3", color:"#fdcb6e" }, 
   { char:"ت", file:"ta.mp3", color:"#00cec9" }, { char:"ث", file:"thaa.mp3", color:"#a5b4fc" }, 
@@ -199,9 +170,9 @@ const letters = [
 
 const actions = [
   { name:"clap", icon:"👏", sound:"clap.mp3", anim:"anim-shake" },
-  { name:"fly", icon:"🦅", sound:"fly.mp3", anim:"anim-bounce" },
-  { name:"hop", icon:"🐸", sound:"hop.mp3", anim:"anim-bounce" },
-  { name:"jump", icon:"🦘", sound:"jump.mp3", anim:"anim-bounce" },
+  { name:"fly", icon:"🦅", sound:"fly.mp3", anim:"anim-fly" },
+  { name:"hop", icon:"🐸", sound:"hop.mp3", anim:"anim-hop" },
+  { name:"jump", icon:"🦘", sound:"jump.mp3", anim:"anim-jump" },
   { name:"look", icon:"👀", sound:"look.mp3", anim:"anim-pulse" },
   { name:"quiet", icon:"🤫", sound:"quiet.mp3", anim:"anim-pulse" },
   { name:"run", icon:"🏃", sound:"run.mp3", anim:"anim-shake" },
@@ -209,9 +180,9 @@ const actions = [
   { name:"sleep", icon:"😴", sound:"sleep.mp3", anim:"anim-pulse" },
   { name:"spin", icon:"🌀", sound:"spin.mp3", anim:"anim-spin" },
   { name:"stomp", icon:"🦶", sound:"stomp.mp3", anim:"anim-shake" },
-  { name:"stretch", icon:"🤸", sound:"stretch.mp3", anim:"anim-bounce" },
+  { name:"stretch", icon:"🤸", sound:"stretch.mp3", anim:"anim-fly" },
   { name:"strong", icon:"💪", sound:"strong.mp3", anim:"anim-pulse" },
-  { name:"walk", icon:"🚶", sound:"walk.mp3", anim:"anim-bounce" },
+  { name:"walk", icon:"🚶", sound:"walk.mp3", anim:"anim-hop" },
   { name:"wave", icon:"👋", sound:"wave.mp3", anim:"anim-shake" }
 ];
 
@@ -220,16 +191,17 @@ const phrases = [
   { file: "keep_going.mp3" }, { file: "well_done.mp3" }
 ];
 
+/* THEME PATH CONFIGURATIONS EMBEDDED WITH YOUR EXACT GITHUB FILE EXTENSIONS */
 const themes = [
-  { name:"snow1", src:"assets/images/themes/snow.webp", p:["❄️","🌨️","✨","🤍","🏔️"], dist:"v-down" },
-  { name:"snow2", src:"assets/images/themes/snow_2.webp", p:["❅","❆","💎","🧊","❄️"], dist:"a-down" },
-  { name:"garden", src:"assets/images/themes/garden.webp", p:["🌸","🦋","🌼","🌿","🌹"], dist:"spread" },
-  { name:"ocean1", src:"assets/images/themes/ocean.webp", p:["🫧","🐟","🐚","🐳","🐠"], dist:"f-up" },
-  { name:"ocean2", src:"assets/images/themes/ocean_2.webp", p:["🫧","🪼","🐙","🦈","🐬"], dist:"s-right" },
-  { name:"forest1", src:"assets/images/themes/forest.webp", p:["🍂","🍁","🕊️","🐒","🐢"], dist:"swirl" },
-  { name:"forest2", src:"assets/images/themes/forest_2.webp", p:["🦚","🌱","🍄","🍀","🌾"], dist:"pop" },
-  { name:"rainbow1", src:"assets/images/themes/rainbow.webp", p:["✨","⭐","🌈","💐","🍓"], dist:"diag" },
-  { name:"rainbow2", src:"assets/images/themes/rainbow_2.webp", p:["🍩","🍭","🎨","🎂","💖"], dist:"radial" }
+  { name:"snow1", src: BASE_PATH + "images/themes/snow.JPG", p:["❄️","🌨️","✨","🤍","🏔️"], dist:"v-down" },
+  { name:"snow2", src: BASE_PATH + "images/themes/snow_2.jpg", p:["❅","❆","💎","🧊","❄️"], dist:"a-down" },
+  { name:"garden", src: BASE_PATH + "images/themes/garden.JPG", p:["🌸","🦋","🌼","🌿","🌹"], dist:"spread" },
+  { name:"ocean1", src: BASE_PATH + "images/themes/ocean.JPG", p:["🫧","🐟","🐚","🐳","🐠"], dist:"f-up" },
+  { name:"ocean2", src: BASE_PATH + "images/themes/ocean_2.JPG", p:["🫧","🪼","🐙","🦈","🐬"], dist:"s-right" },
+  { name:"forest1", src: BASE_PATH + "images/themes/forest.JPG", p:["🍂","🍁","🕊️","🐒","🐢"], dist:"swirl" },
+  { name:"forest2", src: BASE_PATH + "images/themes/forest_2.JPG", p:["🦚","🌱","🍄","🍀","🌾"], dist:"pop" },
+  { name:"rainbow1", src: BASE_PATH + "images/themes/rainbow.JPG", p:["✨","⭐","🌈","💐","🍓"], dist:"diag" },
+  { name:"rainbow2", src: BASE_PATH + "images/themes/rainbow_2.JPG", p:["🍩","🍭","🎨","🎂","💖"], dist:"radial" }
 ];
 
 const speedMatrix = {
@@ -238,29 +210,21 @@ const speedMatrix = {
   fast:   { letterWait: 80,   actionWait: 120,  postStar: 150,  autoNext: 250 }
 };
 
-let currentIdx = 0;
-let starsCollected = 0;
-let currentLevel = 1;
-let currentMode = "manual"; 
-let currentSpeed = "normal"; 
-let isEngineRunning = false;
-let isPaused = false;
-let bgFlip = true;
-let isBooted = false;
-let autoTimeout = null;
-let hudHideTimeout = null;
+let currentIdx = 0, starsCollected = 0, currentLevel = 1;
+let currentMode = "manual", currentSpeed = "normal";
+let isEngineRunning = false, isPaused = false, bgFlip = true, isBooted = false;
+let autoTimeout = null, hudHideTimeout = null;
 
-const audioCache = {};
-const ambient = new Audio("assets/sounds/system/ambient.mp3");
+const ambient = new Audio(BASE_PATH + "sounds/system/ambient.mp3");
 
 const el = {
   letter: document.getElementById("letter"),
   actionIcon: document.getElementById("action-icon"),
   actionText: document.getElementById("action-text"),
   actionCon: document.getElementById("action-container"),
-  tile: document.getElementById("tile-wrapper"),
   pCon: document.getElementById("particle-container"),
   lblStar: document.getElementById("lbl-star-count"),
+  lblTotalStars: document.getElementById("lbl-star-total"),
   starPop: document.getElementById("star-pop"),
   lblLevel: document.getElementById("lbl-level"),
   btnNext: document.getElementById("btn-next"),
@@ -270,30 +234,32 @@ const el = {
 };
 
 function getSoundPath(filename) {
-  if (['amazing.mp3', 'fantastic.mp3', 'keep_going.mp3', 'well_done.mp3'].includes(filename)) return `assets/sounds/phrases/${filename}`;
-  if (['level_up.mp3', 'ambient.mp3'].includes(filename)) return `assets/sounds/system/${filename}`;
-  if (actions.some(a => a.sound === filename)) return `assets/sounds/actions/${filename}`;
-  return `assets/sounds/letters/${filename}`;
+  if (['amazing.mp3', 'fantastic.mp3', 'keep_going.mp3', 'well_done.mp3'].includes(filename)) return BASE_PATH + `sounds/phrases/${filename}`;
+  if (['level_up.mp3', 'ambient.mp3'].includes(filename)) return BASE_PATH + `sounds/system/${filename}`;
+  if (actions.some(a => a.sound === filename)) return BASE_PATH + `sounds/actions/${filename}`;
+  return BASE_PATH + `sounds/letters/${filename}`;
 }
-
-function preCacheAllAudio() {
-  [...letters.map(l=>l.file), ...actions.map(a=>a.sound), ...phrases.map(p=>p.file), "level_up.mp3"].forEach(file => {
-    const a = new Audio(getSoundPath(file)); a.preload = "auto"; audioCache[file] = a;
-  });
-}
-preCacheAllAudio();
 
 function resetHudTimer() {
   if (!isBooted) return;
   el.controls.classList.remove("hidden-hud");
   clearTimeout(hudHideTimeout);
-  hudHideTimeout = setTimeout(() => {
-    if (!isPaused) {
-      el.controls.classList.add("hidden-hud");
-    }
-  }, 2500);
+  hudHideTimeout = setTimeout(() => { if (!isPaused) el.controls.classList.add("hidden-hud"); }, 2500);
 }
 
+function changeThemeEnvironment(themeIdx) {
+  const theme = themes[themeIdx % themes.length];
+  const nextBg = bgFlip ? document.getElementById("bg2") : document.getElementById("bg1");
+  const oldBg = bgFlip ? document.getElementById("bg1") : document.getElementById("bg2");
+  
+  nextBg.style.backgroundImage = `url('${theme.src}')`; 
+  nextBg.style.opacity = "1"; 
+  oldBg.style.opacity = "0";
+  bgFlip = !bgFlip; 
+  runThemeParticles(theme);
+}
+
+/* RESTORED: YOUR DISTINCT 5-PARTICLE MATH AND VECTOR CALCULATION SYSTEM */
 function runThemeParticles(theme) {
   el.pCon.innerHTML = "";
   for (let i = 0; i < 30; i++) {
@@ -301,6 +267,7 @@ function runThemeParticles(theme) {
     p.textContent = theme.p[Math.floor(Math.random() * theme.p.length)];
     p.style.left = Math.random() * 100 + "vw"; p.style.top = Math.random() * 100 + "vh";
     p.style.fontSize = (22 + Math.random() * 26) + "px";
+    
     let tx = 0, ty = 0, rot = 360;
     switch(theme.dist) {
       case "v-down":  tx = (Math.random() - 0.5) * 150; ty = 700; break;
@@ -313,160 +280,82 @@ function runThemeParticles(theme) {
       case "diag":    tx = 600; ty = -600; break;
       case "radial":  const ang = Math.random()*Math.PI*2; tx = Math.cos(ang)*600; ty = Math.sin(ang)*600; break;
     }
+    
     p.style.setProperty('--tx', `${tx}px`); p.style.setProperty('--ty', `${ty}px`); p.style.setProperty('--rot', `${rot}deg`);
     p.style.animation = `cross-screen ${4 + Math.random() * 5}s cubic-bezier(0.1, 0.25, 0.25, 1) infinite`;
     el.pCon.appendChild(p);
   }
 }
 
-function changeThemeEnvironment(themeIdx) {
-  const theme = themes[themeIdx % themes.length];
-  const nextBg = bgFlip ? document.getElementById("bg2") : document.getElementById("bg1");
-  const oldBg = bgFlip ? document.getElementById("bg1") : document.getElementById("bg2");
-  nextBg.style.backgroundImage = `url('${theme.src}')`; nextBg.style.opacity = "1"; oldBg.style.opacity = "0";
-  bgFlip = !bgFlip; runThemeParticles(theme);
-}
-
-function launchStarsBurst() {
-  const anchor = document.getElementById("star-anchor");
-  for (let i = 0; i < 12; i++) {
-    const s = document.createElement("div"); s.className = "burst-star"; s.textContent = "⭐";
-    s.style.left = "45%"; s.style.top = "45%"; anchor.appendChild(s);
-    const angle = (i / 12) * Math.PI * 2; const dist = 110 + Math.random() * 70;
-    const x = Math.cos(angle) * dist; const y = Math.sin(angle) * dist;
-    setTimeout(() => { s.style.transform = `translate(${x}px, ${y}px) scale(0.4)`; s.style.opacity = "0"; }, 20);
-    setTimeout(() => s.remove(), 550);
-  }
-}
-
-function launchIntermissionWave() {
-  const items = ["🎈", "🎉", "✨", "🎈", "🎊"];
-  for (let i = 0; i < 14; i++) {
-    setTimeout(() => {
-      const d = document.createElement("div"); d.className = "celebration-item";
-      d.textContent = items[i % items.length]; d.style.left = (10 + Math.random() * 80) + "vw";
-      d.style.setProperty('--skew', `${(Math.random() - 0.5) * 250}px`);
-      d.style.setProperty('--rot', `${360 + Math.random() * 360}deg`);
-      document.body.appendChild(d);
-      setTimeout(() => d.remove(), 2200);
-    }, i * 70);
-  }
-}
-
-async function playSoundFile(filename) {
-  return new Promise(resolve => {
-    let s = audioCache[filename]; 
-    if (!s) s = new Audio(getSoundPath(filename));
-    s.currentTime = 0; s.volume = 1.0;
-    s.onended = () => resolve(true); 
-    s.onerror = () => resolve(false); // Safety fallback if file is missing/corrupted
-    s.play().catch(() => resolve(false)); // Safety fallback if browser blocks file
+async function playSound(file) {
+  return new Promise(res => {
+    const s = new Audio(getSoundPath(file));
+    s.onended = () => res(); s.onerror = () => res();
+    s.play().catch(() => res());
   });
 }
 
 async function runSequence() {
   if (isEngineRunning || isPaused) return;
   isEngineRunning = true; el.btnNext.disabled = true;
-  
-  const currentLetter = letters[currentIdx % letters.length];
-  const currentAction = actions[currentIdx % actions.length]; 
+
+  const letter = letters[currentIdx % letters.length];
+  const action = actions[currentIdx % actions.length];
   const chosenPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-  const themeIdx = Math.floor(currentIdx / 3) % themes.length;
+  const themeIdx = Math.floor(currentIdx / 3);
+  const timing = speedMatrix[currentSpeed];
 
   const calcLevel = Math.floor(currentIdx / 5) + 1;
   if (calcLevel > currentLevel) {
     currentLevel = calcLevel; el.lblLevel.textContent = currentLevel;
-    await playSoundFile("level_up.mp3");
-    await new Promise(r => setTimeout(r, 500));
+    await playSound("level_up.mp3");
+    await new Promise(r => setTimeout(r, 400));
   }
 
   changeThemeEnvironment(themeIdx);
+  el.actionCon.style.opacity = "0";
+  el.letter.textContent = letter.char; el.letter.style.color = letter.color;
+  el.actionIcon.textContent = action.icon; el.actionIcon.className = "";
+  el.actionText.textContent = action.name;
 
-  el.actionCon.style.opacity = "0"; el.letter.style.transform = "scale(1)";
-  el.letter.textContent = currentLetter.char; el.letter.style.color = currentLetter.color;
-  el.actionIcon.textContent = currentAction.icon; el.actionIcon.className = ""; 
-  el.actionText.textContent = currentAction.name;
-
-  const timing = speedMatrix[currentSpeed];
-
-  // STEP 1: Process Letters Sounds
-  await playSoundFile(currentLetter.file);
-  await new Promise(res => setTimeout(res, timing.letterWait));
+  await playSound(letter.file);
+  await new Promise(r => setTimeout(r, timing.letterWait));
+  if (isPaused) { isEngineRunning = false; return; }
+  
+  el.actionCon.style.opacity = "1"; el.actionIcon.classList.add(action.anim);
+  await playSound(action.sound);
+  await new Promise(r => setTimeout(r, timing.actionWait));
   if (isPaused) { isEngineRunning = false; return; }
 
-  // STEP 2: Display Action
-  el.actionCon.style.opacity = "1"; el.actionIcon.classList.add(currentAction.anim);
-  await playSoundFile(currentAction.sound);
-  await new Promise(res => setTimeout(res, timing.actionWait));
-  if (isPaused) { isEngineRunning = false; return; }
+  await playSound(chosenPhrase.file);
 
-  // STEP 3: Complete Phrase Completion Audio Track
-  await playSoundFile(chosenPhrase.file);
-
-  // STEP 4: Fire Reward Particle Sequence
-  starsCollected++; el.lblStar.textContent = starsCollected;
-  el.starPop.classList.add("boom"); launchStarsBurst();
-  await new Promise(res => setTimeout(res, timing.postStar));
+  starsCollected++; 
+  el.lblStar.textContent = starsCollected; el.lblTotalStars.textContent = starsCollected;
+  el.starPop.classList.add("boom");
+  await new Promise(r => setTimeout(r, timing.postStar));
   el.starPop.classList.remove("boom");
-
-  launchIntermissionWave();
-  await new Promise(res => setTimeout(res, 500));
 
   currentIdx++; isEngineRunning = false;
   if (currentMode === "manual") el.btnNext.disabled = false;
-  if (currentMode === "auto" && !isPaused) autoTimeout = setTimeout(runSequence, timing.autoNext);
+  else autoTimeout = setTimeout(runSequence, timing.autoNext);
+}
+
+function bootEngineWorld() {
+  if (isBooted) return; isBooted = true;
+  ambient.loop = true; ambient.volume = 0.15; ambient.play().catch(()=>{});
+  el.intro.style.opacity = "0";
+  setTimeout(() => { el.intro.remove(); runSequence(); resetHudTimer(); }, 600);
 }
 
 function togglePlay() {
   isPaused = !isPaused;
-  if (isPaused) {
-    clearTimeout(autoTimeout); ambient.pause();
-    el.btnPlayPause.textContent = "PLAY"; el.btnPlayPause.style.background = "#2ecc71";
-    el.btnNext.disabled = (currentMode === "auto");
-    el.controls.classList.remove("hidden-hud");
-  } else {
-    ambient.play().catch(()=>{});
-    el.btnPlayPause.textContent = "PAUSE"; el.btnPlayPause.style.background = "#5849c4";
-    if (currentMode === "auto") runSequence(); else el.btnNext.disabled = isEngineRunning;
-    resetHudTimer();
-  }
+  if (isPaused) { clearTimeout(autoTimeout); el.btnPlayPause.textContent = "PLAY"; }
+  else { el.btnPlayPause.textContent = "PAUSE"; runSequence(); }
 }
 
-function setMode(mode) {
-  currentMode = mode; clearTimeout(autoTimeout);
-  if (mode === "auto") { el.btnNext.disabled = true; if (!isEngineRunning && !isPaused) runSequence(); } 
-  else { if (!isEngineRunning && !isPaused) el.btnNext.disabled = false; }
-  resetHudTimer();
-}
-
-function setSpeed(speed) { currentSpeed = speed; resetHudTimer(); }
-function triggerNextManual() { if (currentMode === "manual" && !isEngineRunning && !isPaused) { runSequence(); resetHudTimer(); } }
-
-function bootEngineWorld() {
-  if (isBooted) return; isBooted = true;
-  
-  // Safely attempt fullscreen (bypass rigid exceptions thrown by iOS Safari)
-  try {
-    const doc = document.documentElement;
-    if (doc.requestFullscreen) doc.requestFullscreen();
-    else if (doc.webkitRequestFullscreen) doc.webkitRequestFullscreen();
-  } catch(e) { console.log("Fullscreen blocked or unsupported"); }
-
-  // Unlocking Audio Context on mobile hardware via explicit interaction signature
-  for (let key in audioCache) {
-    audioCache[key].play().then(() => { audioCache[key].pause(); audioCache[key].currentTime = 0; }).catch(()=>{});
-  }
-
-  ambient.loop = true; ambient.volume = 0.12; ambient.play().catch(() => {});
-  
-  el.intro.style.opacity = "0";
-  setTimeout(() => { 
-    el.intro.remove(); 
-    changeThemeEnvironment(0); 
-    runSequence(); 
-    resetHudTimer();
-  }, 600);
-}
+function setMode(m) { currentMode = m; if (m === "auto") runSequence(); }
+function setSpeed(s) { currentSpeed = s; }
+function triggerNextManual() { if (!isEngineRunning) runSequence(); }
 </script>
 </body>
 </html>
