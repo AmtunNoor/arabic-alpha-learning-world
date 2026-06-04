@@ -4,20 +4,20 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <title>Fun with Arabic Alpha World</title>
-<link href="https://fonts.googleapis.com/css2?family=Jua&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Fredoka:wght=600;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   
-  /* ROOT LAYOUT RENDER ENGINE: Forcing background styles directly onto the foundational document structure */
+  /* CRITICAL TV/CAST FIX: Forcing background image to stretch 100% to fill widescreen displays without clipping */
   html, body {
     margin:0; padding:0; overflow:hidden; 
     background-color:#070412;
-    background-size: cover;
+    background-size: 100% 100%;
     background-position: center center;
     background-repeat: no-repeat;
     font-family:'Fredoka', 'Jua', sans-serif; color:#fff; user-select:none;
     height: 100vh; width: 100vw; width: 100dvw; height: 100dvh;
-    transition: background-image 0.8s ease-in-out;
+    transition: background-image 0.5s ease-in-out;
   }
   
   /* SPLASH SCREEN */
@@ -39,14 +39,14 @@
 
   @keyframes glowPulse { 0% { opacity: 0.5; transform: scale(0.97); } 100% { opacity: 1; transform: scale(1.03); } }
 
-  /* GAME UI CONTAINER */
+  /* GAME UI CONTAINER WITH RESTORED TRANSPARENCY */
   #app { height: 100vh; width: 100vw; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; position: relative; z-index: 5; }
   .display-tile {
-    background: rgba(12, 10, 24, 0.45); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-    border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 35px;
+    background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    border: 2px solid rgba(255, 255, 255, 0.25); border-radius: 35px;
     width: auto; height: auto; min-width: min(85vw, 320px); max-width: 90vw;
     padding: 30px 40px; display: flex; flex-direction: column; align-items: center; gap: 15px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
   }
 
   #letter { font-size: clamp(100px, 18vh, 180px); font-family: 'Jua', sans-serif; line-height: 1; margin: 0; }
@@ -93,18 +93,18 @@
   .star-graphic { position: relative; font-size: 180px; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4)); }
   .star-count { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: 50px; color: #fff; font-weight: 700; top: 10px; }
 
+  /* MODIFIED CONTROL BAR: Locked completely in place for debugging clarity */
   #controls { 
     position:fixed; bottom:40px; left:50%; transform:translateX(-50%); z-index:100; 
     display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.9); 
     padding:8px 18px; border-radius:50px; border: 1px solid rgba(255,255,255,0.15);
-    backdrop-filter: blur(15px); transition: opacity 0.4s ease;
+    backdrop-filter: blur(15px);
   }
-  #controls.hidden-hud { opacity: 0; pointer-events: none; }
   select, button { background: #1f1b3a; color: #cbd5e1; border: none; padding: 10px 16px; border-radius: 25px; font-family: inherit; font-weight:700; cursor: pointer; }
   #btn-play-pause { background: #5849c4; color: #fff; min-width: 90px; }
 </style>
 </head>
-<body onmousemove="resetHudTimer()" ontouchstart="resetHudTimer()">
+<body>
 
 <div id="intro-splash" onclick="bootEngineWorld()">
   <div class="intro-small">Created By</div>
@@ -212,7 +212,6 @@ const speedMatrix = {
   fast:   { letterWait: 100,  actionWait: 150,  postStar: 150,  autoNext: 300 }
 };
 
-// FINITE STATE MACHINE MANAGEMENT VARIABLES
 const STATE_LETTER = 1;
 const STATE_ACTION = 2;
 const STATE_REWARD = 3;
@@ -221,7 +220,7 @@ let currentIdx = 0, starsCollected = 0, currentLevel = 1;
 let currentMode = "manual", currentSpeed = "normal";
 let isPaused = false, isBooted = false, isProcessingStep = false;
 let currentState = STATE_LETTER; 
-let sequenceTimeout = null, hudHideTimeout = null;
+let sequenceTimeout = null;
 
 const ambient = new Audio(AUDIO_BASE + "system/ambient.mp3");
 
@@ -237,8 +236,7 @@ const el = {
   lblLevel: document.getElementById("lbl-level"),
   btnNext: document.getElementById("btn-next"),
   btnPlayPause: document.getElementById("btn-play-pause"),
-  intro: document.getElementById("intro-splash"),
-  controls: document.getElementById("controls")
+  intro: document.getElementById("intro-splash")
 };
 
 function getSoundPath(filename) {
@@ -248,14 +246,6 @@ function getSoundPath(filename) {
   return AUDIO_BASE + `letters/${filename}`;
 }
 
-function resetHudTimer() {
-  if (!isBooted) return;
-  el.controls.classList.remove("hidden-hud");
-  clearTimeout(hudHideTimeout);
-  hudHideTimeout = setTimeout(() => { if (!isPaused) el.controls.classList.add("hidden-hud"); }, 2500);
-}
-
-// BULLETPROOF LAYER SYSTEM: Applying image directly on the body node to force hardware display
 function changeThemeEnvironment(themeIdx) {
   const theme = themes[themeIdx % themes.length];
   document.body.style.backgroundImage = `url('${theme.src}?v=${Date.now()}')`;
@@ -297,7 +287,6 @@ async function playSound(file) {
   });
 }
 
-// STATE MACHINE LOOP ENGINE: Step-by-step conditional processing pipeline
 async function executeEngineStep() {
   if (isPaused || isProcessingStep) return;
   isProcessingStep = true;
@@ -307,7 +296,6 @@ async function executeEngineStep() {
   const action = actions[currentIdx % actions.length];
   const timing = speedMatrix[currentSpeed];
 
-  // Global environment updates only apply when initiating a fresh loop state
   if (currentState === STATE_LETTER) {
     const calcLevel = Math.floor(currentIdx / 5) + 1;
     if (calcLevel > currentLevel) {
@@ -356,7 +344,6 @@ async function executeEngineStep() {
     await new Promise(r => setTimeout(r, timing.postStar));
     el.starPop.classList.remove("boom");
 
-    // Clear tracking metrics and hop to next alphabet context index
     currentIdx++;
     currentState = STATE_LETTER;
     isProcessingStep = false;
@@ -373,7 +360,7 @@ function bootEngineWorld() {
   if (isBooted) return; isBooted = true;
   ambient.loop = true; ambient.volume = 0.15; ambient.play().catch(()=>{});
   el.intro.style.opacity = "0";
-  setTimeout(() => { el.intro.remove(); executeEngineStep(); resetHudTimer(); }, 600);
+  setTimeout(() => { el.intro.remove(); executeEngineStep(); }, 600);
 }
 
 function togglePlay() {
@@ -386,7 +373,7 @@ function togglePlay() {
   else { 
     el.btnPlayPause.textContent = "PAUSE"; 
     ambient.play().catch(()=>{});
-    executeEngineStep(); // Safely triggers the engine to run whatever step it was frozen inside
+    executeEngineStep(); 
   }
 }
 
