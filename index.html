@@ -10,13 +10,29 @@
   
   html, body {
     margin:0; padding:0; overflow:hidden; 
-    background-color:#0d0926;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+    background: radial-gradient(circle at center, #1b1437 0%, #05030a 100%);
     font-family:'Fredoka', 'Jua', sans-serif; color:#fff; user-select:none;
     height: 100vh; width: 100vw; width: 100dvw; height: 100dvh;
+  }
+
+  /* FIXED THEME LAYER ENGINE: Displays the entire image on mobile while stretching flawlessly on widescreen TVs */
+  #theme-background-layer {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain; /* Default for mobile: fits the complete image on screen without cutting edges */
     transition: background-image 0.5s ease-in-out;
+  }
+
+  /* TV & WIDESCREEN CASTING OPTIMIZATION OVERRIDE */
+  @media (min-aspect-ratio: 13/9) {
+    #theme-background-layer {
+      background-size: 100% 100%; /* Spreads edge-to-edge on wide displays without cropping */
+    }
   }
   
   /* SPLASH SCREEN */
@@ -38,15 +54,14 @@
 
   @keyframes glowPulse { 0% { opacity: 0.5; transform: scale(0.97); } 100% { opacity: 1; transform: scale(1.03); } }
 
-  /* GAME UI CONTAINER */
+  /* GAME UI CONTAINER - HIGH COMPATIBILITY TRANSPARENCY */
   #app { height: 100vh; width: 100vw; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; position: relative; z-index: 5; }
   .display-tile {
-    background: rgba(24, 18, 46, 0.45) !important;
-    backdrop-filter: blur(25px) saturate(160%); -webkit-backdrop-filter: blur(25px) saturate(160%);
-    border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 35px;
-    width: auto; height: auto; min-width: min(85vw, 320px); max-width: 90vw;
-    padding: 30px 40px; display: flex; flex-direction: column; align-items: center; gap: 15px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    background: rgba(20, 15, 40, 0.65) !important; /* Swapped out blur filter for a reliable translucent color mask */
+    border: 2.5px solid rgba(255, 255, 255, 0.25); border-radius: 35px;
+    width: auto; height: auto; min-width: min(85vw, 340px); max-width: 90vw;
+    padding: 35px 45px; display: flex; flex-direction: column; align-items: center; gap: 15px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.6);
   }
 
   #letter { font-size: clamp(100px, 18vh, 180px); font-family: 'Jua', sans-serif; line-height: 1; margin: 0; }
@@ -86,7 +101,7 @@
 
   /* HUD INFRASTRUCTURE */
   #hud { position: fixed; top: 30px; left: 30px; right: 30px; display: flex; justify-content: space-between; font-size: 18px; z-index: 50; }
-  #level-indicator, #star-score { background: rgba(0,0,0,0.45); padding: 6px 20px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
+  #level-indicator, #star-score { background: rgba(0,0,0,0.55); padding: 6px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); }
 
   /* STAR POP CONTAINER */
   #star-pop { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0.1); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -94,12 +109,12 @@
   .star-graphic { position: relative; width: 200px; height: 200px; font-size: 180px; display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4)); text-align: center; line-height: 200px; }
   .star-count { position: absolute; left: 0; right: 0; top: 12px; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 45px; color: #fff; font-weight: 700; text-shadow: 0 4px 10px rgba(0,0,0,0.5); font-family: 'Fredoka', sans-serif; }
 
-  /* CONTROL HUD BAR WITH INACTIVITY TIMER CONTROL */
+  /* CONTROL HUD BAR */
   #controls { 
     position:fixed; bottom:40px; left:50%; transform:translateX(-50%); z-index:100; 
-    display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.9); 
+    display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.95); 
     padding:8px 18px; border-radius:50px; border: 1px solid rgba(255,255,255,0.15);
-    backdrop-filter: blur(15px); transition: opacity 0.4s ease; opacity: 1;
+    transition: opacity 0.4s ease; opacity: 1;
   }
   #controls.hidden-hud { opacity: 0; pointer-events: none; }
   select, button { background: #1f1b3a; color: #cbd5e1; border: none; padding: 10px 16px; border-radius: 25px; font-family: inherit; font-weight:700; cursor: pointer; }
@@ -107,6 +122,8 @@
 </style>
 </head>
 <body onmousemove="resetHudTimer()" ontouchstart="resetHudTimer()">
+
+<div id="theme-background-layer"></div>
 
 <div id="intro-splash" onclick="bootEngineWorld()">
   <div class="intro-small">Created By</div>
@@ -208,7 +225,6 @@ const themes = [
   { name:"rainbow2", src: THEME_BASE + "rainbow_2.webp", p:["🍩","🍭","🎨","🎂","💖"], dist:"radial" }
 ];
 
-/* OPTIMIZED SPEED MATRIX TIMINGS: Stripped down delays to make the loops feel snappy and lively */
 const speedMatrix = {
   slow:   { letterWait: 500,  actionWait: 600,  postStar: 600,  autoNext: 800 },
   normal: { letterWait: 250,  actionWait: 350,  postStar: 350,  autoNext: 450 },
@@ -228,6 +244,7 @@ let sequenceTimeout = null, hudHideTimeout = null;
 const ambient = new Audio(AUDIO_BASE + "system/ambient.mp3");
 
 const el = {
+  themeBg: document.getElementById("theme-background-layer"),
   letter: document.getElementById("letter"),
   actionIcon: document.getElementById("action-icon"),
   actionText: document.getElementById("action-text"),
@@ -259,7 +276,7 @@ function resetHudTimer() {
 
 function changeThemeEnvironment(themeIdx) {
   const theme = themes[themeIdx % themes.length];
-  document.body.style.backgroundImage = `url('${theme.src}?v=${Date.now()}')`;
+  el.themeBg.style.backgroundImage = `url('${theme.src}?v=${Date.now()}')`;
   runThemeParticles(theme);
 }
 
@@ -400,4 +417,4 @@ function setSpeed(s) { currentSpeed = s; resetHudTimer(); }
 function triggerNextManual() { resetHudTimer(); if (!isProcessingStep && !isPaused) executeEngineStep(); }
 </script>
 </body>
- </html>
+</html>
