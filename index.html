@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Fun with Arabic Alpha</title>
+<title>Fun with Arabic Alpha World</title>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -17,7 +17,7 @@
   #intro-splash {
     position: fixed; inset: 0; background: radial-gradient(circle at center, #1b1437 0%, #05030a 100%);
     z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
-    text-align: center; cursor: pointer; transition: opacity 0.6s cubic-bezier(0.1, 1, 0.1, 1);
+    text-align: center; cursor: pointer; transition: opacity 0.6s ease;
     padding: 20px;
   }
   .intro-small { font-size: clamp(14px, 3.5vw, 22px); color: #94a3b8; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
@@ -39,15 +39,17 @@
     border: 2px solid rgba(255, 255, 255, 0.15); border-radius: 35px;
     width: auto; height: auto; min-width: min(85vw, 320px); max-width: 90vw;
     padding: 30px 40px; display: flex; flex-direction: column; align-items: center; gap: 15px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.1);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
   }
 
-  #letter { font-size: clamp(100px, 18vh, 180px); font-family: 'Jua', sans-serif; line-height: 1; margin: 0; transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-  #action-container { display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.25s ease; }
+  #letter { font-size: clamp(100px, 18vh, 180px); font-family: 'Jua', sans-serif; line-height: 1; margin: 0; }
+  
+  /* STRICTLY CONTROLS VISIBILITY DURING TIMED BLOCKS */
+  #action-container { display: none; flex-direction: column; align-items: center; gap: 8px; }
   #action-icon { font-size: clamp(70px, 10vh, 110px); line-height: 1; }
   #action-text { font-size: clamp(20px, 4vw, 32px); font-weight: 700; color: #a5b4fc; text-transform: uppercase; margin: 0; letter-spacing: 2px; }
 
-  /* ACTIONS DESIGNATED ANIMATION TRACKS */
+  /* VISUALLY CONTRASTED ANIMATION RYHTHMS FOR TODDLERS */
   .anim-hop { animation: actHop 0.25s infinite alternate ease-in-out; }
   .anim-jump { animation: actJump 0.6s infinite ease-in-out; }
   .anim-shake { animation: actShake 0.25s infinite linear; }
@@ -55,20 +57,19 @@
   .anim-pulse { animation: actPulse 0.5s infinite alternate ease-in-out; }
   .anim-fly { animation: actFly 0.7s infinite alternate ease-in-out; }
 
-  @keyframes actHop { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
+  @keyframes actHop { 0% { transform: translateY(0); } 100% { transform: translateY(-15px); } }
   @keyframes actJump { 
     0%, 100% { transform: translateY(0) scaleY(1); } 
     10% { transform: translateY(5px) scaleY(0.85); }
-    50% { transform: translateY(-45px) scaleY(1.1); }
+    50% { transform: translateY(-50px) scaleY(1.1); }
     85% { transform: translateY(0) scaleY(1.0); } 
-    90% { transform: translateY(2px) scaleY(0.9); }
   }
   @keyframes actShake { 0%,100%{transform:translateX(0) rotate(0);} 25%{transform:translateX(-6px) rotate(-3deg);} 75%{transform:translateX(6px) rotate(3deg);} }
   @keyframes actSpin { 100%{transform:rotate(360deg);} }
   @keyframes actPulse { 0%{transform:scale(1);} 100%{transform:scale(1.15);} }
-  @keyframes actFly { 0% { transform: translateY(-8px) scale(0.95); } 100% { transform: translateY(12px) scale(1.05); } }
+  @keyframes actFly { 0% { transform: translateY(-8px); } 100% { transform: translateY(12px); } }
 
-  /* BACKGROUND & RUNTIME MOVEMENT ARCHITECTURES */
+  /* DYNAMIC BACKGROUND COMPONENT */
   .bg { position:fixed; inset:0; background-size:cover; background-position:center; transition:opacity 1s ease; z-index:-10; opacity:0; }
   #particle-container { position:fixed; inset:0; pointer-events:none; z-index:10; overflow:hidden; }
   .particle { position: absolute; pointer-events: none; }
@@ -79,17 +80,16 @@
     100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1.1); opacity:0; } 
   }
 
-  /* HUD & REWARDS */
+  /* REWARD INTERFACE */
   #hud { position: fixed; top: 30px; left: 30px; right: 30px; display: flex; justify-content: space-between; font-size: 18px; z-index: 50; }
-  #level-indicator { background: rgba(0,0,0,0.35); padding: 6px 20px; border-radius: 20px; backdrop-filter: blur(5px); }
-  #star-score { background: rgba(0,0,0,0.35); padding: 6px 20px; border-radius: 20px; backdrop-filter: blur(5px); }
+  #level-indicator, #star-score { background: rgba(0,0,0,0.35); padding: 6px 20px; border-radius: 20px; backdrop-filter: blur(5px); }
 
   #star-pop { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0.1); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
   #star-pop.boom { opacity: 1; transform: scale(1); }
   .star-graphic { position: relative; font-size: 180px; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4)); }
   .star-count { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: 50px; color: #fff; font-weight: 700; top: 10px; }
 
-  /* CONTROLS */
+  /* OVERLAY HUD CONTROLS */
   #controls { 
     position:fixed; bottom:40px; left:50%; transform:translateX(-50%); z-index:100; 
     display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.85); 
@@ -149,23 +149,24 @@
 </div>
 
 <script>
-const BASE_PATH = "./assets/";
+const AUDIO_BASE = "./assets/sounds/";
+const THEME_BASE = "./assets/images/themes/";
 
 const letters = [
   { char:"ا", file:"alif.mp3", color:"#ff7675" }, { char:"ب", file:"ba.mp3", color:"#fdcb6e" }, 
   { char:"ت", file:"ta.mp3", color:"#00cec9" }, { char:"ث", file:"thaa.mp3", color:"#a5b4fc" }, 
   { char:"ج", file:"jeem.mp3", color:"#ff7675" }, { char:"ح", file:"haa.mp3", color:"#fdcb6e" }, 
   { char:"خ", file:"kha.mp3", color:"#00cec9" }, { char:"د", file:"daal.mp3", color:"#a5b4fc" }, 
-  { char:"ر", file:"raa.mp3", color:"#ff7675" }, { char:"ز", file:"zaa.mp3", color:"#fdcb6e" }, 
-  { char:"س", file:"seen.mp3", color:"#00cec9" }, { char:"ش", file:"sheen.mp3", color:"#a5b4fc" }, 
-  { char:"ص", file:"saad.mp3", color:"#ff7675" }, { char:"ض", file:"dad.mp3", color:"#fdcb6e" }, 
-  { char:"ط", file:"toa.mp3", color:"#00cec9" }, { char:"ظ", file:"zoa.mp3", color:"#a5b4fc" }, 
-  { char:"ع", file:"ain.mp3", color:"#ff7675" }, { char:"غ", file:"ghain.mp3", color:"#fdcb6e" }, 
-  { char:"ف", file:"fa.mp3", color:"#00cec9" }, { char:"ق", file:"qaaf.mp3", color:"#a5b4fc" }, 
-  { char:"ك", file:"kaf.mp3", color:"#ff7675" }, { char:"ل", file:"laam.mp3", color:"#fdcb6e" }, 
-  { char:"م", file:"meem.mp3", color:"#00cec9" }, { char:"ن", file:"noon.mp3", color:"#a5b4fc" }, 
-  { char:"ه", file:"ha.mp3", color:"#ff7675" }, { char:"و", file:"waw.mp3", color:"#fdcb6e" }, 
-  { char:"ي", file:"yaa.mp3", color:"#00cec9" }
+  { char:"ذ", file:"thaal.mp3", color:"#ff7675" }, { char:"ر", file:"raa.mp3", color:"#fdcb6e" }, 
+  { char:"ز", file:"zaa.mp3", color:"#00cec9" }, { char:"س", file:"seen.mp3", color:"#a5b4fc" }, 
+  { char:"ش", file:"sheen.mp3", color:"#ff7675" }, { char:"ص", file:"saad.mp3", color:"#fdcb6e" }, 
+  { char:"ض", file:"dad.mp3", color:"#00cec9" }, { char:"ط", file:"toa.mp3", color:"#a5b4fc" }, 
+  { char:"ظ", file:"zoa.mp3", color:"#ff7675" }, { char:"ع", file:"ain.mp3", color:"#fdcb6e" }, 
+  { char:"غ", file:"ghain.mp3", color:"#00cec9" }, { char:"ف", file:"fa.mp3", color:"#a5b4fc" }, 
+  { char:"ق", file:"qaaf.mp3", color:"#ff7675" }, { char:"ك", file:"kaf.mp3", color:"#fdcb6e" }, 
+  { char:"ل", file:"laam.mp3", color:"#00cec9" }, { char:"م", file:"meem.mp3", color:"#a5b4fc" }, 
+  { char:"ن", file:"noon.mp3", color:"#ff7675" }, { char:"ه", file:"ha.mp3", color:"#fdcb6e" }, 
+  { char:"و", file:"waw.mp3", color:"#00cec9" }, { char:"ي", file:"yaa.mp3", color:"#a5b4fc" }
 ];
 
 const actions = [
@@ -191,17 +192,18 @@ const phrases = [
   { file: "keep_going.mp3" }, { file: "well_done.mp3" }
 ];
 
-/* THEME PATH CONFIGURATIONS EMBEDDED WITH YOUR EXACT GITHUB FILE EXTENSIONS */
+// CRITICAL EXTENSION MATCH: Remapped completely to your lowercase .webp directory footprint
 const themes = [
-  { name:"snow1", src: BASE_PATH + "images/themes/snow.JPG", p:["❄️","🌨️","✨","🤍","🏔️"], dist:"v-down" },
-  { name:"snow2", src: BASE_PATH + "images/themes/snow_2.jpg", p:["❅","❆","💎","🧊","❄️"], dist:"a-down" },
-  { name:"garden", src: BASE_PATH + "images/themes/garden.JPG", p:["🌸","🦋","🌼","🌿","🌹"], dist:"spread" },
-  { name:"ocean1", src: BASE_PATH + "images/themes/ocean.JPG", p:["🫧","🐟","🐚","🐳","🐠"], dist:"f-up" },
-  { name:"ocean2", src: BASE_PATH + "images/themes/ocean_2.JPG", p:["🫧","🪼","🐙","🦈","🐬"], dist:"s-right" },
-  { name:"forest1", src: BASE_PATH + "images/themes/forest.JPG", p:["🍂","🍁","🕊️","🐒","🐢"], dist:"swirl" },
-  { name:"forest2", src: BASE_PATH + "images/themes/forest_2.JPG", p:["🦚","🌱","🍄","🍀","🌾"], dist:"pop" },
-  { name:"rainbow1", src: BASE_PATH + "images/themes/rainbow.JPG", p:["✨","⭐","🌈","💐","🍓"], dist:"diag" },
-  { name:"rainbow2", src: BASE_PATH + "images/themes/rainbow_2.JPG", p:["🍩","🍭","🎨","🎂","💖"], dist:"radial" }
+  { name:"balloon", src: THEME_BASE + "balloon.webp", p:["🎈","🎈","✨","☁️","🌈"], dist:"f-up" },
+  { name:"snow1", src: THEME_BASE + "snow.webp", p:["❄️","🌨️","✨","🤍","🏔️"], dist:"v-down" },
+  { name:"snow2", src: THEME_BASE + "snow_2.webp", p:["❅","❆","💎","🧊","❄️"], dist:"a-down" },
+  { name:"garden", src: THEME_BASE + "garden.webp", p:["🌸","🦋","🌼","🌿","🌹"], dist:"spread" },
+  { name:"ocean1", src: THEME_BASE + "ocean.webp", p:["🫧","🐟","🐚","🐳","🐠"], dist:"f-up" },
+  { name:"ocean2", src: THEME_BASE + "ocean_2.webp", p:["🫧","🪼","🐙","🦈","🐬"], dist:"s-right" },
+  { name:"forest1", src: THEME_BASE + "forest.webp", p:["🍂","🍁","🕊️","🐒","🐢"], dist:"swirl" },
+  { name:"forest2", src: THEME_BASE + "forest_2.webp", p:["🦚","🌱","🍄","🍀","🌾"], dist:"pop" },
+  { name:"rainbow1", src: THEME_BASE + "rainbow.webp", p:["✨","⭐","🌈","💐","🍓"], dist:"diag" },
+  { name:"rainbow2", src: THEME_BASE + "rainbow_2.webp", p:["🍩","🍭","🎨","🎂","💖"], dist:"radial" }
 ];
 
 const speedMatrix = {
@@ -215,7 +217,7 @@ let currentMode = "manual", currentSpeed = "normal";
 let isEngineRunning = false, isPaused = false, bgFlip = true, isBooted = false;
 let autoTimeout = null, hudHideTimeout = null;
 
-const ambient = new Audio(BASE_PATH + "sounds/system/ambient.mp3");
+const ambient = new Audio(AUDIO_BASE + "system/ambient.mp3");
 
 const el = {
   letter: document.getElementById("letter"),
@@ -234,10 +236,10 @@ const el = {
 };
 
 function getSoundPath(filename) {
-  if (['amazing.mp3', 'fantastic.mp3', 'keep_going.mp3', 'well_done.mp3'].includes(filename)) return BASE_PATH + `sounds/phrases/${filename}`;
-  if (['level_up.mp3', 'ambient.mp3'].includes(filename)) return BASE_PATH + `sounds/system/${filename}`;
-  if (actions.some(a => a.sound === filename)) return BASE_PATH + `sounds/actions/${filename}`;
-  return BASE_PATH + `sounds/letters/${filename}`;
+  if (['amazing.mp3', 'fantastic.mp3', 'keep_going.mp3', 'well_done.mp3'].includes(filename)) return AUDIO_BASE + `phrases/${filename}`;
+  if (['level_up.mp3', 'ambient.mp3'].includes(filename)) return AUDIO_BASE + `system/${filename}`;
+  if (actions.some(a => a.sound === filename)) return AUDIO_BASE + `actions/${filename}`;
+  return AUDIO_BASE + `letters/${filename}`;
 }
 
 function resetHudTimer() {
@@ -259,7 +261,6 @@ function changeThemeEnvironment(themeIdx) {
   runThemeParticles(theme);
 }
 
-/* RESTORED: YOUR DISTINCT 5-PARTICLE MATH AND VECTOR CALCULATION SYSTEM */
 function runThemeParticles(theme) {
   el.pCon.innerHTML = "";
   for (let i = 0; i < 30; i++) {
@@ -313,22 +314,29 @@ async function runSequence() {
   }
 
   changeThemeEnvironment(themeIdx);
-  el.actionCon.style.opacity = "0";
+  
+  // SEQUENCING ENFORCEMENT: Completely turn layout down to empty slate before letter processing
+  el.actionCon.style.display = "none";
   el.letter.textContent = letter.char; el.letter.style.color = letter.color;
   el.actionIcon.textContent = action.icon; el.actionIcon.className = "";
   el.actionText.textContent = action.name;
 
+  // Track 1: Focus purely on Letter Character + Audio play
   await playSound(letter.file);
   await new Promise(r => setTimeout(r, timing.letterWait));
   if (isPaused) { isEngineRunning = false; return; }
   
-  el.actionCon.style.opacity = "1"; el.actionIcon.classList.add(action.anim);
+  // Track 2: Introduce Action Graphics + Action Audio natively alongside underlying loops
+  el.actionCon.style.display = "flex"; 
+  el.actionIcon.classList.add(action.anim);
   await playSound(action.sound);
   await new Promise(r => setTimeout(r, timing.actionWait));
   if (isPaused) { isEngineRunning = false; return; }
 
+  // Track 3: Complete cycle via Encouragement Track
   await playSound(chosenPhrase.file);
 
+  // Track 4: Dispatch star payout
   starsCollected++; 
   el.lblStar.textContent = starsCollected; el.lblTotalStars.textContent = starsCollected;
   el.starPop.classList.add("boom");
