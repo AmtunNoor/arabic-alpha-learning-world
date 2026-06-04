@@ -15,7 +15,7 @@
     height: 100vh; width: 100vw; width: 100dvw; height: 100dvh;
   }
 
-  /* FIXED THEME LAYER ENGINE: Displays the entire image on mobile while stretching flawlessly on widescreen TVs */
+  /* BACKDROP ENGINE: Adapts instantly to landscape casting orientations */
   #theme-background-layer {
     position: fixed;
     inset: 0;
@@ -24,14 +24,14 @@
     z-index: 1;
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: contain; /* Default for mobile: fits the complete image on screen without cutting edges */
+    background-size: contain;
     transition: background-image 0.5s ease-in-out;
   }
 
-  /* TV & WIDESCREEN CASTING OPTIMIZATION OVERRIDE */
-  @media (min-aspect-ratio: 13/9) {
+  /* LANDSCAPE/TV ORIENTATION OVERRIDE - Removes the side black bands */
+  @media (orientation: landscape) or (min-aspect-ratio: 13/9) {
     #theme-background-layer {
-      background-size: 100% 100%; /* Spreads edge-to-edge on wide displays without cropping */
+      background-size: 100% 100%;
     }
   }
   
@@ -54,23 +54,33 @@
 
   @keyframes glowPulse { 0% { opacity: 0.5; transform: scale(0.97); } 100% { opacity: 1; transform: scale(1.03); } }
 
-  /* GAME UI CONTAINER - HIGH COMPATIBILITY TRANSPARENCY */
+  /* GAME UI CONTAINER - Height restricted in landscape to optimize casting layouts */
   #app { height: 100vh; width: 100vw; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; position: relative; z-index: 5; }
+  
   .display-tile {
-    background: rgba(20, 15, 40, 0.65) !important; /* Swapped out blur filter for a reliable translucent color mask */
+    background: rgba(20, 15, 40, 0.65) !important;
     border: 2.5px solid rgba(255, 255, 255, 0.25); border-radius: 35px;
-    width: auto; height: auto; min-width: min(85vw, 340px); max-width: 90vw;
+    width: auto; height: auto; 
+    min-width: min(85vw, 340px); max-width: 90vw;
     padding: 35px 45px; display: flex; flex-direction: column; align-items: center; gap: 15px;
     box-shadow: 0 25px 60px rgba(0,0,0,0.6);
   }
 
-  #letter { font-size: clamp(100px, 18vh, 180px); font-family: 'Jua', sans-serif; line-height: 1; margin: 0; }
-  
-  #action-container { display: none; flex-direction: column; align-items: center; gap: 8px; }
-  #action-icon { font-size: clamp(70px, 10vh, 110px); line-height: 1; }
-  #action-text { font-size: clamp(20px, 4vw, 32px); font-weight: 700; color: #a5b4fc; text-transform: uppercase; margin: 0; letter-spacing: 2px; }
+  /* Responsive Scaling adjustments when flipped horizontally */
+  @media (orientation: landscape) {
+    .display-tile {
+      padding: 15px 40px;
+      gap: 5px;
+    }
+  }
 
-  /* ANIMATION MATRIX */
+  #letter { font-size: clamp(90px, 16vh, 160px); font-family: 'Jua', sans-serif; line-height: 1; margin: 0; }
+  
+  #action-container { display: none; flex-direction: column; align-items: center; gap: 4px; }
+  #action-icon { font-size: clamp(60px, 9vh, 95px); line-height: 1; }
+  #action-text { font-size: clamp(18px, 3.5vw, 26px); font-weight: 700; color: #a5b4fc; text-transform: uppercase; margin: 0; letter-spacing: 2px; }
+
+  /* ANIMATIONS */
   .anim-hop { animation: actHop 0.25s infinite alternate ease-in-out; }
   .anim-jump { animation: actJump 0.6s infinite ease-in-out; }
   .anim-shake { animation: actShake 0.25s infinite linear; }
@@ -78,17 +88,17 @@
   .anim-pulse { animation: actPulse 0.5s infinite alternate ease-in-out; }
   .anim-fly { animation: actFly 0.7s infinite alternate ease-in-out; }
 
-  @keyframes actHop { 0% { transform: translateY(0); } 100% { transform: translateY(-15px); } }
+  @keyframes actHop { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
   @keyframes actJump { 
     0%, 100% { transform: translateY(0) scaleY(1); } 
-    10% { transform: translateY(5px) scaleY(0.85); }
-    50% { transform: translateY(-50px) scaleY(1.1); }
+    10% { transform: translateY(4px) scaleY(0.85); }
+    50% { transform: translateY(-40px) scaleY(1.1); }
     85% { transform: translateY(0) scaleY(1.0); } 
   }
-  @keyframes actShake { 0%,100%{transform:translateX(0) rotate(0);} 25%{transform:translateX(-6px) rotate(-3deg);} 75%{transform:translateX(6px) rotate(3deg);} }
+  @keyframes actShake { 0%,100%{transform:translateX(0) rotate(0);} 25%{transform:translateX(-5px) rotate(-2deg);} 75%{transform:translateX(5px) rotate(2deg);} }
   @keyframes actSpin { 100%{transform:rotate(360deg);} }
-  @keyframes actPulse { 0%{transform:scale(1);} 100%{transform:scale(1.15);} }
-  @keyframes actFly { 0% { transform: translateY(-8px); } 100% { transform: translateY(12px); } }
+  @keyframes actPulse { 0%{transform:scale(1);} 100%{transform:scale(1.12);} }
+  @keyframes actFly { 0% { transform: translateY(-6px); } 100% { transform: translateY(10px); } }
 
   #particle-container { position:fixed; inset:0; pointer-events:none; z-index:10; overflow:hidden; }
   .particle { position: absolute; pointer-events: none; }
@@ -99,26 +109,43 @@
     100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1.1); opacity:0; } 
   }
 
-  /* HUD INFRASTRUCTURE */
-  #hud { position: fixed; top: 30px; left: 30px; right: 30px; display: flex; justify-content: space-between; font-size: 18px; z-index: 50; }
-  #level-indicator, #star-score { background: rgba(0,0,0,0.55); padding: 6px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); }
+  /* HUD ADJUSTMENTS FOR LANDSCAPE */
+  #hud { position: fixed; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; font-size: 16px; z-index: 50; }
+  #level-indicator, #star-score { background: rgba(0,0,0,0.55); padding: 5px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); }
+
+  @media (orientation: landscape) {
+    #hud { top: 15px; font-size: 14px; }
+  }
 
   /* STAR POP CONTAINER */
   #star-pop { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0.1); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
   #star-pop.boom { opacity: 1; transform: scale(1); }
-  .star-graphic { position: relative; width: 200px; height: 200px; font-size: 180px; display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4)); text-align: center; line-height: 200px; }
-  .star-count { position: absolute; left: 0; right: 0; top: 12px; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 45px; color: #fff; font-weight: 700; text-shadow: 0 4px 10px rgba(0,0,0,0.5); font-family: 'Fredoka', sans-serif; }
+  .star-graphic { position: relative; width: 160px; height: 160px; font-size: 140px; display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4)); text-align: center; line-height: 160px; }
+  
+  @media (orientation: landscape) {
+    .star-graphic { width: 120px; height: 120px; font-size: 100px; line-height: 120px; }
+  }
+  .star-count { position: absolute; left: 0; right: 0; top: 8px; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 38px; color: #fff; font-weight: 700; text-shadow: 0 4px 10px rgba(0,0,0,0.5); font-family: 'Fredoka', sans-serif; }
+  @media (orientation: landscape) {
+    .star-count { font-size: 28px; top: 4px; }
+  }
 
-  /* CONTROL HUD BAR */
+  /* CONTROL HUDS */
   #controls { 
-    position:fixed; bottom:40px; left:50%; transform:translateX(-50%); z-index:100; 
+    position:fixed; bottom:30px; left:50%; transform:translateX(-50%); z-index:100; 
     display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.95); 
-    padding:8px 18px; border-radius:50px; border: 1px solid rgba(255,255,255,0.15);
+    padding:6px 14px; border-radius:50px; border: 1px solid rgba(255,255,255,0.15);
     transition: opacity 0.4s ease; opacity: 1;
   }
+  @media (orientation: landscape) {
+    #controls { bottom: 15px; padding: 4px 12px; }
+  }
   #controls.hidden-hud { opacity: 0; pointer-events: none; }
-  select, button { background: #1f1b3a; color: #cbd5e1; border: none; padding: 10px 16px; border-radius: 25px; font-family: inherit; font-weight:700; cursor: pointer; }
-  #btn-play-pause { background: #5849c4; color: #fff; min-width: 90px; }
+  select, button { background: #1f1b3a; color: #cbd5e1; border: none; padding: 8px 14px; border-radius: 25px; font-family: inherit; font-weight:700; cursor: pointer; font-size: 14px; }
+  @media (orientation: landscape) {
+    select, button { padding: 6px 12px; font-size: 13px; }
+  }
+  #btn-play-pause { background: #5849c4; color: #fff; min-width: 80px; }
 </style>
 </head>
 <body onmousemove="resetHudTimer()" ontouchstart="resetHudTimer()">
@@ -239,7 +266,7 @@ let currentIdx = 0, starsCollected = 0, currentLevel = 1;
 let currentMode = "manual", currentSpeed = "normal";
 let isPaused = false, isBooted = false, isProcessingStep = false;
 let currentState = STATE_LETTER; 
-let sequenceTimeout = null, hudHideTimeout = null;
+let sequenceTimeout = null, hudHideTimeout = null, wakeLock = null;
 
 const ambient = new Audio(AUDIO_BASE + "system/ambient.mp3");
 
@@ -272,6 +299,16 @@ function resetHudTimer() {
   el.controls.classList.remove("hidden-hud");
   clearTimeout(hudHideTimeout);
   hudHideTimeout = setTimeout(() => { if (!isPaused) el.controls.classList.add("hidden-hud"); }, 3000);
+}
+
+async function requestScreenWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+    }
+  } catch (err) {
+    console.log("Wake lock fallback active.");
+  }
 }
 
 function changeThemeEnvironment(themeIdx) {
@@ -386,10 +423,24 @@ async function executeEngineStep() {
 
 function bootEngineWorld() {
   if (isBooted) return; isBooted = true;
+  
+  const docEl = document.documentElement;
+  if (docEl.requestFullscreen) docEl.requestFullscreen().catch(()=>{});
+  else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen().catch(()=>{});
+  else if (docEl.msRequestFullscreen) docEl.msRequestFullscreen().catch(()=>{});
+
+  requestScreenWakeLock();
+
   ambient.loop = true; ambient.volume = 0.15; ambient.play().catch(()=>{});
   el.intro.style.opacity = "0";
   setTimeout(() => { el.intro.remove(); executeEngineStep(); resetHudTimer(); }, 600);
 }
+
+document.addEventListener('visibilitychange', async () => {
+  if (wakeLock !== null && document.visibilityState === 'visible') {
+    requestScreenWakeLock();
+  }
+});
 
 function togglePlay() {
   isPaused = !isPaused;
