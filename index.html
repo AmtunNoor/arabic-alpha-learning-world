@@ -68,7 +68,7 @@
   @keyframes actPulse { 0%{transform:scale(1);} 100%{transform:scale(1.15);} }
   @keyframes actFly { 0% { transform: translateY(-8px); } 100% { transform: translateY(12px); } }
 
-  /* CASTING IMMERSION: Solid HTML Image elements forcing full screen hardware rendering */
+  /* BACKGROUND ELEMENT RENDERING */
   .bg-layer { 
     position: fixed; inset: 0; 
     width: 100vw; height: 100vh; 
@@ -260,7 +260,6 @@ function changeThemeEnvironment(themeIdx) {
   const nextBg = bgFlip ? document.getElementById("bg2") : document.getElementById("bg1");
   const oldBg = bgFlip ? document.getElementById("bg1") : document.getElementById("bg2");
   
-  // Directly manipulating live img src attributes to eliminate layout container calculation bugs
   nextBg.src = `${theme.src}?v=${Date.now()}`;
   nextBg.style.opacity = "1"; 
   oldBg.style.opacity = "0";
@@ -327,22 +326,18 @@ async function runSequence() {
   el.actionIcon.textContent = action.icon; el.actionIcon.className = "";
   el.actionText.textContent = action.name;
 
-  // Track 1: Focus purely on Letter Character + Audio play
   await playSound(letter.file);
   await new Promise(r => setTimeout(r, timing.letterWait));
   if (isPaused) { isEngineRunning = false; return; }
   
-  // Track 2: Introduce Action Graphics + Action Audio natively alongside underlying loops
   el.actionCon.style.display = "flex"; 
   el.actionIcon.classList.add(action.anim);
   await playSound(action.sound);
   await new Promise(r => setTimeout(r, timing.actionWait));
   if (isPaused) { isEngineRunning = false; return; }
 
-  // Track 3: Complete cycle via Encouragement Track
   await playSound(chosenPhrase.file);
 
-  // Track 4: Dispatch star payout
   starsCollected++; 
   el.lblStar.textContent = starsCollected; el.lblTotalStars.textContent = starsCollected;
   el.starPop.classList.add("boom");
@@ -361,10 +356,19 @@ function bootEngineWorld() {
   setTimeout(() => { el.intro.remove(); runSequence(); resetHudTimer(); }, 600);
 }
 
+// FULL AUDIO SYNCHRONIZATION: Pausing the engine now links into the ambient loop node
 function togglePlay() {
   isPaused = !isPaused;
-  if (isPaused) { clearTimeout(autoTimeout); el.btnPlayPause.textContent = "PLAY"; }
-  else { el.btnPlayPause.textContent = "PAUSE"; runSequence(); }
+  if (isPaused) { 
+    clearTimeout(autoTimeout); 
+    ambient.pause(); // Synchronously freeze ambient soundtrack
+    el.btnPlayPause.textContent = "PLAY"; 
+  }
+  else { 
+    el.btnPlayPause.textContent = "PAUSE"; 
+    ambient.play().catch(()=>{}); // Safely restart the loop
+    runSequence(); 
+  }
 }
 
 function setMode(m) { currentMode = m; if (m === "auto") runSequence(); }
