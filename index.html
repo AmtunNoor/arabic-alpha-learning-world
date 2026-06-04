@@ -228,7 +228,6 @@ const phrases = [
   { file: "keep_going.mp3" }, { file: "well_done.mp3" }
 ];
 
-/* THEMES REALIGNED WITH SYSTEM ASSET UNDERSCORES */
 const themes = [
   { name:"snow1", src:"assets/images/themes/snow.webp", p:["❄️","🌨️","✨","🤍","🏔️"], dist:"v-down" },
   { name:"snow2", src:"assets/images/themes/snow_2.webp", p:["❅","❆","💎","🧊","❄️"], dist:"a-down" },
@@ -412,5 +411,4 @@ async function runSequence() {
 
   // STEP 4: Fire Reward Particle Sequence
   starsCollected++; el.lblStar.textContent = starsCollected;
-  el.starPop.classList.add("boom"); launchStarsBurst();
-  await new Promise(res =
+  el.starPop.classList.add("boom"); launc
