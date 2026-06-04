@@ -8,11 +8,10 @@
 <style>
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   
-  /* CRITICAL TV/CAST FIX: Forcing background image to stretch 100% to fill widescreen displays without clipping */
   html, body {
     margin:0; padding:0; overflow:hidden; 
-    background-color:#070412;
-    background-size: 100% 100%;
+    background-color:#0d0926;
+    background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     font-family:'Fredoka', 'Jua', sans-serif; color:#fff; user-select:none;
@@ -39,14 +38,15 @@
 
   @keyframes glowPulse { 0% { opacity: 0.5; transform: scale(0.97); } 100% { opacity: 1; transform: scale(1.03); } }
 
-  /* GAME UI CONTAINER WITH RESTORED TRANSPARENCY */
+  /* GAME UI CONTAINER */
   #app { height: 100vh; width: 100vw; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; position: relative; z-index: 5; }
   .display-tile {
-    background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-    border: 2px solid rgba(255, 255, 255, 0.25); border-radius: 35px;
+    background: rgba(24, 18, 46, 0.45) !important;
+    backdrop-filter: blur(25px) saturate(160%); -webkit-backdrop-filter: blur(25px) saturate(160%);
+    border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 35px;
     width: auto; height: auto; min-width: min(85vw, 320px); max-width: 90vw;
     padding: 30px 40px; display: flex; flex-direction: column; align-items: center; gap: 15px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
   }
 
   #letter { font-size: clamp(100px, 18vh, 180px); font-family: 'Jua', sans-serif; line-height: 1; margin: 0; }
@@ -84,27 +84,29 @@
     100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1.1); opacity:0; } 
   }
 
-  /* HUD CONTROLS */
+  /* HUD INFRASTRUCTURE */
   #hud { position: fixed; top: 30px; left: 30px; right: 30px; display: flex; justify-content: space-between; font-size: 18px; z-index: 50; }
   #level-indicator, #star-score { background: rgba(0,0,0,0.45); padding: 6px 20px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
 
+  /* STAR POP CONTAINER */
   #star-pop { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0.1); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
   #star-pop.boom { opacity: 1; transform: scale(1); }
-  .star-graphic { position: relative; font-size: 180px; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4)); }
-  .star-count { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: 50px; color: #fff; font-weight: 700; top: 10px; }
+  .star-graphic { position: relative; width: 200px; height: 200px; font-size: 180px; display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4)); text-align: center; line-height: 200px; }
+  .star-count { position: absolute; left: 0; right: 0; top: 12px; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 45px; color: #fff; font-weight: 700; text-shadow: 0 4px 10px rgba(0,0,0,0.5); font-family: 'Fredoka', sans-serif; }
 
-  /* MODIFIED CONTROL BAR: Locked completely in place for debugging clarity */
+  /* CONTROL HUD BAR WITH INACTIVITY TIMER CONTROL */
   #controls { 
     position:fixed; bottom:40px; left:50%; transform:translateX(-50%); z-index:100; 
     display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.9); 
     padding:8px 18px; border-radius:50px; border: 1px solid rgba(255,255,255,0.15);
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px); transition: opacity 0.4s ease; opacity: 1;
   }
+  #controls.hidden-hud { opacity: 0; pointer-events: none; }
   select, button { background: #1f1b3a; color: #cbd5e1; border: none; padding: 10px 16px; border-radius: 25px; font-family: inherit; font-weight:700; cursor: pointer; }
   #btn-play-pause { background: #5849c4; color: #fff; min-width: 90px; }
 </style>
 </head>
-<body>
+<body onmousemove="resetHudTimer()" ontouchstart="resetHudTimer()">
 
 <div id="intro-splash" onclick="bootEngineWorld()">
   <div class="intro-small">Created By</div>
@@ -206,10 +208,11 @@ const themes = [
   { name:"rainbow2", src: THEME_BASE + "rainbow_2.webp", p:["🍩","🍭","🎨","🎂","💖"], dist:"radial" }
 ];
 
+/* OPTIMIZED SPEED MATRIX TIMINGS: Stripped down delays to make the loops feel snappy and lively */
 const speedMatrix = {
-  slow:   { letterWait: 1000, actionWait: 1200, postStar: 1200, autoNext: 1500 },
-  normal: { letterWait: 500,  actionWait: 700,  postStar: 700,  autoNext: 900 },
-  fast:   { letterWait: 100,  actionWait: 150,  postStar: 150,  autoNext: 300 }
+  slow:   { letterWait: 500,  actionWait: 600,  postStar: 600,  autoNext: 800 },
+  normal: { letterWait: 250,  actionWait: 350,  postStar: 350,  autoNext: 450 },
+  fast:   { letterWait: 50,   actionWait: 80,   postStar: 100,  autoNext: 150 }
 };
 
 const STATE_LETTER = 1;
@@ -220,7 +223,7 @@ let currentIdx = 0, starsCollected = 0, currentLevel = 1;
 let currentMode = "manual", currentSpeed = "normal";
 let isPaused = false, isBooted = false, isProcessingStep = false;
 let currentState = STATE_LETTER; 
-let sequenceTimeout = null;
+let sequenceTimeout = null, hudHideTimeout = null;
 
 const ambient = new Audio(AUDIO_BASE + "system/ambient.mp3");
 
@@ -236,7 +239,8 @@ const el = {
   lblLevel: document.getElementById("lbl-level"),
   btnNext: document.getElementById("btn-next"),
   btnPlayPause: document.getElementById("btn-play-pause"),
-  intro: document.getElementById("intro-splash")
+  intro: document.getElementById("intro-splash"),
+  controls: document.getElementById("controls")
 };
 
 function getSoundPath(filename) {
@@ -244,6 +248,13 @@ function getSoundPath(filename) {
   if (['level_up.mp3', 'ambient.mp3'].includes(filename)) return AUDIO_BASE + `system/${filename}`;
   if (actions.some(a => a.sound === filename)) return AUDIO_BASE + `actions/${filename}`;
   return AUDIO_BASE + `letters/${filename}`;
+}
+
+function resetHudTimer() {
+  if (!isBooted) return;
+  el.controls.classList.remove("hidden-hud");
+  clearTimeout(hudHideTimeout);
+  hudHideTimeout = setTimeout(() => { if (!isPaused) el.controls.classList.add("hidden-hud"); }, 3000);
 }
 
 function changeThemeEnvironment(themeIdx) {
@@ -360,11 +371,12 @@ function bootEngineWorld() {
   if (isBooted) return; isBooted = true;
   ambient.loop = true; ambient.volume = 0.15; ambient.play().catch(()=>{});
   el.intro.style.opacity = "0";
-  setTimeout(() => { el.intro.remove(); executeEngineStep(); }, 600);
+  setTimeout(() => { el.intro.remove(); executeEngineStep(); resetHudTimer(); }, 600);
 }
 
 function togglePlay() {
   isPaused = !isPaused;
+  resetHudTimer();
   if (isPaused) { 
     clearTimeout(sequenceTimeout); 
     ambient.pause(); 
@@ -379,12 +391,13 @@ function togglePlay() {
 
 function setMode(m) { 
   currentMode = m; 
+  resetHudTimer();
   if (m === "auto" && !isPaused && !isProcessingStep && currentState === STATE_LETTER) {
     executeEngineStep(); 
   } 
 }
-function setSpeed(s) { currentSpeed = s; }
-function triggerNextManual() { if (!isProcessingStep && !isPaused) executeEngineStep(); }
+function setSpeed(s) { currentSpeed = s; resetHudTimer(); }
+function triggerNextManual() { resetHudTimer(); if (!isProcessingStep && !isPaused) executeEngineStep(); }
 </script>
 </body>
-</html>
+ </html>
