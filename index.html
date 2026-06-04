@@ -15,8 +15,8 @@
     height: 100vh; width: 100vw; width: 100dvw; height: 100dvh;
   }
 
-  /* BACKDROP ENGINE: Adapts instantly to landscape casting orientations */
-  #theme-background-layer {
+  /* SMOOTH BACKDROP LAYER ENGINE: Avoids flashy screen jumps by fading images gently */
+  .bg-layer {
     position: fixed;
     inset: 0;
     width: 100%;
@@ -25,12 +25,15 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-size: contain;
-    transition: background-image 0.5s ease-in-out;
+    transition: opacity 1.2s ease-in-out;
+    opacity: 0;
+  }
+  .bg-layer.active {
+    opacity: 1;
   }
 
-  /* LANDSCAPE/TV ORIENTATION OVERRIDE - Removes the side black bands */
   @media (orientation: landscape) or (min-aspect-ratio: 13/9) {
-    #theme-background-layer {
+    .bg-layer {
       background-size: 100% 100%;
     }
   }
@@ -54,7 +57,7 @@
 
   @keyframes glowPulse { 0% { opacity: 0.5; transform: scale(0.97); } 100% { opacity: 1; transform: scale(1.03); } }
 
-  /* GAME UI CONTAINER - Height restricted in landscape to optimize casting layouts */
+  /* GAME UI CONTAINER */
   #app { height: 100vh; width: 100vw; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; position: relative; z-index: 5; }
   
   .display-tile {
@@ -66,12 +69,8 @@
     box-shadow: 0 25px 60px rgba(0,0,0,0.6);
   }
 
-  /* Responsive Scaling adjustments when flipped horizontally */
   @media (orientation: landscape) {
-    .display-tile {
-      padding: 15px 40px;
-      gap: 5px;
-    }
+    .display-tile { padding: 15px 40px; gap: 5px; }
   }
 
   #letter { font-size: clamp(90px, 16vh, 160px); font-family: 'Jua', sans-serif; line-height: 1; margin: 0; }
@@ -109,48 +108,40 @@
     100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1.1); opacity:0; } 
   }
 
-  /* HUD ADJUSTMENTS FOR LANDSCAPE */
+  /* HUD */
   #hud { position: fixed; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; font-size: 16px; z-index: 50; }
   #level-indicator, #star-score { background: rgba(0,0,0,0.55); padding: 5px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); }
 
-  @media (orientation: landscape) {
-    #hud { top: 15px; font-size: 14px; }
-  }
+  @media (orientation: landscape) { #hud { top: 15px; font-size: 14px; } }
 
   /* STAR POP CONTAINER */
   #star-pop { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 1000; pointer-events: none; opacity: 0; transform: scale(0.1); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
   #star-pop.boom { opacity: 1; transform: scale(1); }
   .star-graphic { position: relative; width: 160px; height: 160px; font-size: 140px; display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4)); text-align: center; line-height: 160px; }
   
-  @media (orientation: landscape) {
-    .star-graphic { width: 120px; height: 120px; font-size: 100px; line-height: 120px; }
-  }
+  @media (orientation: landscape) { .star-graphic { width: 120px; height: 120px; font-size: 100px; line-height: 120px; } }
   .star-count { position: absolute; left: 0; right: 0; top: 8px; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 38px; color: #fff; font-weight: 700; text-shadow: 0 4px 10px rgba(0,0,0,0.5); font-family: 'Fredoka', sans-serif; }
-  @media (orientation: landscape) {
-    .star-count { font-size: 28px; top: 4px; }
-  }
+  @media (orientation: landscape) { .star-count { font-size: 28px; top: 4px; } }
 
-  /* CONTROL HUDS */
+  /* CONTROL HUD MENU BAR */
   #controls { 
     position:fixed; bottom:30px; left:50%; transform:translateX(-50%); z-index:100; 
     display:flex; align-items: center; gap:10px; background:rgba(12, 10, 24, 0.95); 
     padding:6px 14px; border-radius:50px; border: 1px solid rgba(255,255,255,0.15);
     transition: opacity 0.4s ease; opacity: 1;
   }
-  @media (orientation: landscape) {
-    #controls { bottom: 15px; padding: 4px 12px; }
-  }
+  @media (orientation: landscape) { #controls { bottom: 15px; padding: 4px 12px; } }
   #controls.hidden-hud { opacity: 0; pointer-events: none; }
   select, button { background: #1f1b3a; color: #cbd5e1; border: none; padding: 8px 14px; border-radius: 25px; font-family: inherit; font-weight:700; cursor: pointer; font-size: 14px; }
-  @media (orientation: landscape) {
-    select, button { padding: 6px 12px; font-size: 13px; }
-  }
+  @media (orientation: landscape) { select, button { padding: 6px 12px; font-size: 13px; } }
   #btn-play-pause { background: #5849c4; color: #fff; min-width: 80px; }
+  #btn-stop { background: #d63031; color: #fff; } /* Stop custom palette styles */
 </style>
 </head>
 <body onmousemove="resetHudTimer()" ontouchstart="resetHudTimer()">
 
-<div id="theme-background-layer"></div>
+<div id="bg-layer-1" class="bg-layer active"></div>
+<div id="bg-layer-2" class="bg-layer"></div>
 
 <div id="intro-splash" onclick="bootEngineWorld()">
   <div class="intro-small">Created By</div>
@@ -192,6 +183,7 @@
     <option value="fast">Fast</option>
   </select>
   <button id="btn-play-pause" onclick="togglePlay()">PAUSE</button>
+  <button id="btn-stop" onclick="stopEngineGame()">STOP 🛑</button>
   <button id="btn-next" onclick="triggerNextManual()">NEXT ➡️</button>
 </div>
 
@@ -252,10 +244,11 @@ const themes = [
   { name:"rainbow2", src: THEME_BASE + "rainbow_2.webp", p:["🍩","🍭","🎨","🎂","💖"], dist:"radial" }
 ];
 
+/* UPGRADED SUPER-SONIC SPEED RUN TIMINGS */
 const speedMatrix = {
-  slow:   { letterWait: 500,  actionWait: 600,  postStar: 600,  autoNext: 800 },
-  normal: { letterWait: 250,  actionWait: 350,  postStar: 350,  autoNext: 450 },
-  fast:   { letterWait: 50,   actionWait: 80,   postStar: 100,  autoNext: 150 }
+  slow:   { letterWait: 300,  actionWait: 350,  postStar: 350,  autoNext: 400 },
+  normal: { letterWait: 100,  actionWait: 150,  postStar: 150,  autoNext: 200 },
+  fast:   { letterWait: 0,    actionWait: 5,    postStar: 5,    autoNext: 10 }
 };
 
 const STATE_LETTER = 1;
@@ -267,11 +260,13 @@ let currentMode = "manual", currentSpeed = "normal";
 let isPaused = false, isBooted = false, isProcessingStep = false;
 let currentState = STATE_LETTER; 
 let sequenceTimeout = null, hudHideTimeout = null, wakeLock = null;
+let activeBgLayer = 1;
 
 const ambient = new Audio(AUDIO_BASE + "system/ambient.mp3");
 
 const el = {
-  themeBg: document.getElementById("theme-background-layer"),
+  bg1: document.getElementById("bg-layer-1"),
+  bg2: document.getElementById("bg-layer-2"),
   letter: document.getElementById("letter"),
   actionIcon: document.getElementById("action-icon"),
   actionText: document.getElementById("action-text"),
@@ -286,6 +281,8 @@ const el = {
   intro: document.getElementById("intro-splash"),
   controls: document.getElementById("controls")
 };
+
+let currentThemeSrc = "";
 
 function getSoundPath(filename) {
   if (['amazing.mp3', 'fantastic.mp3', 'keep_going.mp3', 'well_done.mp3'].includes(filename)) return AUDIO_BASE + `phrases/${filename}`;
@@ -306,14 +303,28 @@ async function requestScreenWakeLock() {
     if ('wakeLock' in navigator) {
       wakeLock = await navigator.wakeLock.request('screen');
     }
-  } catch (err) {
-    console.log("Wake lock fallback active.");
-  }
+  } catch (err) {}
 }
 
+// ANTI-FLASH CROSSFADE LAYER TRANSITION
 function changeThemeEnvironment(themeIdx) {
   const theme = themes[themeIdx % themes.length];
-  el.themeBg.style.backgroundImage = `url('${theme.src}?v=${Date.now()}')`;
+  const targetSrc = `${theme.src}?v=${Date.now()}`;
+  
+  if (currentThemeSrc === targetSrc) return;
+  currentThemeSrc = targetSrc;
+
+  if (activeBgLayer === 1) {
+    el.bg2.style.backgroundImage = `url('${targetSrc}')`;
+    el.bg2.classList.add("active");
+    el.bg1.classList.remove("active");
+    activeBgLayer = 2;
+  } else {
+    el.bg1.style.backgroundImage = `url('${targetSrc}')`;
+    el.bg1.classList.add("active");
+    el.bg2.classList.remove("active");
+    activeBgLayer = 1;
+  }
   runThemeParticles(theme);
 }
 
@@ -345,6 +356,7 @@ function runThemeParticles(theme) {
 }
 
 async function playSound(file) {
+  if (isPaused) return;
   return new Promise(res => {
     const s = new Audio(getSoundPath(file));
     s.onended = () => res(); s.onerror = () => res();
@@ -370,6 +382,7 @@ async function executeEngineStep() {
     changeThemeEnvironment(Math.floor(currentIdx / 3));
     
     el.actionCon.style.display = "none";
+    el.letter.style.display = "block";
     el.letter.textContent = letter.char; el.letter.style.color = letter.color;
     el.actionIcon.textContent = action.icon; el.actionIcon.className = "";
     el.actionText.textContent = action.name;
@@ -434,6 +447,27 @@ function bootEngineWorld() {
   ambient.loop = true; ambient.volume = 0.15; ambient.play().catch(()=>{});
   el.intro.style.opacity = "0";
   setTimeout(() => { el.intro.remove(); executeEngineStep(); resetHudTimer(); }, 600);
+}
+
+// HARD HARDWARE STOP SYSTEM ENGINE
+function stopEngineGame() {
+  clearTimeout(sequenceTimeout);
+  isPaused = true;
+  isProcessingStep = false;
+  ambient.pause();
+  ambient.currentTime = 0;
+  
+  currentState = STATE_LETTER;
+  el.actionCon.style.display = "none";
+  el.letter.style.display = "block";
+  
+  const letter = letters[currentIdx % letters.length];
+  el.letter.textContent = letter.char; 
+  el.letter.style.color = letter.color;
+  
+  el.btnPlayPause.textContent = "PLAY";
+  el.btnNext.disabled = false;
+  resetHudTimer();
 }
 
 document.addEventListener('visibilitychange', async () => {
